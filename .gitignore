@@ -1,0 +1,11 @@
+# Ignore everything
+*
+
+# Except the Ben Studios project files
+!.gitignore
+!table-configurator.html
+!index.html
+!gen-thumbs.html
+!thumbs/
+!thumbs/*.jpg
+!thumbs/*.png

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ben Studios — Baltic Birch Furniture, Made to Order</title>
+  <style>
+    :root {
+      --red: #D4001A; --blk: #0A0A0A; --wht: #FFFFFF;
+      --off: #F5F1EB; --mid: #888; --lt: #E4E0D8; --hd: 56px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; background: var(--wht); color: var(--blk); }
+
+    /* ── Header ─────────────────────────────────────────────── */
+    .site-hd { position: fixed; top: 0; left: 0; right: 0; height: var(--hd); background: var(--wht); border-bottom: 1px solid var(--lt); z-index: 20; display: flex; align-items: center; }
+    .hd-inner { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+    .logo { font-size: 13px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; color: var(--blk); text-decoration: none; }
+    .logo span { color: var(--red); }
+    .hd-nav { display: flex; gap: 28px; }
+    .hd-nav a { font-size: 10px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color 0.1s; cursor: pointer; }
+    .hd-nav a:hover, .hd-nav a.active { color: var(--blk); }
+
+    /* ── Hero ───────────────────────────────────────────────── */
+    .hero {
+      padding: calc(var(--hd) + 80px) 32px 72px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-bottom: 1px solid var(--lt);
+    }
+    .hero-left { padding-right: 60px; }
+    .hero-kicker { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); margin-bottom: 20px; }
+    .hero-h { font-size: clamp(36px, 5vw, 64px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.05; margin-bottom: 24px; }
+    .hero-sub { font-size: 15px; line-height: 1.7; color: #555; max-width: 400px; margin-bottom: 32px; }
+    .hero-cta {
+      display: inline-block; padding: 14px 28px;
+      background: var(--blk); color: var(--wht);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; transition: background 0.12s;
+    }
+    .hero-cta:hover { background: var(--red); }
+    .hero-right {
+      display: flex; flex-direction: column; justify-content: flex-end;
+      gap: 14px; border-left: 1px solid var(--lt); padding-left: 60px;
+    }
+    .hero-stat { }
+    .hero-stat-n { font-size: 32px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+    .hero-stat-l { font-size: 10px; font-weight: 500; letter-spacing: 0.06em; color: var(--mid); margin-top: 3px; }
+    .hero-rule { height: 1px; background: var(--lt); }
+
+    /* ── Section header ─────────────────────────────────────── */
+    .sec-hd { padding: 52px 32px 32px; display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid var(--lt); }
+    .sec-title { font-size: 11px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+    .sec-note { font-size: 11px; color: var(--mid); }
+
+    /* ── Product grid ───────────────────────────────────────── */
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--lt);
+    }
+    .prod-card {
+      border-right: 1px solid var(--lt);
+      border-bottom: 1px solid var(--lt);
+      text-decoration: none; color: var(--blk);
+      display: block;
+      transition: background 0.12s;
+      position: relative;
+      overflow: hidden;
+    }
+    .prod-card:nth-child(3n) { border-right: none; }
+    .prod-card:hover { background: var(--off); }
+    .prod-card:hover .card-arrow { opacity: 1; transform: translate(0,0); }
+
+    /* thumbnail area */
+    .card-img {
+      width: 100%; aspect-ratio: 1/1;
+      background: var(--off);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .card-img canvas {
+      width: 100%; height: 100%;
+      object-fit: contain;
+    }
+    .card-img img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .thumb-loading {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; letter-spacing: 0.1em; color: #BEB9B2;
+    }
+
+    /* card body */
+    .card-body { padding: 20px 24px 26px; }
+    .card-cat { font-size: 8px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); margin-bottom: 7px; }
+    .card-name { font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: 6px; }
+    .card-desc { font-size: 12px; color: #666; line-height: 1.6; margin-bottom: 14px; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .card-price { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+    .card-price span { font-size: 10px; font-weight: 400; color: var(--mid); margin-left: 3px; }
+    .card-arrow {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--red);
+      opacity: 0; transform: translate(-6px, 0);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    /* ── Values strip ───────────────────────────────────────── */
+    .values { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--lt); }
+    .val-item { padding: 36px 28px; border-right: 1px solid var(--lt); }
+    .val-item:last-child { border-right: none; }
+    .val-icon { font-size: 20px; margin-bottom: 12px; }
+    .val-title { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .val-text { font-size: 12px; color: #666; line-height: 1.6; }
+
+    /* ── Footer ─────────────────────────────────────────────── */
+    .footer { padding: 40px 32px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo { font-size: 11px; font-weight: 800; letter-spacing: 0.13em; text-transform: uppercase; }
+    .footer-logo span { color: var(--red); }
+    .footer-copy { font-size: 10px; color: var(--mid); letter-spacing: 0.04em; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-left { padding-right: 0; margin-bottom: 40px; }
+      .hero-right { border-left: none; border-top: 1px solid var(--lt); padding-left: 0; padding-top: 32px; flex-direction: row; flex-wrap: wrap; gap: 24px 40px; }
+      .prod-grid { grid-template-columns: repeat(2, 1fr); }
+      .prod-card:nth-child(3n) { border-right: 1px solid var(--lt); }
+      .prod-card:nth-child(2n) { border-right: none; }
+      .values { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .hd-inner { padding: 0 18px; }
+      .hero { padding: calc(var(--hd) + 40px) 18px 48px; }
+      .sec-hd { padding: 36px 18px 22px; }
+      .prod-grid { grid-template-columns: 1fr; }
+      .prod-card:nth-child(n) { border-right: none; }
+      .values { grid-template-columns: 1fr; }
+      .footer { flex-direction: column; gap: 10px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="site-hd">
+  <div class="hd-inner">
+    <a class="logo" href="index.html">Ben<span>·</span>Studios</a>
+    <nav class="hd-nav">
+      <a href="#products" class="active">Shop</a>
+      <a href="mailto:hello@benstudios.com">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-kicker">Made to Order · Brooklyn, NY</div>
+    <h1 class="hero-h">Baltic birch,<br>built to last.</h1>
+    <p class="hero-sub">Every piece is cut and assembled by hand from void-free Baltic birch plywood. No shortcuts, no particle board. Configure your dimensions, order direct.</p>
+    <a class="hero-cta" href="#products">Browse the collection ↓</a>
+  </div>
+  <div class="hero-right">
+    <div class="hero-stat">
+      <div class="hero-stat-n">¾"</div>
+      <div class="hero-stat-l">B/BB grade · void-free core</div>
+    </div>
+    <div class="hero-rule"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">100</div>
+      <div class="hero-stat-l">Units per edition · limited run</div>
+    </div>
+    <div class="hero-rule"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">2–7 wk</div>
+      <div class="hero-stat-l">Lead time · ships fully assembled</div>
+    </div>
+    <div class="hero-rule"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">100%</div>
+      <div class="hero-stat-l">Oiled finish · food-safe when cured</div>
+    </div>
+  </div>
+</section>
+
+<!-- Products -->
+<div class="sec-hd" id="products">
+  <div class="sec-title">The Collection</div>
+  <div class="sec-note">All pieces built to your dimensions</div>
+</div>
+
+<div class="prod-grid" id="prod-grid">
+  <!-- cards injected by JS -->
+</div>
+
+<!-- Values -->
+<div class="values">
+  <div class="val-item">
+    <div class="val-icon">◻</div>
+    <div class="val-title">Void-free plywood</div>
+    <div class="val-text">Baltic birch B/BB grade — solid glue lines throughout, no hollow pockets or filler.</div>
+  </div>
+  <div class="val-item">
+    <div class="val-icon">◎</div>
+    <div class="val-title">Hand-rubbed oil finish</div>
+    <div class="val-text">Two coats of penetrating oil, applied by hand. Food-safe when cured, easy to touch up.</div>
+  </div>
+  <div class="val-item">
+    <div class="val-icon">△</div>
+    <div class="val-title">Made to your dimensions</div>
+    <div class="val-text">Every piece is configured and built to order. No warehouse stock, no generic sizing.</div>
+  </div>
+  <div class="val-item">
+    <div class="val-icon">→</div>
+    <div class="val-title">Free shipping, US</div>
+    <div class="val-text">Freight shipping included on all orders. White-glove delivery available for large pieces.</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-logo">Ben<span>·</span>Studios</div>
+  <div class="footer-copy">© 2026 · Brooklyn, NY · Made to order</div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  Product catalog (mirrors configurator)
+// ═══════════════════════════════════════════════════════════════
+const T = 0.75, SHEET = 3600, SPR = 185, WASTE = 1.2, MARGIN = 0.40;
+const FACE = [200,172,128], EDGE = [155,126,88];
+
+function calcRetail(sqIn, labor, oilCost, shipCost) {
+  const sheets = Math.ceil(sqIn * WASTE / SHEET);
+  const mat = sheets * SPR;
+  const cost = mat + labor + oilCost + shipCost;
+  return Math.ceil(cost / (1 - MARGIN) / 10) * 10;
+}
+function calcAccessoryRetail(sqIn, labor, oilCost, shipCost) {
+  const mat = sqIn * (SPR * WASTE / SHEET);
+  const cost = mat + labor + oilCost + shipCost;
+  return Math.ceil(cost / (1 - MARGIN) / 5) * 5;
+}
+
+const CATALOG = [
+  {
+    id: 'table',
+    cat: 'Dining',
+    name: 'Baltic Birch Dining Table',
+    desc: 'Trestle base, configurable length and height. Seats 4 to 8.',
+    fromPrice: calcRetail(
+      48*30 + 2*(22*29.25) + 26.5*29.25,
+      280, 65, 175
+    ),
+    camAngle: { th: 0.6, ph: 0.28, scale: 1.5 },
+  },
+  {
+    id: 'coffee-slab',
+    cat: 'Coffee Table',
+    name: 'Slab Coffee Table',
+    desc: 'Low trestle form, 16" height. Clean and minimal.',
+    fromPrice: calcRetail(
+      40*20 + 2*(14*15.25) + 22.5*15.25,
+      160, 45, 95
+    ),
+    camAngle: { th: 0.6, ph: 0.32, scale: 1.9 },
+  },
+  {
+    id: 'coffee-box',
+    cat: 'Coffee Table',
+    name: 'Box Coffee Table',
+    desc: 'Open box frame with lower shelf. Open both sides.',
+    fromPrice: calcRetail(
+      2*(40*20) + 2*(T*14.5*20) + 38.5*20,
+      180, 45, 95
+    ),
+    camAngle: { th: 0.55, ph: 0.30, scale: 1.9 },
+  },
+  {
+    id: 'sidetable',
+    cat: 'Side Table',
+    name: 'Baltic Birch Side Table',
+    desc: 'Box construction with internal shelf. Three sizes.',
+    fromPrice: calcRetail(
+      2*(14*14) + 2*(T*20.5*14) + 12.5*12.5,
+      90, 30, 60
+    ),
+    camAngle: { th: 0.7, ph: 0.30, scale: 2.5 },
+  },
+  {
+    id: 'shelving',
+    cat: 'Shelving',
+    name: 'Freestanding Shelving System',
+    desc: '4–6 shelves, adjustable steel pins, anti-tip anchor.',
+    fromPrice: calcRetail(
+      2*(T*56*10) + 4*(22.5*10),
+      120, 45, 95
+    ),
+    camAngle: { th: 0.5, ph: 0.25, scale: 1.6 },
+  },
+  {
+    id: 'shelf',
+    cat: 'Wall Shelf',
+    name: 'Floating Wall Box',
+    desc: 'Wall-mounted box with internal shelf. No visible hardware.',
+    fromPrice: calcRetail(
+      2*(24*8) + 2*(T*8.5*8) + 22.5*8,
+      60, 25, 40
+    ),
+    camAngle: { th: 0.5, ph: 0.30, scale: 2.2 },
+  },
+  {
+    id: 'bench',
+    cat: 'Bench',
+    name: 'Plywood Shoe Bench',
+    desc: 'Entryway bench with shoe storage below. Up to 4 bays.',
+    fromPrice: calcRetail(
+      24*12 + 2*(T*18*12) + 22.5*12,
+      100, 35, 70
+    ),
+    camAngle: { th: 0.6, ph: 0.28, scale: 2.8 },
+  },
+  {
+    id: 'entryshelf',
+    cat: 'Accessories',
+    name: 'Entryway Shelf',
+    desc: 'Wall-mounted shelf with back lip and side returns. Keys, mail, sunglasses.',
+    fromPrice: calcAccessoryRetail(18*6 + 18*1.75 + 2*(6*1.75), 25, 8, 18),
+    camAngle: { th: 0.55, ph: 0.32, scale: 1.6 },
+  },
+  {
+    id: 'bookends',
+    cat: 'Accessories',
+    name: 'Baltic Birch Bookends',
+    desc: 'Set of 2 L-shaped bookends. Solid ¾" plywood with exposed edge grain.',
+    fromPrice: calcAccessoryRetail(2*(5*5 + 5*4), 20, 8, 15),
+    camAngle: { th: 0.55, ph: 0.30, scale: 1.4 },
+  },
+  {
+    id: 'keytray',
+    cat: 'Accessories',
+    name: 'Key Tray',
+    desc: 'Catch-all tray with finger-jointed corners. 1½" walls, oiled finish.',
+    fromPrice: calcAccessoryRetail(8*5 + 2*(8*1.5) + 2*(5*1.5), 18, 5, 12),
+    camAngle: { th: 0.55, ph: 0.42, scale: 2.8 },
+  },
+  {
+    id: 'candleholder',
+    cat: 'Accessories',
+    name: 'Candle Holder Set',
+    desc: 'Staggered birch blocks with drilled candle wells. Set of 2 or 3.',
+    fromPrice: calcAccessoryRetail(4*(3*3.5)+2*(3*3) + 4*(3*6)+2*(3*3), 25, 10, 15),
+    camAngle: { th: 0.55, ph: 0.32, scale: 2.2 },
+  },
+  {
+    id: 'coasters',
+    cat: 'Accessories',
+    name: 'Baltic Birch Coasters',
+    desc: 'Set of 4 or 6 with matching plywood holder. 13-ply edge grain on all sides.',
+    fromPrice: calcAccessoryRetail(4*(2*(3.75*3.75)+4*(3.75*T)) + 20, 18, 6, 12),
+    camAngle: { th: 0.55, ph: 0.38, scale: 2.5 },
+  },
+  {
+    id: 'plans',
+    cat: 'Digital',
+    name: 'Cutlist Plans — PDF',
+    desc: 'Complete cut plans for any Ben Studios piece. Cut it yourself or take to a shop.',
+    fromPrice: 40,
+    isDigital: true,
+    camAngle: { th: 0.55, ph: 0.38, scale: 1.0 },
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+//  Inject product cards with static thumbnails
+//  Thumbnails live in thumbs/thumb-[id].jpg
+//  Generate them once by opening gen-thumbs.html in your browser
+// ═══════════════════════════════════════════════════════════════
+const grid = document.getElementById('prod-grid');
+CATALOG.forEach(prod => {
+  const card = document.createElement('a');
+  card.className = 'prod-card';
+  card.href = `table-configurator.html?p=${prod.id}`;
+  card.innerHTML = `
+    <div class="card-img">
+      <img src="thumbs/thumb-${prod.id}.jpg" alt="${prod.name}"
+           onerror="this.parentElement.innerHTML='<div class=\\'thumb-loading\\'>${prod.name}</div>'">
+    </div>
+    <div class="card-body">
+      <div class="card-cat">${prod.cat}</div>
+      <div class="card-name">${prod.name}</div>
+      <div class="card-desc">${prod.desc}</div>
+      <div class="card-footer">
+        <div class="card-price">$${prod.fromPrice.toLocaleString()}<span>${prod.isDigital ? 'pdf download' : 'from · oiled'}</span></div>
+        <div class="card-arrow">${prod.isDigital ? 'View →' : 'Configure →'}</div>
+      </div>
+    </div>
+  `;
+  grid.appendChild(card);
+});
+
+// Thumbnails are static — generated once via gen-thumbs.html
+// No Three.js needed on this page.
+
+</script>
+</body>
+</html>
