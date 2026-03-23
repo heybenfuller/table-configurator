@@ -233,95 +233,46 @@
 // ═══════════════════════════════════════════════════════════════
 //  Product catalog (mirrors configurator)
 // ═══════════════════════════════════════════════════════════════
-const T = 0.75, SHEET = 3600, SPR = 185, WASTE = 1.2, MARGIN = 0.40;
-const FACE = [200,172,128], EDGE = [155,126,88];
+const T = 0.75, SHEET = 3600, SPR = 150, WASTE = 1.1, MARGIN = 0.40;
 
 function calcRetail(sqIn, labor, oilCost, shipCost) {
-  const sheets = Math.ceil(sqIn * WASTE / SHEET);
-  const mat = sheets * SPR;
+  const rate = SPR * WASTE / SHEET;
+  const mat = sqIn * rate;
   const cost = mat + labor + oilCost + shipCost;
   return Math.ceil(cost / (1 - MARGIN) / 10) * 10;
 }
 
 const CATALOG = [
   {
-    id: 'table',
-    cat: 'Dining',
-    name: 'Dining Table',
-    desc: 'Trestle base, configurable length and height. Seats 4 to 8.',
+    id: 'tables',
+    cat: 'Tables',
+    name: 'Tables',
+    desc: 'Dining, coffee, and side tables. Trestle and box-frame construction, 4 styles to configure.',
     fromPrice: calcRetail(
-      48*30 + 2*(22*29.25) + 26.5*29.25,
-      280, 65, 175
-    ),
-    camAngle: { th: 0.6, ph: 0.28, scale: 1.5 },
-  },
-  {
-    id: 'coffee-slab',
-    cat: 'Coffee Table',
-    name: 'Slab',
-    desc: 'Low trestle form, 16" height. Clean and minimal.',
-    fromPrice: calcRetail(
-      40*20 + 2*(14*15.25) + 22.5*15.25,
-      160, 45, 95
-    ),
-    camAngle: { th: 0.6, ph: 0.32, scale: 1.9 },
-  },
-  {
-    id: 'coffee-box',
-    cat: 'Coffee Table',
-    name: 'Box',
-    desc: 'Open box frame with lower shelf. Open both sides.',
-    fromPrice: calcRetail(
-      2*(40*20) + 2*(T*14.5*20) + 38.5*20,
-      180, 45, 95
-    ),
-    camAngle: { th: 0.55, ph: 0.30, scale: 1.9 },
-  },
-  {
-    id: 'sidetable',
-    cat: 'Side Table',
-    name: 'Side Table',
-    desc: 'Box construction with internal shelf. Three sizes.',
-    fromPrice: calcRetail(
-      2*(14*14) + 2*(T*20.5*14) + 12.5*12.5,
+      14*(14+1) + 14*14 + 2*(20.5*14) + 12.5*12.5,
       90, 30, 60
     ),
-    camAngle: { th: 0.7, ph: 0.30, scale: 2.5 },
   },
   {
     id: 'shelving',
     cat: 'Shelving',
-    name: 'Shelf',
-    desc: '4–6 shelves, adjustable steel pins, anti-tip anchor.',
+    name: 'Shelving',
+    desc: 'Freestanding bookcase or wall-mounted floating shelf. Dado-routed joints, no visible hardware.',
     fromPrice: calcRetail(
-      2*(T*56*10) + 4*(22.5*10),
-      120, 45, 95
-    ),
-    camAngle: { th: 0.5, ph: 0.25, scale: 1.6 },
-  },
-  {
-    id: 'shelf',
-    cat: 'Wall Shelf',
-    name: 'Wall Shelving',
-    desc: 'Wall-mounted shelf unit, 1–3 shelves. No visible hardware.',
-    fromPrice: calcRetail(
-      2*(24*8) + 2*(T*8.5*8) + 22.5*8,
+      2*(24*12) + 2*(6.5*12) + 1*(22.5*12),
       60, 25, 40
     ),
-    camAngle: { th: 0.5, ph: 0.30, scale: 2.2 },
   },
   {
-    id: 'bench',
-    cat: 'Bench',
-    name: 'Shoe Bench',
-    desc: 'Entryway bench with shoe storage below. Up to 4 bays.',
+    id: 'seating',
+    cat: 'Seating',
+    name: 'Seating',
+    desc: 'Entryway bench, counter and bar stools, and a daybed platform. All box-frame, all Baltic birch.',
     fromPrice: calcRetail(
-      24*12 + 2*(T*18*12) + 22.5*12,
-      100, 35, 70
+      15*(13+1) + 2*(13*23.25) + 13.5*13,
+      70, 20, 45
     ),
-    camAngle: { th: 0.6, ph: 0.28, scale: 2.8 },
   },
-
 ];
 
 // ═══════════════════════════════════════════════════════════════
