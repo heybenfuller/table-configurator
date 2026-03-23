@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ben Studios — Studio Mockup Generator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #111; color: #EEE; font-family: 'Helvetica Neue', sans-serif; display: flex; flex-direction: column; height: 100vh; }
+
+  .toolbar {
+    display: flex; align-items: center; gap: 20px; padding: 12px 20px;
+    background: #1A1A1A; border-bottom: 1px solid #2A2A2A;
+    flex-wrap: wrap;
+  }
+  .logo { font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #888; margin-right: 8px; }
+  label { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: #666; }
+  select, input[type=range] { background: #222; border: 1px solid #333; color: #CCC; padding: 4px 8px; font-size: 11px; border-radius: 2px; }
+  .swatch-row { display: flex; gap: 6px; align-items: center; }
+  .swatch {
+    width: 22px; height: 22px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: border-color 0.15s;
+  }
+  .swatch.active { border-color: #FFF; }
+  .btn {
+    padding: 7px 16px; background: #FFF; color: #111;
+    font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    border: none; cursor: pointer; border-radius: 2px; transition: background 0.1s;
+  }
+  .btn:hover { background: #DDD; }
+  .btn-dl { background: #C8001A; color: #FFF; }
+  .btn-dl:hover { background: #A00015; }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+  #cv { display: block; flex: 1; }
+
+  .sidebar {
+    width: 220px; background: #161616; border-left: 1px solid #2A2A2A;
+    padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto;
+  }
+  .side-title { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #555; margin-bottom: 4px; margin-top: 8px; }
+  .shot-btn {
+    padding: 9px 12px; background: #222; border: 1px solid #333;
+    font-size: 10px; letter-spacing: 0.06em; color: #AAA;
+    cursor: pointer; border-radius: 2px; text-align: left; transition: background 0.1s, color 0.1s;
+  }
+  .shot-btn:hover { background: #2A2A2A; color: #EEE; }
+  .shot-btn.active { background: #FFF; color: #111; border-color: #FFF; font-weight: 600; }
+  .sep { height: 1px; background: #2A2A2A; margin: 6px 0; }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <span class="logo">Ben Studios · Mockup Gen</span>
+
+  <label>Product</label>
+  <select id="sel-product" onchange="switchProduct()">
+    <option value="dining">Dining Table</option>
+    <option value="coffee">Coffee Table</option>
+    <option value="coffee-shelf">Coffee + Shelf</option>
+    <option value="side">Side Table</option>
+    <option value="bookcase">Bookcase</option>
+    <option value="wall-shelf">Wall Shelf</option>
+    <option value="bench">Bench</option>
+    <option value="stool">Stool</option>
+    <option value="daybed">Daybed</option>
+  </select>
+
+  <label>Wall</label>
+  <div class="swatch-row" id="wall-swatches">
+    <div class="swatch active" data-color="3D4A44" style="background:#3D4A44" title="Slate green" onclick="setWall(this,'3D4A44')"></div>
+    <div class="swatch" data-color="2F3640" style="background:#2F3640" title="Deep navy" onclick="setWall(this,'2F3640')"></div>
+    <div class="swatch" data-color="3E3530" style="background:#3E3530" title="Warm charcoal" onclick="setWall(this,'3E3530')"></div>
+    <div class="swatch" data-color="4A3828" style="background:#4A3828" title="Tobacco" onclick="setWall(this,'4A3828')"></div>
+    <div class="swatch" data-color="5A5248" style="background:#5A5248" title="Putty" onclick="setWall(this,'5A5248')"></div>
+    <div class="swatch" data-color="D8D0C4" style="background:#D8D0C4" title="Warm white" onclick="setWall(this,'D8D0C4')"></div>
+  </div>
+
+  <label>Exposure</label>
+  <input type="range" id="sl-exposure" min="0.6" max="2.2" step="0.05" value="1.3" oninput="setExposure(this.value)">
+
+  <button class="btn btn-dl" onclick="saveImage()">Save PNG</button>
+</div>
+
+<div class="main">
+  <canvas id="cv"></canvas>
+  <div class="sidebar">
+    <div class="side-title">Camera</div>
+    <button class="shot-btn active" onclick="setShot('front')">Front — straight on</button>
+    <button class="shot-btn" onclick="setShot('3q')">3/4 — right</button>
+    <button class="shot-btn" onclick="setShot('3q-left')">3/4 — left</button>
+    <button class="shot-btn" onclick="setShot('side')">Side profile</button>
+    <button class="shot-btn" onclick="setShot('high')">High angle</button>
+    <button class="shot-btn" onclick="setShot('low')">Low — dramatic</button>
+
+    <div class="sep"></div>
+    <div class="side-title">Finish</div>
+    <button class="shot-btn active" id="fin-oiled" onclick="setFinish('oiled')">Oiled</button>
+    <button class="shot-btn" id="fin-eb" onclick="setFinish('edgeband')">Edge Banded</button>
+
+    <div class="sep"></div>
+    <div class="side-title">Tip</div>
+    <div style="font-size:10px;color:#555;line-height:1.6">Drag to orbit · Scroll to zoom · Save PNG for catalog use</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ═══════════════════════════════════════════════════════════════
+//  Scene setup
+// ═══════════════════════════════════════════════════════════════
+const cv = document.getElementById('cv');
+const ren = new THREE.WebGLRenderer({ canvas: cv, antialias: true, preserveDrawingBuffer: true });
+ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+ren.shadowMap.enabled = true;
+ren.shadowMap.type = THREE.PCFSoftShadowMap;
+ren.outputEncoding = THREE.sRGBEncoding;
+ren.physicallyCorrectLights = true;
+ren.toneMapping = THREE.ACESFilmicToneMapping;
+ren.toneMappingExposure = 1.3;
+
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(32, 1, 0.1, 10000);
+
+// ── Lighting — studio window from upper left ─────────────────
+const ambient = new THREE.HemisphereLight(0xB0C4D8, 0x403830, 0.5);
+scene.add(ambient);
+
+// Key: large soft window — cool northern light
+const key = new THREE.DirectionalLight(0xD0E0F0, 4.5);
+key.position.set(-120, 200, 80);
+key.castShadow = true;
+key.shadow.mapSize.set(4096, 4096);
+Object.assign(key.shadow.camera, { left:-250, right:250, top:250, bottom:-250, near:1, far:700 });
+key.shadow.bias = -0.0003;
+key.shadow.radius = 3;
+scene.add(key);
+
+// Fill: warm bounce from floor/opposite wall — very soft
+const fill = new THREE.DirectionalLight(0xFFEEDD, 0.8);
+fill.position.set(100, 60, -80);
+scene.add(fill);
+
+// Rim: subtle backlight to separate from wall
+const rim = new THREE.DirectionalLight(0xCCDDFF, 0.4);
+rim.position.set(0, 80, -200);
+scene.add(rim);
+
+// ── Wall color ────────────────────────────────────────────────
+let wallHex = 0x3D4A44;
+
+function buildStudio() {
+  // remove old studio geometry
+  scene.children.filter(o => o.userData.studio).forEach(o => scene.remove(o));
+
+  const wallColor = new THREE.Color('#' + wallHex.toString(16).padStart(6,'0'));
+  const wallMat = new THREE.MeshStandardMaterial({ color: wallColor, roughness: 0.92, metalness: 0 });
+
+  // Back wall
+  const bwg = new THREE.PlaneGeometry(1600, 600);
+  const bw = new THREE.Mesh(bwg, wallMat);
+  bw.position.set(0, 300, -300); bw.receiveShadow = true; bw.userData.studio = true;
+  scene.add(bw);
+
+  // Left wall
+  const lwg = new THREE.PlaneGeometry(600, 600);
+  const lw = new THREE.Mesh(lwg, wallMat);
+  lw.rotation.y = Math.PI/2; lw.position.set(-300, 300, 0); lw.receiveShadow = true; lw.userData.studio = true;
+  scene.add(lw);
+
+  // Concrete floor — procedural texture
+  const floorTex = mkConcreteTex();
+  const floorMat = new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.96, metalness: 0 });
+  const fg = new THREE.PlaneGeometry(1600, 1200);
+  const floor = new THREE.Mesh(fg, floorMat);
+  floor.rotation.x = -Math.PI/2; floor.receiveShadow = true; floor.userData.studio = true;
+  scene.add(floor);
+
+  // Baseboard — thin dark strip where wall meets floor
+  const bbMat = new THREE.MeshStandardMaterial({ color: new THREE.Color('#' + wallHex.toString(16).padStart(6,'0')).multiplyScalar(0.7), roughness:1 });
+  const bbg = new THREE.BoxGeometry(1600, 4, 4);
+  const bb = new THREE.Mesh(bbg, bbMat);
+  bb.position.set(0, 2, -300); bb.receiveShadow = true; bb.userData.studio = true;
+  scene.add(bb);
+}
+
+// ── Procedural concrete ───────────────────────────────────────
+function mkConcreteTex() {
+  const SZ = 1024;
+  const c = document.createElement('canvas'); c.width = SZ; c.height = SZ;
+  const x = c.getContext('2d');
+
+  // Base: warm medium gray
+  x.fillStyle = '#8E8880'; x.fillRect(0, 0, SZ, SZ);
+
+  // Large poured-slab variation patches
+  for (let i = 0; i < 8; i++) {
+    const px = Math.random()*SZ, py = Math.random()*SZ;
+    const r = 80 + Math.random()*200;
+    const gd = x.createRadialGradient(px, py, 0, px, py, r);
+    const shift = (Math.random()-0.5)*22;
+    gd.addColorStop(0, `rgba(${142+shift},${138+shift},${130+shift},0.12)`);
+    gd.addColorStop(1, 'rgba(0,0,0,0)');
+    x.fillStyle = gd; x.fillRect(0,0,SZ,SZ);
+  }
+
+  // Fine aggregate noise
+  const id = x.getImageData(0, 0, SZ, SZ);
+  for (let i = 0; i < id.data.length; i += 4) {
+    const n = (Math.random()-0.5)*18;
+    id.data[i]   = Math.min(255, Math.max(0, id.data[i]   + n));
+    id.data[i+1] = Math.min(255, Math.max(0, id.data[i+1] + n*0.95));
+    id.data[i+2] = Math.min(255, Math.max(0, id.data[i+2] + n*0.9));
+  }
+  x.putImageData(id, 0, 0);
+
+  // Faint pour lines / form marks
+  for (let i = 0; i < 6; i++) {
+    const y = Math.random()*SZ;
+    x.strokeStyle = `rgba(80,76,72,${0.04+Math.random()*0.06})`;
+    x.lineWidth = 0.5 + Math.random();
+    x.beginPath(); x.moveTo(0,y); x.lineTo(SZ,y+Math.random()*6-3); x.stroke();
+  }
+
+  const t = new THREE.CanvasTexture(c);
+  t.encoding = THREE.sRGBEncoding;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  t.repeat.set(6, 6);
+  return t;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Baltic birch textures (same as configurator)
+// ═══════════════════════════════════════════════════════════════
+const FACE = [205, 183, 140];
+const EDGE = [178, 152, 108];
+
+function mkFTex(r,g,b) {
+  const SZ=1024, c=document.createElement('canvas'); c.width=SZ; c.height=SZ;
+  const x=c.getContext('2d');
+  x.fillStyle=`rgb(${r},${g},${b})`; x.fillRect(0,0,SZ,SZ);
+  for(let y=0;y<SZ;y++){
+    const wave=Math.sin(y*0.018)*6+Math.sin(y*0.042+1.3)*3+Math.sin(y*0.091+2.7)*1.2;
+    const band=Math.sin(y*0.11+wave*0.08)*0.5+0.5;
+    const alpha=0.008+band*0.018;
+    x.fillStyle=`rgba(${r-30},${g-28},${r-55},${alpha})`; x.fillRect(0,y,SZ,1);
+  }
+  for(let i=0;i<4;i++){
+    const by=Math.random()*SZ, bh=60+Math.random()*140, shift=Math.random()>0.5?8:-6;
+    const gd=x.createLinearGradient(0,by,0,by+bh);
+    gd.addColorStop(0,`rgba(${r+shift},${g+shift},${b+shift*0.5},0)`);
+    gd.addColorStop(0.5,`rgba(${r+shift},${g+shift},${b+shift*0.5},0.04)`);
+    gd.addColorStop(1,`rgba(${r+shift},${g+shift},${b+shift*0.5},0)`);
+    x.fillStyle=gd; x.fillRect(0,by,SZ,bh);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; return t;
+}
+function mkETex(r,g,b) {
+  const c=document.createElement('canvas'); c.width=16; c.height=128;
+  const x=c.getContext('2d'); const pl=13, ph=c.height/pl;
+  for(let i=0;i<pl;i++){
+    const y=i*ph;
+    x.fillStyle=i%2===0?`rgb(${r+15},${g+15},${b+10})`:`rgb(${r-10},${g-10},${b-8})`;
+    x.fillRect(0,y,c.width,ph);
+    x.fillStyle=`rgba(${r-40},${g-40},${b-20},0.55)`; x.fillRect(0,y,c.width,0.8);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.magFilter=THREE.NearestFilter; return t;
+}
+function mkETexV(r,g,b) {
+  const c=document.createElement('canvas'); c.width=128; c.height=16;
+  const x=c.getContext('2d'); const pl=13, pw=c.width/pl;
+  for(let i=0;i<pl;i++){
+    const xp=i*pw;
+    x.fillStyle=i%2===0?`rgb(${r+15},${g+15},${b+10})`:`rgb(${r-10},${g-10},${b-8})`;
+    x.fillRect(xp,0,pw,c.height);
+    x.fillStyle=`rgba(${r-40},${g-40},${b-20},0.55)`; x.fillRect(xp,0,0.8,c.height);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.magFilter=THREE.NearestFilter; return t;
+}
+function mkEBTex(r,g,b) {
+  const SZ=256, c=document.createElement('canvas'); c.width=SZ; c.height=SZ;
+  const x=c.getContext('2d');
+  x.fillStyle=`rgb(${r},${g},${b})`; x.fillRect(0,0,SZ,SZ);
+  for(let i=0;i<SZ;i++){
+    const alpha=0.025*(Math.sin(i*0.09+0.8)*0.5+0.5);
+    x.fillStyle=`rgba(${r-20},${g-18},${b-14},${alpha})`; x.fillRect(0,i,SZ,1);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; return t;
+}
+
+const T = 0.75;
+let mF, mFT, mE, mEV;
+let finishState = 'oiled';
+const EB_COLOR = [215,188,148];
+
+function buildMats() {
+  mF  = new THREE.MeshStandardMaterial({ map:mkFTex(...FACE), roughness:0.52, metalness:0 });
+  mFT = new THREE.MeshStandardMaterial({ map:mkFTex(FACE[0]+8,FACE[1]+8,FACE[2]+5), roughness:0.52, metalness:0 });
+  if (finishState === 'edgeband') {
+    const ebm = new THREE.MeshStandardMaterial({ map:mkEBTex(...EB_COLOR), roughness:0.45, metalness:0 });
+    mE = ebm; mEV = ebm.clone();
+  } else {
+    mE  = new THREE.MeshStandardMaterial({ map:mkETex(...EDGE), roughness:0.62, metalness:0 });
+    mEV = new THREE.MeshStandardMaterial({ map:mkETexV(...EDGE), roughness:0.62, metalness:0 });
+  }
+}
+function mFlat() { return [mE.clone(),mE.clone(),mFT.clone(),mF.clone(),mE.clone(),mE.clone()]; }
+function mStand() { return [mF.clone(),mF.clone(),mE.clone(),mE.clone(),mEV.clone(),mEV.clone()]; }
+function mLeg()   { return [mF.clone(),mF.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]; }
+
+function eL(m,g) {
+  m.add(new THREE.LineSegments(
+    new THREE.EdgesGeometry(g),
+    new THREE.LineBasicMaterial({ color:0x503808, transparent:true, opacity:0.14 })
+  ));
+}
+
+// ── Product group ─────────────────────────────────────────────
+const grp = new THREE.Group(); scene.add(grp);
+function clearGrp() {
+  while(grp.children.length) {
+    const o=grp.children[0];
+    if(o.geometry) o.geometry.dispose();
+    if(o.children) o.children.forEach(c=>{ if(c.geometry) c.geometry.dispose(); });
+    grp.remove(o);
+  }
+}
+function add(geo, mat, x,y,z) {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(x,y,z); m.castShadow = true; m.receiveShadow = true;
+  grp.add(m); eL(m,geo); return m;
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Product builders
+// ═══════════════════════════════════════════════════════════════
+const PRODUCTS = {
+
+  'dining': { label:'Dining Table', build() {
+    buildMats();
+    const L=72, W=36, H=30, lw=3, fw=5;
+    // Top
+    add(new THREE.BoxGeometry(L,T,W+1), mFlat(), 0,H-T/2,0.5);
+    // Trestle legs ×2
+    [-1,1].forEach(s=>{
+      const xp = s*(L/2-lw/2-6);
+      // Flange top & bottom
+      add(new THREE.BoxGeometry(fw,T,W), mFlat(), xp, H-T-T/2, 0);
+      add(new THREE.BoxGeometry(fw,T,W), mFlat(), xp, T/2, 0);
+      // Web (vertical panel)
+      add(new THREE.BoxGeometry(T,H-2*T,lw), mStand(), xp, T+(H-2*T)/2, 0);
+      // Feet (wide pads)
+      add(new THREE.BoxGeometry(fw+4,T*0.5,lw+4), mFlat(), xp, T*0.25, 0);
+    });
+    // Stretcher
+    add(new THREE.BoxGeometry(L-28,T,T), mFlat(), 0, H/2, 0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(L,W)*1.7+40 };
+  }},
+
+  'coffee': { label:'Coffee Table', build() {
+    buildMats();
+    const L=48, W=24, H=16, lw=2.5, fw=4;
+    add(new THREE.BoxGeometry(L,T,W+1), mFlat(), 0,H-T/2,0.5);
+    [-1,1].forEach(s=>{
+      const xp=s*(L/2-lw/2-4);
+      add(new THREE.BoxGeometry(fw,T,W), mFlat(), xp,H-T-T/2,0);
+      add(new THREE.BoxGeometry(fw,T,W), mFlat(), xp,T/2,0);
+      add(new THREE.BoxGeometry(T,H-2*T,lw), mStand(), xp,T+(H-2*T)/2,0);
+    });
+    add(new THREE.BoxGeometry(L-20,T,T), mFlat(), 0,H/2,0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(L,W)*2+30 };
+  }},
+
+  'coffee-shelf': { label:'Coffee + Shelf', build() {
+    buildMats();
+    const L=48, W=24, H=16, epH=H-T, shelfY=4;
+    const innerL=L-2*T;
+    add(new THREE.BoxGeometry(L,T,W+1), mFlat(), 0,H-T/2,0.5);
+    [-1,1].forEach(s=>{
+      add(new THREE.BoxGeometry(T,epH,W), mStand(), s*(L/2-T/2),epH/2,0);
+    });
+    add(new THREE.BoxGeometry(innerL,T,W), mFlat(), 0,shelfY,0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(L,W)*2+30 };
+  }},
+
+  'side': { label:'Side Table', build() {
+    buildMats();
+    const L=18,W=18,H=24,iW=L-2*T,innerH=H-2*T,shelfY=Math.round(H*0.45);
+    add(new THREE.BoxGeometry(L,T,W+1), mFlat(), 0,H-T/2,0.5);
+    add(new THREE.BoxGeometry(L,T,W), mFlat(), 0,T/2,0);
+    [-1,1].forEach(s=>add(new THREE.BoxGeometry(T,innerH,W), mStand(), s*(L/2-T/2),T+innerH/2,0));
+    add(new THREE.BoxGeometry(iW,T,W), mFlat(), 0,shelfY,0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(L,W,H)*2.4+20 };
+  }},
+
+  'bookcase': { label:'Bookcase', build() {
+    buildMats();
+    const W=36,H=72,D=12,nSh=4,innerH=H-2*T,innerW=W-2*T;
+    // Cap top (overhangs 1")
+    add(new THREE.BoxGeometry(W+2,T,D+1), mFlat(), 0,H+T/2,0.5);
+    // Sides
+    [-1,1].forEach(s=>add(new THREE.BoxGeometry(T,H,D), mStand(), s*(W/2-T/2),H/2,0));
+    // Top & bottom
+    add(new THREE.BoxGeometry(innerW,T,D), mFlat(), 0,H-T/2,0); // top inner
+    add(new THREE.BoxGeometry(innerW,T,D), mFlat(), 0,T/2,0);   // bottom
+    // Shelves
+    for(let i=1;i<=nSh;i++){
+      const sy=T+innerH*(i/(nSh+1));
+      add(new THREE.BoxGeometry(innerW,T,D), mFlat(), 0,sy,0);
+    }
+    return { ctr:{x:0,y:(H+T)*0.5,z:0}, sc:Math.max(W,H)*1.5+30 };
+  }},
+
+  'wall-shelf': { label:'Wall Shelf', build() {
+    buildMats();
+    const W=36,D=12,H=6;
+    add(new THREE.BoxGeometry(W,T,D+1), mFlat(), 0,H-T/2,0.5);
+    // Rail behind
+    add(new THREE.BoxGeometry(W,H-T,T), [mF.clone(),mF.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()], 0,(H-T)/2,-(D/2-T/2));
+    // Brackets ×2
+    [-1,1].forEach(s=>{
+      const xp=s*(W/2-4);
+      add(new THREE.BoxGeometry(T,H-T,D-1), mStand(), xp,(H-T)/2,0);
+    });
+    // Mount at ~48" height on wall
+    grp.position.y = 48;
+    return { ctr:{x:0,y:48+H/2,z:0}, sc:Math.max(W,D,H)*3+20 };
+  }},
+
+  'bench': { label:'Bench', build() {
+    buildMats();
+    const W=48,H=18,D=12,innerH=H-T,shelfY=7,innerW=W-2*T;
+    add(new THREE.BoxGeometry(W,T,D+1), mFlat(), 0,H-T/2,0.5);
+    [-1,1].forEach(s=>add(new THREE.BoxGeometry(T,innerH,D), mStand(), s*(W/2-T/2),innerH/2,0));
+    add(new THREE.BoxGeometry(innerW,T,D), mFlat(), 0,shelfY,0);
+    // Centre support for wide bench
+    add(new THREE.BoxGeometry(T,innerH,D), mStand(), 0,innerH/2,0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(W,H)*1.9+30 };
+  }},
+
+  'stool': { label:'Stool', build() {
+    buildMats();
+    const W=15,D=13,H=24,innerH=H-T,innerW=W-2*T,stretcherY=6;
+    add(new THREE.BoxGeometry(W,T,D+1), mFlat(), 0,H-T/2,0.5);
+    [-1,1].forEach(s=>add(new THREE.BoxGeometry(T,innerH,D), mStand(), s*(W/2-T/2),innerH/2,0));
+    // Back panel — face grain on Z faces
+    const bpg=new THREE.BoxGeometry(innerW,innerH,T);
+    const bpm=new THREE.Mesh(bpg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+    bpm.position.set(0,innerH/2,-(D/2-T/2)); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
+    add(new THREE.BoxGeometry(innerW,T,D), mFlat(), 0,stretcherY,0);
+    return { ctr:{x:0,y:H*0.45,z:0}, sc:Math.max(W,H,D)*2.8+20 };
+  }},
+
+  'daybed': { label:'Daybed', build() {
+    buildMats();
+    const L=75,W=38,H=14,shelfY=5,innerW=L-2*T,supH=H-T-shelfY-T;
+    add(new THREE.BoxGeometry(L,T,W+1), mFlat(), 0,H-T/2,0.5);
+    [-1,1].forEach(s=>add(new THREE.BoxGeometry(T,H,W), mStand(), s*(L/2-T/2),H/2,0));
+    add(new THREE.BoxGeometry(innerW,T,W), mFlat(), 0,shelfY,0);
+    add(new THREE.BoxGeometry(T,supH,W), mStand(), 0,shelfY+T+supH/2,0);
+    return { ctr:{x:0,y:H*0.5,z:0}, sc:Math.max(L,W)*1.8+40 };
+  }},
+};
+
+// ═══════════════════════════════════════════════════════════════
+//  Camera shots
+// ═══════════════════════════════════════════════════════════════
+const SHOTS = {
+  'front':   { th: 0,    ph: 0.15 },
+  '3q':      { th: 0.55, ph: 0.22 },
+  '3q-left': { th:-0.55, ph: 0.22 },
+  'side':    { th: Math.PI/2, ph: 0.12 },
+  'high':    { th: 0.4,  ph: 0.55 },
+  'low':     { th: 0.35, ph: 0.06 },
+};
+
+let th = 0, ph = 0.15, zm = 1;
+let camCt = { x:0, y:20, z:0 }, camSc = 100;
+
+function updCam() {
+  const r = camSc * zm;
+  cam.position.set(
+    camCt.x + r * Math.sin(th) * Math.cos(ph),
+    camCt.y + r * Math.sin(ph),
+    camCt.z + r * Math.cos(th) * Math.cos(ph)
+  );
+  cam.lookAt(camCt.x, camCt.y, camCt.z);
+}
+
+// ── Orbit ─────────────────────────────────────────────────────
+let isDrag=false, lx=0, ly=0;
+cv.addEventListener('mousedown', e=>{ isDrag=true; lx=e.clientX; ly=e.clientY; });
+window.addEventListener('mouseup', ()=>isDrag=false);
+window.addEventListener('mousemove', e=>{
+  if(!isDrag) return;
+  th -= (e.clientX-lx)*0.008; ph -= (e.clientY-ly)*0.005;
+  ph = Math.max(0.01, Math.min(1.4, ph));
+  lx=e.clientX; ly=e.clientY; updCam();
+});
+cv.addEventListener('wheel', e=>{ zm *= 1 + e.deltaY*0.001; zm=Math.max(0.3,Math.min(3,zm)); updCam(); }, {passive:true});
+
+// ── Resize ────────────────────────────────────────────────────
+function resize() {
+  const w=cv.clientWidth, h=cv.clientHeight;
+  ren.setSize(w,h,false);
+  cam.aspect=w/h; cam.updateProjectionMatrix();
+}
+new ResizeObserver(resize).observe(cv);
+resize();
+
+// ═══════════════════════════════════════════════════════════════
+//  Controls
+// ═══════════════════════════════════════════════════════════════
+let currentProduct = 'dining';
+
+function switchProduct() {
+  currentProduct = document.getElementById('sel-product').value;
+  clearGrp();
+  grp.position.y = 0; // reset wall-shelf offset
+  const r = PRODUCTS[currentProduct].build();
+  camCt = r.ctr; camSc = r.sc; zm = 1;
+  th = SHOTS['front'].th; ph = SHOTS['front'].ph;
+  updCam();
+}
+
+function setShot(key) {
+  document.querySelectorAll('.shot-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  th = SHOTS[key].th; ph = SHOTS[key].ph;
+  updCam();
+}
+
+function setWall(el, hex) {
+  document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  wallHex = parseInt(hex, 16);
+  buildStudio();
+}
+
+function setExposure(v) {
+  ren.toneMappingExposure = parseFloat(v);
+}
+
+function setFinish(f) {
+  finishState = f;
+  document.getElementById('fin-oiled').classList.toggle('active', f==='oiled');
+  document.getElementById('fin-eb').classList.toggle('active', f==='edgeband');
+  switchProduct();
+}
+
+function saveImage() {
+  ren.render(scene, cam);
+  const prod = PRODUCTS[currentProduct].label.replace(/\s+/g,'-').toLowerCase();
+  const a = document.createElement('a');
+  a.download = `ben-studios-${prod}.png`;
+  a.href = cv.toDataURL('image/png');
+  a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  Init & loop
+// ═══════════════════════════════════════════════════════════════
+buildStudio();
+switchProduct();
+
+function loop() { requestAnimationFrame(loop); ren.render(scene, cam); }
+loop();
+</script>
+</body>
+</html>
