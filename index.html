@@ -251,26 +251,31 @@ function buildProduct(id, ty) {
   buildMats();
   const g = new THREE.Group();
 
-  if(id==='tables' && ty===0) { // Dining
-    const L=72,W=36,H=30,lw=3,fw=5;
-    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
-    [-1,1].forEach(s=>{
-      const xp=s*(L/2-fw/2-5);
-      box(fw,T,W,mFlat(),xp,H-T-T/2,0,g);
-      box(fw,T,W,mFlat(),xp,T/2,0,g);
-      box(T,H-2*T,lw,mStand(),xp,T+(H-2*T)/2,0,g);
-    });
-    box(L-28,T,T,mFlat(),0,H/2,0,g);
-  } else if(id==='tables' && ty===1) { // Coffee trestle
-    const L=48,W=24,H=16,fw=4;
-    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
-    [-1,1].forEach(s=>{
-      const xp=s*(L/2-fw/2-4);
-      box(fw,T,W,mFlat(),xp,H-T-T/2,0,g);
-      box(fw,T,W,mFlat(),xp,T/2,0,g);
-      box(T,H-2*T,3,mStand(),xp,T+(H-2*T)/2,0,g);
-    });
-    box(L-20,T,T,mFlat(),0,H/2,0,g);
+  if(id==='tables' && ty===0) { // Dining — two upright flanges + web spine
+    const L=72,W=36,H=30;
+    const recess=12,inset=4,panelH=H-T,baseW=W-2*inset;
+    const webLen=L-2*recess-2*T;
+    const xL=-L/2+recess+T/2, xR=L/2-recess-T/2;
+    box(L,T,W,mFlat(),0,H-T/2,0,g);                        // top
+    box(T,panelH,baseW,mStand(),xL,panelH/2,0,g);          // left flange
+    box(T,panelH,baseW,mStand(),xR,panelH/2,0,g);          // right flange
+    // web spine — face grain on front/back (Z faces = indices 4,5)
+    const wg=new THREE.BoxGeometry(webLen,panelH,T);
+    const wm=new THREE.Mesh(wg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+    wm.position.set(0,panelH/2,0); wm.castShadow=true; g.add(wm);
+    wm.add(new THREE.LineSegments(new THREE.EdgesGeometry(wg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+  } else if(id==='tables' && ty===1) { // Coffee — trestle
+    const L=48,W=24,H=16;
+    const recess=8,inset=3,panelH=H-T,baseW=W-2*inset;
+    const webLen=L-2*recess-2*T;
+    const xL=-L/2+recess+T/2, xR=L/2-recess-T/2;
+    box(L,T,W,mFlat(),0,H-T/2,0,g);
+    box(T,panelH,baseW,mStand(),xL,panelH/2,0,g);
+    box(T,panelH,baseW,mStand(),xR,panelH/2,0,g);
+    const wg=new THREE.BoxGeometry(webLen,panelH,T);
+    const wm=new THREE.Mesh(wg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+    wm.position.set(0,panelH/2,0); wm.castShadow=true; g.add(wm);
+    wm.add(new THREE.LineSegments(new THREE.EdgesGeometry(wg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
   } else if(id==='tables' && ty===2) { // Coffee+shelf
     const L=48,W=24,H=16,epH=H-T,iL=L-2*T;
     box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
@@ -331,35 +336,42 @@ const TOTAL = N * SLOT;
 const track = new THREE.Group();
 scene.add(track);
 
-// Build each product, store its group and hit-box
-const slots = ITEMS.map((item, i) => {
-  const prod = buildProduct(item.id, item.ty);
-  prod.position.x = i * SLOT - TOTAL/2 + SLOT/2;
+// Build 2 complete sets for gapless looping.
+// Items positioned at j*SLOT (j = 0..2N-1).
+// track.position.x = -scrollX + SLOT/2  →  world x of item j = j*SLOT - scrollX + SLOT/2
+// At scrollX = TOTAL/2, set-0 item 4 lands at x=0 (screen centre).
+// Forward-wrap: scrollX % TOTAL; at the boundary set-1 positions = set-0 positions → seamless.
+const slots = ITEMS.map((item, i) => ({
+  item, groups: [], hits: [], scale: 1, targetScale: 1
+}));
 
-  // Tall invisible box — covers full slot width + height including voids inside pieces
-  const hg = new THREE.BoxGeometry(SLOT - 4, 90, 20);
-  const hm = new THREE.MeshBasicMaterial({ visible:false, side:THREE.FrontSide });
-  const hit = new THREE.Mesh(hg, hm);
-  hit.position.set(prod.position.x, 45, 0);
-  hit.userData = { slotIdx: i };
+const allHitMeshes = [];
 
-  track.add(prod);
-  track.add(hit);
+for (let set = 0; set < 2; set++) {
+  ITEMS.forEach((item, i) => {
+    const j   = set * N + i;
+    const xPos = j * SLOT;
 
-  return { group: prod, hit, item, scale: 1, targetScale: 1 };
-});
+    const prod = buildProduct(item.id, item.ty);
+    prod.position.x = xPos;
 
-// Duplicate first few items at end for seamless wrap
-const DUP = 3;
-for(let i=0;i<DUP;i++){
-  const item=ITEMS[i];
-  const extra=buildProduct(item.id,item.ty);
-  extra.position.x = N*SLOT - TOTAL/2 + SLOT/2 + i*SLOT;
-  track.add(extra);
+    const hg = new THREE.BoxGeometry(SLOT - 4, 90, 20);
+    const hm = new THREE.MeshBasicMaterial({ visible: false, side: THREE.FrontSide });
+    const hit = new THREE.Mesh(hg, hm);
+    hit.position.set(xPos, 45, 0);
+    hit.userData = { slotIdx: i };   // 0-8, shared between both sets
+
+    track.add(prod);
+    track.add(hit);
+
+    slots[i].groups.push(prod);
+    slots[i].hits.push(hit);
+    allHitMeshes.push(hit);
+  });
 }
 
-// ── Scroll state
-let scrollX = 0;
+// ── Scroll state — start at TOTAL/2 so set-0 centre is on screen with content on both sides
+let scrollX = TOTAL / 2;
 const SCROLL_SPEED = 0.10; // units per frame — faster base speed
 
 // ── Drag state
@@ -381,7 +393,7 @@ updateWorldPerPx();
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let hoveredIdx = -1;
-const hitMeshes = slots.map(s => s.hit);
+const hitMeshes = allHitMeshes;
 
 function getHoveredIdx(clientX, clientY) {
   const rect = cv.getBoundingClientRect();
@@ -459,15 +471,16 @@ function animate() {
   // Auto-scroll — stop when hovering or dragging
   if(!isDragging && hoveredIdx === -1) scrollX += SCROLL_SPEED;
 
-  // Seamless wrap over full track
+  // Seamless wrap — at the boundary, set-1 world positions === set-0 world positions
   scrollX = ((scrollX % TOTAL) + TOTAL) % TOTAL;
 
-  track.position.x = -scrollX + TOTAL/2 - SLOT/2;
+  // world x of item j  =  j*SLOT  +  track.position.x  =  j*SLOT - scrollX + SLOT/2
+  track.position.x = -scrollX + SLOT / 2;
 
-  // Smooth scale per slot (no rotation)
+  // Smooth scale — apply to both set copies so hover on either looks identical
   slots.forEach(s => {
     s.scale += (s.targetScale - s.scale) * 0.1;
-    s.group.scale.setScalar(s.scale);
+    s.groups.forEach(g => g.scale.setScalar(s.scale));
   });
 
   ren.render(scene, cam);
