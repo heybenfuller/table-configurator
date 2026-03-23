@@ -59,7 +59,9 @@
       letter-spacing: -0.04em;
       line-height: 0.95;
       margin-bottom: 20px;
-      color: #111;
+      color: #F9F0C7;
+      -webkit-text-stroke: 1.5px #111;
+      paint-order: stroke fill;
     }
     .hero-sub {
       font-size: clamp(12px, 1.1vw, 14px);
@@ -115,7 +117,7 @@
 <canvas id="cv"></canvas>
 
 <div class="hero">
-  <h1 class="hero-h">Baltic birch,<br>made to order.</h1>
+  <h1 class="hero-h">Baltic birch furniture,<br>made to order.</h1>
   <p class="hero-sub">¾″ void-free plywood, CNC-cut, dado-jointed, hand-oiled. Designed in Brooklyn. Configure your dimensions and order direct.</p>
   <a class="hero-cta" href="table-configurator.html">Configure yours</a>
 </div>
@@ -142,7 +144,6 @@ ren.toneMappingExposure = 1.1;
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xF9F0C7);
-scene.fog = new THREE.Fog(0xF9F0C7, 320, 560);
 
 const cam = new THREE.PerspectiveCamera(44, 1, 0.1, 1000);
 cam.position.set(0, 55, 290);
@@ -329,7 +330,7 @@ function buildProduct(id, ty) {
 // ═══════════════════════════════════════════════════════════
 //  Carousel
 // ═══════════════════════════════════════════════════════════
-const SLOT = 62;    // spacing between products — tight family feel
+const SLOT = 82;    // spacing between products — clear of widest pieces (daybed 75u, dining 72u)
 const N = ITEMS.length;
 const TOTAL = N * SLOT;
 
