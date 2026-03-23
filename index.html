@@ -5,258 +5,451 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ben Studios — Baltic Birch Furniture, Made to Order</title>
   <style>
-    :root {
-      --blk: #111110;
-      --wht: #FAFAF8;
-      --off: #F2EDE6;
-      --lt:  #E0D9D0;
-      --mid: #999890;
-      --hd:  60px;
-      --gutter: clamp(28px, 5vw, 80px);
-    }
-
+    :root { --hd: 52px; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html, body { width: 100%; height: 100%; overflow: hidden; }
     body {
       font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      background: var(--wht);
-      color: var(--blk);
+      background: #F9F0C7;
+      color: #111;
       -webkit-font-smoothing: antialiased;
+      cursor: default;
     }
 
-    /* ── HEADER ─────────────────────────────────────────────────── */
+    /* ── Header ── */
     .hd {
       position: fixed; top: 0; left: 0; right: 0; height: var(--hd);
-      background: var(--wht);
-      z-index: 100;
+      z-index: 10;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 var(--gutter);
+      padding: 0 clamp(24px, 4vw, 60px);
     }
     .logo {
       font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
-      text-transform: uppercase; color: var(--blk); text-decoration: none;
+      text-transform: uppercase; color: #111;
+      text-decoration: none;
     }
     .hd-link {
       font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--mid);
-      text-decoration: none; transition: color 0.15s;
+      text-transform: uppercase; color: #999;
+      text-decoration: none; transition: color 0.2s;
     }
-    .hd-link:hover { color: var(--blk); }
+    .hd-link:hover { color: #111; }
 
-    /* ── HERO ───────────────────────────────────────────────────── */
-    .hero {
-      padding-top: var(--hd);
-      min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: flex-end;
-      padding-left: var(--gutter);
-      padding-right: var(--gutter);
-      padding-bottom: clamp(48px, 8vh, 96px);
-    }
-    .hero-h {
-      font-size: clamp(48px, 8.5vw, 130px);
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      line-height: 0.93;
-      margin-bottom: clamp(28px, 4vh, 52px);
-      max-width: 14ch;
-    }
-    .hero-sub {
-      font-size: clamp(13px, 1.2vw, 15px);
-      color: var(--mid);
-      line-height: 1.75;
-      max-width: 42ch;
-      margin-bottom: clamp(28px, 4vh, 48px);
-    }
-    .hero-cta {
-      display: inline-block;
-      font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--blk);
-      text-decoration: none;
-      border-bottom: 1px solid var(--blk);
-      padding-bottom: 2px;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .hero-cta:hover { color: var(--mid); border-color: var(--mid); }
-
-    /* ── DIVIDER ────────────────────────────────────────────────── */
-    .rule { height: 1px; background: var(--lt); margin: 0 var(--gutter); }
-
-    /* ── COLLECTION LABEL ───────────────────────────────────────── */
-    .sec-label {
-      padding: clamp(40px, 6vh, 72px) var(--gutter) clamp(28px, 4vh, 48px);
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--mid);
-    }
-
-    /* ── PRODUCT GRID ───────────────────────────────────────────── */
-    .prod-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1px;
-      background: var(--lt);
-      border-top: 1px solid var(--lt);
-      border-bottom: 1px solid var(--lt);
-    }
-    .prod-card {
-      background: var(--wht);
-      text-decoration: none; color: var(--blk);
+    /* ── Canvas fills viewport ── */
+    #cv {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
       display: block;
     }
-    .card-img {
-      width: 100%; aspect-ratio: 1 / 1;
-      background: var(--off);
-      overflow: hidden;
-    }
-    .card-img img {
-      width: 100%; height: 100%; object-fit: contain; display: block;
-      padding: 10%;
-      transition: transform 0.5s ease;
-    }
-    .prod-card:hover .card-img img { transform: scale(1.04); }
-    .card-img-fallback {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #C0BAB2;
-    }
-    .card-body {
-      padding: 20px 24px 28px;
-      display: flex; justify-content: space-between; align-items: baseline;
-    }
-    .card-name { font-size: 13px; font-weight: 600; letter-spacing: 0.01em; }
-    .card-price { font-size: 12px; color: var(--mid); }
 
-    /* ── MATERIAL NOTE ──────────────────────────────────────────── */
-    .note {
-      padding: clamp(60px, 10vh, 120px) var(--gutter);
-      max-width: 640px;
-      margin: 0 auto;
-      text-align: center;
+    /* ── Hero overlay ── */
+    .hero {
+      position: fixed;
+      top: var(--hd); left: 0;
+      width: 40%;
+      height: calc(100% - var(--hd));
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: 0 clamp(24px, 4vw, 60px) clamp(40px, 6vh, 80px);
+      pointer-events: none;
+      z-index: 5;
     }
-    .note-body {
-      font-size: clamp(14px, 1.4vw, 18px);
-      line-height: 1.8;
-      color: var(--mid);
+    .hero-h {
+      font-size: clamp(36px, 5.5vw, 82px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      margin-bottom: 20px;
+      color: #111;
     }
-    .note-body strong { color: var(--blk); font-weight: 600; }
+    .hero-sub {
+      font-size: clamp(12px, 1.1vw, 14px);
+      color: #888;
+      line-height: 1.7;
+      max-width: 36ch;
+      margin-bottom: 28px;
+    }
+    .hero-cta {
+      pointer-events: all;
+      display: inline-block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #111;
+      text-decoration: none;
+      border-bottom: 1px solid #999;
+      padding-bottom: 3px;
+      transition: border-color 0.2s, color 0.2s;
+      width: fit-content;
+    }
+    .hero-cta:hover { border-color: #111; }
 
-    /* ── FOOTER ─────────────────────────────────────────────────── */
-    .footer {
-      border-top: 1px solid var(--lt);
-      padding: 28px var(--gutter);
-      display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 10px;
+    /* ── Product name tooltip ── */
+    #tooltip {
+      position: fixed;
+      bottom: clamp(28px, 4vh, 48px);
+      right: clamp(24px, 4vw, 60px);
+      text-align: right;
+      z-index: 10;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      opacity: 0;
     }
-    .footer-logo { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
-    .footer-copy { font-size: 10px; color: var(--mid); letter-spacing: 0.05em; }
-    .footer-contact {
-      font-size: 10px; color: var(--mid); letter-spacing: 0.06em;
-      text-decoration: none; transition: color 0.15s;
+    #tooltip-name {
+      font-size: 13px; font-weight: 600; letter-spacing: 0.01em; color: #111;
+      margin-bottom: 3px;
     }
-    .footer-contact:hover { color: var(--blk); }
+    #tooltip-hint {
+      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #AAA;
+    }
 
-    /* ── RESPONSIVE ─────────────────────────────────────────────── */
-    @media (max-width: 768px) {
-      .prod-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 480px) {
-      .prod-grid { grid-template-columns: 1fr; }
-      .card-body { padding: 16px 20px 22px; }
-    }
+    /* ── Cursor crosshair on hoverable product ── */
+    body.over-product { cursor: pointer; }
   </style>
 </head>
 <body>
 
 <header class="hd">
   <a class="logo" href="index.html">Ben Studios</a>
-  <a class="hd-link" href="table-configurator.html">Configure →</a>
+  <a class="hd-link" href="table-configurator.html">All products →</a>
 </header>
 
-<section class="hero">
-  <h1 class="hero-h">Baltic birch, made to order.</h1>
-  <p class="hero-sub">¾″ void-free Baltic birch plywood — CNC-cut, dado-jointed, hand-oiled. Designed and built in Brooklyn. Configure your dimensions and order direct.</p>
+<canvas id="cv"></canvas>
+
+<div class="hero">
+  <h1 class="hero-h">Baltic birch,<br>made to order.</h1>
+  <p class="hero-sub">¾″ void-free plywood, CNC-cut, dado-jointed, hand-oiled. Designed in Brooklyn. Configure your dimensions and order direct.</p>
   <a class="hero-cta" href="table-configurator.html">Configure yours</a>
-</section>
-
-<div class="rule"></div>
-
-<div class="sec-label" id="collection">The Collection</div>
-
-<div class="prod-grid" id="prod-grid"></div>
-
-<div class="note">
-  <p class="note-body">
-    <strong>One material.</strong> Every Ben Studios piece is ¾″ Baltic birch throughout — the faces, the edges, the shelves. No veneers. No particle board. Two coats of hand-rubbed oil. Limited to 100 pieces per edition, numbered from the first cut.
-  </p>
 </div>
 
-<div class="rule"></div>
+<div id="tooltip">
+  <div id="tooltip-name"></div>
+  <div id="tooltip-hint">Click to configure</div>
+</div>
 
-<footer class="footer">
-  <div class="footer-logo">Ben Studios</div>
-  <div class="footer-copy">Brooklyn, NY · Made to order · © 2026</div>
-  <a class="footer-contact" href="mailto:hello@benstudios.com">hello@benstudios.com</a>
-</footer>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-const T = 0.75, SHEET = 3600, SPR = 150, WASTE = 1.1, MARGIN = 0.40;
-function calcRetail(sqIn, labor, oilCost, shipCost) {
-  const rate = SPR * WASTE / SHEET;
-  return Math.ceil((sqIn * rate + labor + oilCost + shipCost) / (1 - MARGIN) / 10) * 10;
+// ═══════════════════════════════════════════════════════════
+//  Renderer & scene
+// ═══════════════════════════════════════════════════════════
+const cv = document.getElementById('cv');
+const ren = new THREE.WebGLRenderer({ canvas:cv, antialias:true });
+ren.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+ren.shadowMap.enabled = true;
+ren.shadowMap.type = THREE.PCFSoftShadowMap;
+ren.outputEncoding = THREE.sRGBEncoding;
+ren.physicallyCorrectLights = true;
+ren.toneMapping = THREE.ACESFilmicToneMapping;
+ren.toneMappingExposure = 1.1;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xF9F0C7);
+scene.fog = new THREE.Fog(0xF9F0C7, 320, 560);
+
+const cam = new THREE.PerspectiveCamera(44, 1, 0.1, 1000);
+cam.position.set(0, 55, 290);
+cam.lookAt(0, 18, 0);
+
+// ── Lighting — studio window, upper left ──
+scene.add(new THREE.HemisphereLight(0xFFF8E8, 0xD8CC99, 1.2));
+
+const key = new THREE.DirectionalLight(0xFFFBF0, 3.2);
+key.position.set(-100, 200, 80);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+Object.assign(key.shadow.camera, { left:-300, right:300, top:200, bottom:-100, near:1, far:600 });
+key.shadow.bias = -0.0004;
+key.shadow.radius = 3;
+scene.add(key);
+
+const fill = new THREE.DirectionalLight(0xFFEFCC, 0.8);
+fill.position.set(120, 60, -60);
+scene.add(fill);
+
+// Subtle floor (receives shadows only, very dark)
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(2000, 2000),
+  new THREE.MeshStandardMaterial({ color:0xF2E8B8, roughness:1, metalness:0 })
+);
+floor.rotation.x = -Math.PI/2;
+floor.receiveShadow = true;
+scene.add(floor);
+
+// ═══════════════════════════════════════════════════════════
+//  Baltic birch textures
+// ═══════════════════════════════════════════════════════════
+const FACE = [200,172,128], EDGE = [155,126,88];
+const T = 0.75;
+
+function mkFTex(r,g,b) {
+  const SZ=512, c=document.createElement('canvas'); c.width=SZ; c.height=SZ;
+  const x=c.getContext('2d');
+  x.fillStyle=`rgb(${r},${g},${b})`; x.fillRect(0,0,SZ,SZ);
+  for(let y=0;y<SZ;y++){
+    const w=Math.sin(y*0.018)*6+Math.sin(y*0.042+1.3)*3;
+    const band=Math.sin(y*0.11+w*0.08)*0.5+0.5;
+    x.fillStyle=`rgba(${r-30},${g-28},${r-55},${0.007+band*0.016})`; x.fillRect(0,y,SZ,1);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; return t;
+}
+function mkETex(r,g,b) {
+  const c=document.createElement('canvas'); c.width=16; c.height=128;
+  const x=c.getContext('2d'); const pl=13, ph=c.height/pl;
+  for(let i=0;i<pl;i++){
+    const y=i*ph;
+    x.fillStyle=i%2===0?`rgb(${r+15},${g+15},${b+10})`:`rgb(${r-10},${g-10},${b-8})`;
+    x.fillRect(0,y,c.width,ph);
+    x.fillStyle=`rgba(${r-40},${g-40},${b-20},0.55)`; x.fillRect(0,y,c.width,0.8);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.magFilter=THREE.NearestFilter; return t;
+}
+function mkETexV(r,g,b) {
+  const c=document.createElement('canvas'); c.width=128; c.height=16;
+  const x=c.getContext('2d'); const pl=13, pw=c.width/pl;
+  for(let i=0;i<pl;i++){
+    const xp=i*pw;
+    x.fillStyle=i%2===0?`rgb(${r+15},${g+15},${b+10})`:`rgb(${r-10},${g-10},${b-8})`;
+    x.fillRect(xp,0,pw,c.height);
+    x.fillStyle=`rgba(${r-40},${g-40},${b-20},0.55)`; x.fillRect(xp,0,0.8,c.height);
+  }
+  const t=new THREE.CanvasTexture(c); t.encoding=THREE.sRGBEncoding; t.wrapS=t.wrapT=THREE.RepeatWrapping; t.magFilter=THREE.NearestFilter; return t;
 }
 
-const CATALOG = [
-  {
-    id: 'tables', name: 'Tables',
-    desc: 'Dining · Coffee · Side',
-    fromPrice: calcRetail(14*(14+1)+14*14+2*(20.5*14)+12.5*12.5, 90, 30, 60),
-  },
-  {
-    id: 'shelving', name: 'Shelving',
-    desc: 'Freestanding · Wall-mounted',
-    fromPrice: calcRetail(2*(24*12)+2*(6.5*12)+1*(22.5*12), 60, 25, 40),
-  },
-  {
-    id: 'seating', name: 'Seating',
-    desc: 'Bench · Stool · Daybed',
-    fromPrice: calcRetail(15*(13+1)+2*(13*23.25)+13.5*13, 70, 20, 45),
-  },
+let mF, mFT, mE, mEV;
+function buildMats() {
+  mF  = new THREE.MeshStandardMaterial({ map:mkFTex(...FACE), roughness:0.55, metalness:0 });
+  mFT = new THREE.MeshStandardMaterial({ map:mkFTex(FACE[0]+8,FACE[1]+8,FACE[2]+5), roughness:0.55, metalness:0 });
+  mE  = new THREE.MeshStandardMaterial({ map:mkETex(...EDGE), roughness:0.65, metalness:0 });
+  mEV = new THREE.MeshStandardMaterial({ map:mkETexV(...EDGE), roughness:0.65, metalness:0 });
+}
+function mFlat() { return [mE.clone(),mE.clone(),mFT.clone(),mF.clone(),mE.clone(),mE.clone()]; }
+function mStand(){ return [mF.clone(),mF.clone(),mE.clone(),mE.clone(),mEV.clone(),mEV.clone()]; }
+
+function box(w,h,d, mat, px,py,pz, parent) {
+  const g=new THREE.BoxGeometry(w,h,d);
+  const m=new THREE.Mesh(g, mat);
+  m.position.set(px,py,pz); m.castShadow=true; m.receiveShadow=true;
+  parent.add(m);
+  m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g), new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+  return m;
+}
+
+// ═══════════════════════════════════════════════════════════
+//  Product definitions
+// ═══════════════════════════════════════════════════════════
+const ITEMS = [
+  { id:'tables',  ty:0, name:'Dining Table' },
+  { id:'tables',  ty:1, name:'Coffee Table' },
+  { id:'tables',  ty:2, name:'Coffee + Shelf' },
+  { id:'tables',  ty:3, name:'Side Table' },
+  { id:'shelving',ty:0, name:'Bookcase' },
+  { id:'shelving',ty:1, name:'Wall Shelf' },
+  { id:'seating', ty:0, name:'Bench' },
+  { id:'seating', ty:1, name:'Stool' },
+  { id:'seating', ty:2, name:'Daybed' },
 ];
 
-const grid = document.getElementById('prod-grid');
-CATALOG.forEach(prod => {
-  const card = document.createElement('a');
-  card.className = 'prod-card';
-  card.href = `table-configurator.html?p=${prod.id}`;
+function buildProduct(id, ty) {
+  buildMats();
+  const g = new THREE.Group();
 
-  const img = new Image();
-  img.src = `thumbs/thumb-${prod.id}.jpg`;
-  img.alt = prod.name;
-  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;padding:10%;transition:transform 0.5s ease';
+  if(id==='tables' && ty===0) { // Dining
+    const L=72,W=36,H=30,lw=3,fw=5;
+    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>{
+      const xp=s*(L/2-fw/2-5);
+      box(fw,T,W,mFlat(),xp,H-T-T/2,0,g);
+      box(fw,T,W,mFlat(),xp,T/2,0,g);
+      box(T,H-2*T,lw,mStand(),xp,T+(H-2*T)/2,0,g);
+    });
+    box(L-28,T,T,mFlat(),0,H/2,0,g);
+  } else if(id==='tables' && ty===1) { // Coffee trestle
+    const L=48,W=24,H=16,fw=4;
+    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>{
+      const xp=s*(L/2-fw/2-4);
+      box(fw,T,W,mFlat(),xp,H-T-T/2,0,g);
+      box(fw,T,W,mFlat(),xp,T/2,0,g);
+      box(T,H-2*T,3,mStand(),xp,T+(H-2*T)/2,0,g);
+    });
+    box(L-20,T,T,mFlat(),0,H/2,0,g);
+  } else if(id==='tables' && ty===2) { // Coffee+shelf
+    const L=48,W=24,H=16,epH=H-T,iL=L-2*T;
+    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,epH,W,mStand(),s*(L/2-T/2),epH/2,0,g));
+    box(iL,T,W,mFlat(),0,4,0,g);
+  } else if(id==='tables' && ty===3) { // Side table
+    const L=18,W=18,H=24,iW=L-2*T,iH=H-2*T;
+    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
+    box(L,T,W,mFlat(),0,T/2,0,g);
+    [-1,1].forEach(s=>box(T,iH,W,mStand(),s*(L/2-T/2),T+iH/2,0,g));
+    box(iW,T,W,mFlat(),0,Math.round(H*0.45),0,g);
+  } else if(id==='shelving' && ty===0) { // Bookcase
+    const W=36,H=72,D=12,iW=W-2*T,iH=H-2*T;
+    box(W+2,T,D+1,mFlat(),0,H+T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,H,D,mStand(),s*(W/2-T/2),H/2,0,g));
+    box(iW,T,D,mFlat(),0,H-T/2,0,g);
+    box(iW,T,D,mFlat(),0,T/2,0,g);
+    [1,2,3,4].forEach(i=>box(iW,T,D,mFlat(),0,T+iH*(i/5),0,g));
+  } else if(id==='shelving' && ty===1) { // Wall shelf
+    const W=36,D=12,H=6;
+    box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
+    box(W,H-T,T,[mF.clone(),mF.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()],0,(H-T)/2,-(D/2-T/2),g);
+    [-1,1].forEach(s=>box(T,H-T,D-1,mStand(),s*(W/2-5),(H-T)/2,0,g));
+    g.position.y = 36; // mount at 36" to look natural
+  } else if(id==='seating' && ty===0) { // Bench
+    const W=48,H=18,D=12,iH=H-T,iW=W-2*T;
+    box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,iH,D,mStand(),s*(W/2-T/2),iH/2,0,g));
+    box(iW,T,D,mFlat(),0,7,0,g);
+    box(T,iH,D,mStand(),0,iH/2,0,g);
+  } else if(id==='seating' && ty===1) { // Stool
+    const W=15,D=13,H=24,iH=H-T,iW=W-2*T;
+    box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,iH,D,mStand(),s*(W/2-T/2),iH/2,0,g));
+    const bpg=new THREE.BoxGeometry(iW,iH,T);
+    const bpm=new THREE.Mesh(bpg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+    bpm.position.set(0,iH/2,-(D/2-T/2)); bpm.castShadow=true; g.add(bpm);
+    bpm.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+    box(iW,T,D,mFlat(),0,6,0,g);
+  } else if(id==='seating' && ty===2) { // Daybed
+    const L=75,W=38,H=14,iW=L-2*T,supH=H-T-5-T;
+    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,H,W,mStand(),s*(L/2-T/2),H/2,0,g));
+    box(iW,T,W,mFlat(),0,5,0,g);
+    box(T,supH,W,mStand(),0,5+T+supH/2,0,g);
+  }
 
-  const imgWrap = document.createElement('div');
-  imgWrap.className = 'card-img';
+  return g;
+}
 
-  img.onload = () => imgWrap.appendChild(img);
-  img.onerror = () => {
-    const fb = document.createElement('div');
-    fb.className = 'card-img-fallback';
-    fb.textContent = prod.name;
-    imgWrap.appendChild(fb);
-  };
+// ═══════════════════════════════════════════════════════════
+//  Carousel
+// ═══════════════════════════════════════════════════════════
+const SLOT = 88;    // spacing between products
+const N = ITEMS.length;
+const TOTAL = N * SLOT;
 
-  card.innerHTML = `
-    <div class="card-body">
-      <span class="card-name">${prod.name}</span>
-      <span class="card-price">from $${prod.fromPrice.toLocaleString()}</span>
-    </div>
-  `;
-  card.insertBefore(imgWrap, card.firstChild);
+const track = new THREE.Group();
+scene.add(track);
 
-  card.addEventListener('mouseenter', () => { if (img.parentNode) img.style.transform = 'scale(1.04)'; });
-  card.addEventListener('mouseleave', () => { if (img.parentNode) img.style.transform = ''; });
+// Build each product, store its group and hit-plane
+const slots = ITEMS.map((item, i) => {
+  const prod = buildProduct(item.id, item.ty);
+  prod.position.x = i * SLOT - TOTAL/2 + SLOT/2;
 
-  grid.appendChild(card);
+  // Invisible hit plane for raycasting
+  const hg = new THREE.PlaneGeometry(SLOT - 8, 80);
+  const hm = new THREE.MeshBasicMaterial({ visible:false, side:THREE.DoubleSide });
+  const hit = new THREE.Mesh(hg, hm);
+  hit.rotation.x = -Math.PI/2;
+  hit.position.set(prod.position.x, 1, 0);
+  hit.userData = { slotIdx: i };
+
+  track.add(prod);
+  track.add(hit);
+
+  return { group: prod, hit, item, scale: 1, targetScale: 1 };
 });
+
+// Duplicate first few items at end for seamless wrap
+const DUP = 3;
+for(let i=0;i<DUP;i++){
+  const item=ITEMS[i];
+  const extra=buildProduct(item.id,item.ty);
+  extra.position.x = N*SLOT - TOTAL/2 + SLOT/2 + i*SLOT;
+  track.add(extra);
+}
+
+// ── Scroll state
+let scrollX = 0;
+const SCROLL_SPEED = 0.018; // units per frame
+
+// ── Raycasting
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredIdx = -1;
+const hitMeshes = slots.map(s => s.hit);
+
+function onMouseMove(e) {
+  const rect = cv.getBoundingClientRect();
+  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, cam);
+  const hits = raycaster.intersectObjects(hitMeshes);
+
+  const tt = document.getElementById('tooltip');
+  const tn = document.getElementById('tooltip-name');
+
+  if(hits.length > 0) {
+    const idx = hits[0].object.userData.slotIdx;
+    if(idx !== hoveredIdx) {
+      if(hoveredIdx !== -1) slots[hoveredIdx].targetScale = 1;
+      hoveredIdx = idx;
+      slots[idx].targetScale = 1.12;
+      tn.textContent = ITEMS[idx].name;
+      tt.style.opacity = '1';
+    }
+    document.body.classList.add('over-product');
+  } else {
+    if(hoveredIdx !== -1) {
+      slots[hoveredIdx].targetScale = 1;
+      hoveredIdx = -1;
+    }
+    tt.style.opacity = '0';
+    document.body.classList.remove('over-product');
+  }
+}
+
+function onClick() {
+  if(hoveredIdx !== -1) {
+    const item = ITEMS[hoveredIdx];
+    window.location.href = `table-configurator.html?p=${item.id}&ty=${item.ty}`;
+  }
+}
+
+window.addEventListener('mousemove', onMouseMove);
+cv.addEventListener('click', onClick);
+
+// ── Resize
+function resize() {
+  const w = window.innerWidth, h = window.innerHeight;
+  ren.setSize(w, h, false);
+  cam.aspect = w/h;
+  cam.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+// ═══════════════════════════════════════════════════════════
+//  Animation loop
+// ═══════════════════════════════════════════════════════════
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+
+  // Auto-scroll (pause slightly when hovering)
+  const pauseScroll = hoveredIdx !== -1;
+  if(!pauseScroll) scrollX += SCROLL_SPEED;
+
+  // Wrap
+  if(scrollX > SLOT) scrollX -= SLOT;
+
+  track.position.x = -scrollX;
+
+  // Spin each product
+  slots.forEach((s, i) => {
+    s.group.rotation.y += 0.003;
+
+    // Smooth scale
+    s.scale += (s.targetScale - s.scale) * 0.1;
+    s.group.scale.setScalar(s.scale);
+  });
+
+  ren.render(scene, cam);
+}
+animate();
 </script>
 </body>
 </html>

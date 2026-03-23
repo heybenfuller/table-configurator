@@ -1141,7 +1141,13 @@ function renderPanel() {
   const edNo=editionNum(st);
   let html='';
 
-  html += `<div class="breadcrumb">Home <span>›</span> ${p.breadcrumb}</div>`;
+  // Category picker — top of hierarchy
+  html += `<div class="cfg-grp" style="margin-bottom:4px"><div class="pills">`;
+  PRODS.forEach(pr => {
+    html += `<button class="pill${pr.id===p.id?' on':''}" onclick="switchProd('${pr.id}')">${pr.tabLabel}</button>`;
+  });
+  html += `</div></div>`;
+
   html += `<h1 class="pd-name">${p.name}</h1>`;
   html += `<div class="edition-row">
     <span class="edition-badge">${p.modelPrefix} · No.&nbsp;${edNo} / 100</span>
@@ -1333,9 +1339,18 @@ window.addEventListener('resize', onR); onR();
 (function anim() { requestAnimationFrame(anim); ren.render(scene, cam); })();
 
 // ── Init ─────────────────────────────────────────────────────
-const urlProd = new URLSearchParams(window.location.search).get('p');
+const _qs = new URLSearchParams(window.location.search);
+const urlProd = _qs.get('p');
+const urlTy   = _qs.get('ty');
 if (urlProd && PRODS.find(p => p.id === urlProd)) {
   curProd = PRODS.find(p => p.id === urlProd);
+  if (urlTy !== null && !isNaN(urlTy)) {
+    const ti = parseInt(urlTy);
+    if (ti >= 0 && ti < curProd.types.length) {
+      curProd.state.ty = ti;
+      curProd.onTypeChange();
+    }
+  }
 }
 buildMobileNav();
 syncNav();
