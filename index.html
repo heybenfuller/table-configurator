@@ -6,15 +6,13 @@
   <title>Ben Studios — Baltic Birch Furniture, Made to Order</title>
   <style>
     :root {
-      --blk: #0F0F0F;
-      --wht: #FFFFFF;
-      --off: #F4EFE8;
-      --warm: #EDE6DB;
-      --lt:  #DDD7CE;
-      --mid: #888880;
-      --red: #C8001A;
-      --hd:  52px;
-      --pad: clamp(24px, 4vw, 64px);
+      --blk: #111110;
+      --wht: #FAFAF8;
+      --off: #F2EDE6;
+      --lt:  #E0D9D0;
+      --mid: #999890;
+      --hd:  60px;
+      --gutter: clamp(28px, 5vw, 80px);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -26,543 +24,200 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── HEADER ────────────────────────────────────────────────── */
+    /* ── HEADER ─────────────────────────────────────────────────── */
     .hd {
       position: fixed; top: 0; left: 0; right: 0; height: var(--hd);
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--lt);
+      background: var(--wht);
       z-index: 100;
-      display: flex; align-items: center;
-      padding: 0 var(--pad);
-      justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--gutter);
     }
     .logo {
-      font-size: 12px; font-weight: 800; letter-spacing: 0.15em;
+      font-size: 11px; font-weight: 700; letter-spacing: 0.18em;
       text-transform: uppercase; color: var(--blk); text-decoration: none;
     }
-    .logo-dot { color: var(--red); }
-    .hd-nav { display: flex; gap: 32px; align-items: center; }
-    .hd-nav a {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.10em;
+    .hd-link {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.12em;
       text-transform: uppercase; color: var(--mid);
-      text-decoration: none; transition: color 0.1s;
+      text-decoration: none; transition: color 0.15s;
     }
-    .hd-nav a:hover { color: var(--blk); }
-    .hd-cta {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--wht) !important;
-      background: var(--blk); padding: 9px 18px;
-      text-decoration: none; transition: background 0.12s;
-    }
-    .hd-cta:hover { background: var(--red) !important; }
+    .hd-link:hover { color: var(--blk); }
 
-    /* ── HERO ──────────────────────────────────────────────────── */
+    /* ── HERO ───────────────────────────────────────────────────── */
     .hero {
-      margin-top: var(--hd);
-      min-height: calc(100vh - var(--hd));
-      display: grid;
-      grid-template-columns: 1fr 420px;
-    }
-
-    .hero-left {
-      padding: clamp(48px, 8vh, 100px) var(--pad);
-      display: flex; flex-direction: column; justify-content: space-between;
-      border-right: 1px solid var(--lt);
-    }
-    .hero-eyebrow {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: var(--mid);
-      margin-bottom: clamp(40px, 8vh, 80px);
+      padding-top: var(--hd);
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding-left: var(--gutter);
+      padding-right: var(--gutter);
+      padding-bottom: clamp(48px, 8vh, 96px);
     }
     .hero-h {
-      font-size: clamp(52px, 7.5vw, 110px);
-      font-weight: 800;
+      font-size: clamp(48px, 8.5vw, 130px);
+      font-weight: 700;
       letter-spacing: -0.04em;
-      line-height: 0.95;
-      margin-bottom: 36px;
-    }
-    .hero-h em {
-      font-style: normal;
-      color: var(--mid);
+      line-height: 0.93;
+      margin-bottom: clamp(28px, 4vh, 52px);
+      max-width: 14ch;
     }
     .hero-sub {
-      font-size: clamp(14px, 1.4vw, 17px);
-      line-height: 1.7;
-      color: #555;
-      max-width: 480px;
-      margin-bottom: 40px;
+      font-size: clamp(13px, 1.2vw, 15px);
+      color: var(--mid);
+      line-height: 1.75;
+      max-width: 42ch;
+      margin-bottom: clamp(28px, 4vh, 48px);
     }
-    .hero-actions { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
-    .btn-primary {
-      display: inline-block; padding: 15px 32px;
-      background: var(--blk); color: var(--wht);
-      font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
-      text-decoration: none; transition: background 0.12s;
+    .hero-cta {
+      display: inline-block;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--blk);
+      text-decoration: none;
+      border-bottom: 1px solid var(--blk);
+      padding-bottom: 2px;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .btn-primary:hover { background: var(--red); }
-    .btn-ghost {
-      display: inline-block; padding: 14px 24px;
-      border: 1px solid var(--lt); color: var(--blk);
-      font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-      text-decoration: none; transition: border-color 0.12s, color 0.12s;
-    }
-    .btn-ghost:hover { border-color: var(--blk); }
+    .hero-cta:hover { color: var(--mid); border-color: var(--mid); }
 
-    .hero-bottom {
-      margin-top: clamp(40px, 6vh, 72px);
-      display: flex; gap: 40px; flex-wrap: wrap;
-      border-top: 1px solid var(--lt); padding-top: 28px;
-    }
-    .hero-stat-n {
-      font-size: 26px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
-    }
-    .hero-stat-l {
-      font-size: 10px; color: var(--mid); margin-top: 4px; letter-spacing: 0.04em; line-height: 1.4;
-    }
+    /* ── DIVIDER ────────────────────────────────────────────────── */
+    .rule { height: 1px; background: var(--lt); margin: 0 var(--gutter); }
 
-    /* Right panel — warm birch tone, material close-up feel */
-    .hero-right {
-      background: var(--off);
-      display: flex; flex-direction: column;
-      justify-content: flex-end;
-      padding: clamp(32px, 5vw, 60px);
-      position: relative;
-      overflow: hidden;
-    }
-    /* Simulated edge-grain stripe texture */
-    .hero-right::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: repeating-linear-gradient(
-        90deg,
-        transparent 0px,
-        transparent 2px,
-        rgba(160,130,80,0.07) 2px,
-        rgba(160,130,80,0.07) 3px
-      );
-      pointer-events: none;
-    }
-    .hero-ply-label {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--mid);
-      margin-bottom: 20px;
-    }
-    .hero-ply-stack {
-      display: flex; flex-direction: column; gap: 0;
-      margin-bottom: 32px;
-    }
-    .ply {
-      height: 18px;
-      background: linear-gradient(180deg, #E8DFD0 0%, #D4C9B0 100%);
-      border-bottom: 1px solid rgba(120,90,40,0.25);
-      position: relative;
-    }
-    .ply:nth-child(even) {
-      background: linear-gradient(180deg, #D0C8B8 0%, #C0B8A0 100%);
-    }
-    .ply-glue {
-      height: 2px;
-      background: rgba(90,60,20,0.15);
-    }
-    .hero-spec {
-      font-size: 11px; line-height: 1.8; color: #666;
-    }
-    .hero-spec strong { color: var(--blk); font-weight: 700; }
-
-    /* ── MANIFESTO ─────────────────────────────────────────────── */
-    .manifesto {
-      background: var(--blk);
-      color: var(--wht);
-      padding: clamp(60px, 10vh, 120px) var(--pad);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(40px, 6vw, 100px);
-      align-items: center;
-    }
-    .manifesto-left {}
-    .manifesto-kicker {
+    /* ── COLLECTION LABEL ───────────────────────────────────────── */
+    .sec-label {
+      padding: clamp(40px, 6vh, 72px) var(--gutter) clamp(28px, 4vh, 48px);
       font-size: 9px; font-weight: 700; letter-spacing: 0.22em;
-      text-transform: uppercase; color: #666; margin-bottom: 24px;
+      text-transform: uppercase; color: var(--mid);
     }
-    .manifesto-h {
-      font-size: clamp(28px, 4vw, 52px);
-      font-weight: 800; letter-spacing: -0.03em; line-height: 1.1;
-    }
-    .manifesto-h span { color: var(--red); }
-    .manifesto-right {}
-    .manifesto-body {
-      font-size: clamp(14px, 1.3vw, 17px); line-height: 1.8; color: #AAA;
-      margin-bottom: 28px;
-    }
-    .manifesto-body strong { color: var(--wht); font-weight: 600; }
-    .manifesto-spec-list {
-      display: flex; flex-direction: column; gap: 12px;
-      border-top: 1px solid #2A2A2A; padding-top: 28px;
-    }
-    .spec-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-size: 11px; letter-spacing: 0.04em;
-    }
-    .spec-row-k { color: #555; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
-    .spec-row-v { color: #CCC; }
 
-    /* ── COLLECTION ────────────────────────────────────────────── */
-    .collection-hd {
-      padding: 48px var(--pad) 24px;
-      display: flex; align-items: baseline; justify-content: space-between;
-      border-bottom: 1px solid var(--lt);
-    }
-    .collection-title {
-      font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
-    }
-    .collection-note { font-size: 11px; color: var(--mid); }
-
+    /* ── PRODUCT GRID ───────────────────────────────────────────── */
     .prod-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-    }
-
-    .prod-card {
-      border-right: 1px solid var(--lt);
-      border-bottom: 1px solid var(--lt);
-      text-decoration: none; color: var(--blk);
-      display: block;
-      transition: background 0.15s;
-      position: relative;
-    }
-    .prod-card:last-child { border-right: none; }
-    .prod-card:hover { background: var(--off); }
-
-    .card-img {
-      width: 100%; aspect-ratio: 4/3;
-      background: var(--warm);
-      overflow: hidden; position: relative;
-    }
-    .card-img img {
-      width: 100%; height: 100%; object-fit: contain; display: block;
-      padding: 24px;
-      transition: transform 0.4s ease;
-    }
-    .prod-card:hover .card-img img { transform: scale(1.03); }
-    .card-img-fallback {
-      position: absolute; inset: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: #BEB9B0;
-    }
-
-    .card-body { padding: 24px 28px 28px; }
-    .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .card-name { font-size: 18px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; }
-    .card-badge {
-      font-size: 8px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
-      color: var(--mid); border: 1px solid var(--lt); padding: 4px 8px;
-      white-space: nowrap; margin-left: 12px; margin-top: 3px;
-    }
-    .card-desc { font-size: 12px; color: #666; line-height: 1.65; margin-bottom: 20px; }
-    .card-footer { display: flex; align-items: center; justify-content: space-between; }
-    .card-price { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; }
-    .card-price-from { font-size: 10px; font-weight: 400; color: var(--mid); margin-right: 3px; }
-    .card-configure {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--blk);
-      display: flex; align-items: center; gap: 6px;
-      transition: gap 0.15s;
-    }
-    .prod-card:hover .card-configure { gap: 10px; color: var(--red); }
-    .card-configure-arrow { font-size: 12px; }
-
-    /* ── PROCESS STRIP ─────────────────────────────────────────── */
-    .process {
-      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--lt);
       border-top: 1px solid var(--lt);
       border-bottom: 1px solid var(--lt);
     }
-    .process-step {
-      padding: 40px 28px;
-      border-right: 1px solid var(--lt);
-      position: relative;
-    }
-    .process-step:last-child { border-right: none; }
-    .process-n {
-      font-size: 36px; font-weight: 800; letter-spacing: -0.04em; line-height: 1;
-      color: var(--lt); margin-bottom: 16px;
-    }
-    .process-title { font-size: 12px; font-weight: 700; margin-bottom: 8px; }
-    .process-body { font-size: 12px; color: #666; line-height: 1.6; }
-
-    /* ── EMAIL CAPTURE ─────────────────────────────────────────── */
-    .email-section {
-      background: var(--off);
-      padding: clamp(60px, 8vh, 100px) var(--pad);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(40px, 6vw, 80px);
-      align-items: center;
-      border-bottom: 1px solid var(--lt);
-    }
-    .email-left {}
-    .email-kicker {
-      font-size: 9px; font-weight: 700; letter-spacing: 0.2em;
-      text-transform: uppercase; color: var(--mid); margin-bottom: 16px;
-    }
-    .email-h {
-      font-size: clamp(24px, 3vw, 38px); font-weight: 800;
-      letter-spacing: -0.03em; line-height: 1.15;
-    }
-    .email-right {}
-    .email-sub {
-      font-size: 13px; line-height: 1.7; color: #666; margin-bottom: 24px;
-    }
-    .email-form { display: flex; gap: 0; }
-    .email-input {
-      flex: 1; padding: 14px 18px;
-      border: 1px solid var(--lt); border-right: none;
-      font-family: inherit; font-size: 13px; color: var(--blk);
+    .prod-card {
       background: var(--wht);
-      outline: none;
-      transition: border-color 0.12s;
+      text-decoration: none; color: var(--blk);
+      display: block;
     }
-    .email-input:focus { border-color: var(--blk); }
-    .email-input::placeholder { color: #AAAAAA; }
-    .email-submit {
-      padding: 14px 24px;
-      background: var(--blk); color: var(--wht);
-      border: none; cursor: pointer;
-      font-family: inherit; font-size: 10px; font-weight: 700;
-      letter-spacing: 0.14em; text-transform: uppercase;
-      transition: background 0.12s;
+    .card-img {
+      width: 100%; aspect-ratio: 1 / 1;
+      background: var(--off);
+      overflow: hidden;
     }
-    .email-submit:hover { background: var(--red); }
-    .email-note { font-size: 10px; color: var(--mid); margin-top: 10px; }
+    .card-img img {
+      width: 100%; height: 100%; object-fit: contain; display: block;
+      padding: 10%;
+      transition: transform 0.5s ease;
+    }
+    .prod-card:hover .card-img img { transform: scale(1.04); }
+    .card-img-fallback {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: #C0BAB2;
+    }
+    .card-body {
+      padding: 20px 24px 28px;
+      display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .card-name { font-size: 13px; font-weight: 600; letter-spacing: 0.01em; }
+    .card-price { font-size: 12px; color: var(--mid); }
 
-    /* ── FOOTER ────────────────────────────────────────────────── */
+    /* ── MATERIAL NOTE ──────────────────────────────────────────── */
+    .note {
+      padding: clamp(60px, 10vh, 120px) var(--gutter);
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .note-body {
+      font-size: clamp(14px, 1.4vw, 18px);
+      line-height: 1.8;
+      color: var(--mid);
+    }
+    .note-body strong { color: var(--blk); font-weight: 600; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
     .footer {
-      padding: 32px var(--pad);
+      border-top: 1px solid var(--lt);
+      padding: 28px var(--gutter);
       display: flex; align-items: center; justify-content: space-between;
-      flex-wrap: wrap; gap: 12px;
+      flex-wrap: wrap; gap: 10px;
     }
-    .footer-logo { font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; }
-    .footer-links { display: flex; gap: 24px; }
-    .footer-links a {
-      font-size: 10px; color: var(--mid); text-decoration: none;
-      letter-spacing: 0.06em; transition: color 0.1s;
+    .footer-logo { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+    .footer-copy { font-size: 10px; color: var(--mid); letter-spacing: 0.05em; }
+    .footer-contact {
+      font-size: 10px; color: var(--mid); letter-spacing: 0.06em;
+      text-decoration: none; transition: color 0.15s;
     }
-    .footer-links a:hover { color: var(--blk); }
-    .footer-copy { font-size: 10px; color: var(--mid); letter-spacing: 0.04em; }
+    .footer-contact:hover { color: var(--blk); }
 
-    /* ── RESPONSIVE ────────────────────────────────────────────── */
-    @media (max-width: 1024px) {
-      .hero { grid-template-columns: 1fr; }
-      .hero-right { display: none; }
-      .manifesto { grid-template-columns: 1fr; gap: 40px; }
-      .email-section { grid-template-columns: 1fr; }
-    }
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
     @media (max-width: 768px) {
-      .prod-grid { grid-template-columns: 1fr; }
-      .prod-card { border-right: none; }
-      .process { grid-template-columns: repeat(2, 1fr); }
+      .prod-grid { grid-template-columns: repeat(2, 1fr); }
     }
-    @media (max-width: 520px) {
-      .hd-nav a:not(.hd-cta) { display: none; }
-      .process { grid-template-columns: 1fr; }
-      .process-step { border-right: none; }
-      .hero-bottom { gap: 24px; }
-      .email-form { flex-direction: column; }
-      .email-input { border-right: 1px solid var(--lt); }
-      .footer-links { display: none; }
+    @media (max-width: 480px) {
+      .prod-grid { grid-template-columns: 1fr; }
+      .card-body { padding: 16px 20px 22px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── HEADER ──────────────────────────────────────────────────── -->
 <header class="hd">
-  <a class="logo" href="index.html">Ben<span class="logo-dot">·</span>Studios</a>
-  <nav class="hd-nav">
-    <a href="#collection">Collection</a>
-    <a href="#process">How it works</a>
-    <a class="hd-cta" href="table-configurator.html">Configure yours →</a>
-  </nav>
+  <a class="logo" href="index.html">Ben Studios</a>
+  <a class="hd-link" href="table-configurator.html">Configure →</a>
 </header>
 
-<!-- ── HERO ────────────────────────────────────────────────────── -->
 <section class="hero">
-  <div class="hero-left">
-    <div class="hero-eyebrow">Brooklyn, NY · Made to order · Est. 2025</div>
-
-    <div>
-      <h1 class="hero-h">
-        One<br>
-        material.<br>
-        <em>Full stop.</em>
-      </h1>
-      <p class="hero-sub">
-        Every Ben Studios piece is ¾″ Baltic birch — CNC-cut, dado-jointed, hand-finished.
-        No veneers, no particle board, no apologies. Configure your dimensions and order direct from our Brooklyn workshop.
-      </p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="table-configurator.html">Configure yours →</a>
-        <a class="btn-ghost" href="#collection">See the collection</a>
-      </div>
-    </div>
-
-    <div class="hero-bottom">
-      <div class="hero-stat">
-        <div class="hero-stat-n">¾″</div>
-        <div class="hero-stat-l">Baltic birch<br>throughout</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-n">13</div>
-        <div class="hero-stat-l">plies per sheet —<br>all visible on every edge</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-n">100</div>
-        <div class="hero-stat-l">pieces per edition —<br>numbered, made to order</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-n">0</div>
-        <div class="hero-stat-l">veneers, fillers,<br>or particle board</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Material close-up panel -->
-  <div class="hero-right">
-    <div class="hero-ply-label">¾″ Baltic birch · B/BB grade · 13 plies</div>
-    <div class="hero-ply-stack" id="ply-stack">
-      <!-- Injected by JS -->
-    </div>
-    <div class="hero-spec">
-      <strong>B/BB grade.</strong> Face veneer is B-grade (light, minimal knots).<br>
-      Back veneer BB-grade. All interior plies void-free.<br><br>
-      <strong>13 plies.</strong> Each ~1.8mm. Alternating grain direction<br>
-      for dimensional stability — the piece won't move.<br><br>
-      <strong>CNC-cut.</strong> Every dado, pocket hole, and edge<br>
-      machined to ±0.005″. No hand-fitting required.
-    </div>
-  </div>
+  <h1 class="hero-h">Baltic birch, made to order.</h1>
+  <p class="hero-sub">¾″ void-free Baltic birch plywood — CNC-cut, dado-jointed, hand-oiled. Designed and built in Brooklyn. Configure your dimensions and order direct.</p>
+  <a class="hero-cta" href="table-configurator.html">Configure yours</a>
 </section>
 
-<!-- ── MANIFESTO ───────────────────────────────────────────────── -->
-<section class="manifesto">
-  <div class="manifesto-left">
-    <div class="manifesto-kicker">The material is the design</div>
-    <h2 class="manifesto-h">
-      Baltic birch<br>
-      is our <span>cashmere.</span>
-    </h2>
-  </div>
-  <div class="manifesto-right">
-    <p class="manifesto-body">
-      Most furniture brands treat material as a starting point — then cover it with stain, veneer, or paint. We go the other direction. <strong>We chose one material and made it the whole point.</strong>
-    </p>
-    <p class="manifesto-body">
-      The stacked plies on every edge aren't a side effect — they're the signature. The warm, consistent grain on every face isn't a compromise — it's the finish. Two coats of hand-rubbed oil. That's it.
-    </p>
-    <div class="manifesto-spec-list">
-      <div class="spec-row"><span class="spec-row-k">Material</span><span class="spec-row-v">¾″ void-free Baltic birch plywood, B/BB grade</span></div>
-      <div class="spec-row"><span class="spec-row-k">Joinery</span><span class="spec-row-v">CNC-cut dado joints + pocket screws. No glue.</span></div>
-      <div class="spec-row"><span class="spec-row-k">Finish</span><span class="spec-row-v">2-coat hand-rubbed penetrating oil</span></div>
-      <div class="spec-row"><span class="spec-row-k">Tolerance</span><span class="spec-row-v">±0.005″ on all machined features</span></div>
-      <div class="spec-row"><span class="spec-row-k">Lead time</span><span class="spec-row-v">3–6 weeks from order confirmation</span></div>
-      <div class="spec-row"><span class="spec-row-k">Shipping</span><span class="spec-row-v">Free freight, contiguous US · ships flat-packed</span></div>
-    </div>
-  </div>
-</section>
+<div class="rule"></div>
 
-<!-- ── COLLECTION ───────────────────────────────────────────────── -->
-<div class="collection-hd" id="collection">
-  <div class="collection-title">The Collection</div>
-  <div class="collection-note">All pieces built to your dimensions · Free shipping</div>
+<div class="sec-label" id="collection">The Collection</div>
+
+<div class="prod-grid" id="prod-grid"></div>
+
+<div class="note">
+  <p class="note-body">
+    <strong>One material.</strong> Every Ben Studios piece is ¾″ Baltic birch throughout — the faces, the edges, the shelves. No veneers. No particle board. Two coats of hand-rubbed oil. Limited to 100 pieces per edition, numbered from the first cut.
+  </p>
 </div>
 
-<div class="prod-grid" id="prod-grid">
-  <!-- Injected by JS -->
-</div>
+<div class="rule"></div>
 
-<!-- ── PROCESS ──────────────────────────────────────────────────── -->
-<div class="process" id="process">
-  <div class="process-step">
-    <div class="process-n">01</div>
-    <div class="process-title">Configure</div>
-    <div class="process-body">Choose your product, dial in your dimensions, pick your finish. The 3D viewer updates in real time. Price is live — no hidden freight, no surprises.</div>
-  </div>
-  <div class="process-step">
-    <div class="process-n">02</div>
-    <div class="process-title">We machine it</div>
-    <div class="process-body">Your cut list goes directly to the CNC. Every dado, pocket hole, and edge machined to spec. No hand-cutting, no fudging. B/BB-grade sheets only.</div>
-  </div>
-  <div class="process-step">
-    <div class="process-n">03</div>
-    <div class="process-title">Hand finished</div>
-    <div class="process-body">Two coats of penetrating oil, applied and wiped by hand. Edge banding available if you prefer a cleaner look. Either way, no lacquer, no stain.</div>
-  </div>
-  <div class="process-step">
-    <div class="process-n">04</div>
-    <div class="process-title">Ships flat</div>
-    <div class="process-body">All holes pre-drilled. All hardware included. One person, 15–30 minutes, one drill. Assembles without measuring, without glue, without a manual.</div>
-  </div>
-</div>
-
-<!-- ── EMAIL CAPTURE ────────────────────────────────────────────── -->
-<section class="email-section">
-  <div class="email-left">
-    <div class="email-kicker">Stay in the loop</div>
-    <h2 class="email-h">New pieces.<br>New editions.<br>No noise.</h2>
-  </div>
-  <div class="email-right">
-    <p class="email-sub">We release new products and limited editions in small batches. Get on the list and you'll hear first — one email per drop, nothing else.</p>
-    <form class="email-form" onsubmit="handleEmail(event)">
-      <input class="email-input" type="email" placeholder="your@email.com" required>
-      <button class="email-submit" type="submit">Join the list</button>
-    </form>
-    <div class="email-note" id="email-note">Brooklyn, NY · Baltic birch furniture, made to order</div>
-  </div>
-</section>
-
-<!-- ── FOOTER ───────────────────────────────────────────────────── -->
 <footer class="footer">
-  <div class="footer-logo">Ben<span class="logo-dot">·</span>Studios</div>
-  <nav class="footer-links">
-    <a href="table-configurator.html">Configurator</a>
-    <a href="mailto:hello@benstudios.com">Contact</a>
-    <a href="#collection">Collection</a>
-  </nav>
-  <div class="footer-copy">© 2026 Ben Studios LLC · Brooklyn, NY</div>
+  <div class="footer-logo">Ben Studios</div>
+  <div class="footer-copy">Brooklyn, NY · Made to order · © 2026</div>
+  <a class="footer-contact" href="mailto:hello@benstudios.com">hello@benstudios.com</a>
 </footer>
 
 <script>
-// ── Pricing (mirrors configurator) ────────────────────────────
 const T = 0.75, SHEET = 3600, SPR = 150, WASTE = 1.1, MARGIN = 0.40;
 function calcRetail(sqIn, labor, oilCost, shipCost) {
   const rate = SPR * WASTE / SHEET;
-  const mat = sqIn * rate;
-  const cost = mat + labor + oilCost + shipCost;
-  return Math.ceil(cost / (1 - MARGIN) / 10) * 10;
+  return Math.ceil((sqIn * rate + labor + oilCost + shipCost) / (1 - MARGIN) / 10) * 10;
 }
 
-// ── Product catalog ────────────────────────────────────────────
 const CATALOG = [
   {
-    id: 'tables',
-    name: 'Tables',
-    badge: 'Dining · Coffee · Side',
-    desc: 'Trestle dining tables that seat 4–8 and box-frame coffee and side tables with open lower shelves. Four styles, your dimensions.',
+    id: 'tables', name: 'Tables',
+    desc: 'Dining · Coffee · Side',
     fromPrice: calcRetail(14*(14+1)+14*14+2*(20.5*14)+12.5*12.5, 90, 30, 60),
   },
   {
-    id: 'shelving',
-    name: 'Shelving',
-    badge: 'Freestanding · Wall-mounted',
-    desc: 'A freestanding bookcase with adjustable shelf count and a wall-mounted floating shelf. Dado-routed joints, no visible hardware.',
+    id: 'shelving', name: 'Shelving',
+    desc: 'Freestanding · Wall-mounted',
     fromPrice: calcRetail(2*(24*12)+2*(6.5*12)+1*(22.5*12), 60, 25, 40),
   },
   {
-    id: 'seating',
-    name: 'Seating',
-    badge: 'Bench · Stool · Daybed',
-    desc: 'An entryway bench with optional storage shelf, counter and bar stools with solid back panel, and a twin platform daybed.',
+    id: 'seating', name: 'Seating',
+    desc: 'Bench · Stool · Daybed',
     fromPrice: calcRetail(15*(13+1)+2*(13*23.25)+13.5*13, 70, 20, 45),
   },
 ];
@@ -572,46 +227,36 @@ CATALOG.forEach(prod => {
   const card = document.createElement('a');
   card.className = 'prod-card';
   card.href = `table-configurator.html?p=${prod.id}`;
+
+  const img = new Image();
+  img.src = `thumbs/thumb-${prod.id}.jpg`;
+  img.alt = prod.name;
+  img.style.cssText = 'width:100%;height:100%;object-fit:contain;display:block;padding:10%;transition:transform 0.5s ease';
+
+  const imgWrap = document.createElement('div');
+  imgWrap.className = 'card-img';
+
+  img.onload = () => imgWrap.appendChild(img);
+  img.onerror = () => {
+    const fb = document.createElement('div');
+    fb.className = 'card-img-fallback';
+    fb.textContent = prod.name;
+    imgWrap.appendChild(fb);
+  };
+
   card.innerHTML = `
-    <div class="card-img">
-      <img src="thumbs/thumb-${prod.id}.jpg" alt="${prod.name}"
-           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-      <div class="card-img-fallback" style="display:none">${prod.name}</div>
-    </div>
     <div class="card-body">
-      <div class="card-top">
-        <div class="card-name">${prod.name}</div>
-        <div class="card-badge">${prod.badge}</div>
-      </div>
-      <div class="card-desc">${prod.desc}</div>
-      <div class="card-footer">
-        <div class="card-price"><span class="card-price-from">from</span>$${prod.fromPrice.toLocaleString()}</div>
-        <div class="card-configure">Configure <span class="card-configure-arrow">→</span></div>
-      </div>
+      <span class="card-name">${prod.name}</span>
+      <span class="card-price">from $${prod.fromPrice.toLocaleString()}</span>
     </div>
   `;
+  card.insertBefore(imgWrap, card.firstChild);
+
+  card.addEventListener('mouseenter', () => { if (img.parentNode) img.style.transform = 'scale(1.04)'; });
+  card.addEventListener('mouseleave', () => { if (img.parentNode) img.style.transform = ''; });
+
   grid.appendChild(card);
 });
-
-// ── Ply stack visual ───────────────────────────────────────────
-const stack = document.getElementById('ply-stack');
-if (stack) {
-  let html = '';
-  for (let i = 0; i < 13; i++) {
-    html += `<div class="ply"></div>`;
-    if (i < 12) html += `<div class="ply-glue"></div>`;
-  }
-  stack.innerHTML = html;
-}
-
-// ── Email form ─────────────────────────────────────────────────
-function handleEmail(e) {
-  e.preventDefault();
-  const note = document.getElementById('email-note');
-  note.textContent = "You're on the list. We'll be in touch.";
-  note.style.color = '#2C7A2C';
-  e.target.querySelector('input').value = '';
-}
 </script>
 </body>
 </html>
