@@ -697,19 +697,19 @@ const PRODS = [
     modelPrefix: 'BS-WS',
     tabLabel: 'Wall Shelving',
     breadcrumb: 'Shelving › Floating',
-    desc: 'A wall-mounted shelf unit in ¾" Baltic birch — top, bottom, two sides, and 1–3 internal shelves. Hardware mounts flush inside; nothing visible from the front. Clean enough for any room.',
+    desc: 'A wall-mounted shelf unit in ¾" Baltic birch — top, bottom, two sides, 1–3 internal shelves, and a solid mounting rail inside that screws directly into studs. Nothing visible from the front.',
     features: [
       '¾" Baltic birch · B/BB grade',
-      'Concealed wall-mount cleat — no visible hardware',
+      'Interior mounting rail screws into studs — no visible hardware',
       '1–3 internal shelves, open front',
-      'Stud-mount hardware included',
+      'Stud-mount screws and paper template included',
       'Made to order · 3–4 week lead time',
     ],
     assembly: [
       'Wall mounting required — drill and level needed',
+      'Hold level, drill through interior rail into studs, drive screws',
+      'Screws sit inside the box — invisible once mounted',
       'One person can mount; piece weighs 8–22 lbs',
-      'Mount cleat into studs; box slides onto cleat',
-      'Follow the included paper template for placement',
     ],
     ship: { badge: 'Free shipping', note: 'Boxed · Contiguous US' },
     ctaLabel: 'Order This Shelf',
@@ -759,6 +759,12 @@ const PRODS = [
         const shg=new THREE.BoxGeometry(d.innerL,T,d.D);
         const shm=new THREE.Mesh(shg, mFlat()); shm.position.set(0,shY,0); shm.castShadow=true; grp.add(shm); eL(shm,shg);
       }
+      // Mounting rail — 3" tall strip inside near top, flush with back wall
+      const railH=3, railDepth=T;
+      const rg=new THREE.BoxGeometry(d.innerL, railH, railDepth);
+      const rm=new THREE.Mesh(rg, mFlat());
+      rm.position.set(0, wallY+d.H/2-T-railH/2, -(d.D/2-railDepth/2));
+      rm.castShadow=true; grp.add(rm); eL(rm,rg);
       camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.L,d.H,40)*2.0+20;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
