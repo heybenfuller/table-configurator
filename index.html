@@ -339,42 +339,26 @@ const TOTAL = N * SLOT;
 const track = new THREE.Group();
 scene.add(track);
 
-// Build 2 complete sets for gapless looping.
-// Items positioned at j*SLOT (j = 0..2N-1).
-// track.position.x = -scrollX + SLOT/2  →  world x of item j = j*SLOT - scrollX + SLOT/2
-// At scrollX = TOTAL/2, set-0 item 4 lands at x=0 (screen centre).
-// Forward-wrap: scrollX % TOTAL; at the boundary set-1 positions = set-0 positions → seamless.
-const slots = ITEMS.map((item, i) => ({
-  item, groups: [], hits: [], scale: 1, targetScale: 1
-}));
+// Virtual-scroll carousel — one set of N items.
+// Each frame, item i is placed at: x = (i*SLOT - scrollX) wrapped into [-TOTAL/2, TOTAL/2).
+// Teleports happen well outside the ±~120u camera view → completely invisible.
+const slots = ITEMS.map((item, i) => {
+  const prod = buildProduct(item.id, item.ty);
 
-const allHitMeshes = [];
+  const hg = new THREE.BoxGeometry(SLOT - 4, 90, 20);
+  const hm = new THREE.MeshBasicMaterial({ visible: false, side: THREE.FrontSide });
+  const hit = new THREE.Mesh(hg, hm);
+  hit.position.y = 45;
+  hit.userData = { slotIdx: i };
 
-for (let set = 0; set < 2; set++) {
-  ITEMS.forEach((item, i) => {
-    const j   = set * N + i;
-    const xPos = j * SLOT;
+  track.add(prod);
+  track.add(hit);
 
-    const prod = buildProduct(item.id, item.ty);
-    prod.position.x = xPos;
+  return { group: prod, hit, item, scale: 1, targetScale: 1 };
+});
 
-    const hg = new THREE.BoxGeometry(SLOT - 4, 90, 20);
-    const hm = new THREE.MeshBasicMaterial({ visible: false, side: THREE.FrontSide });
-    const hit = new THREE.Mesh(hg, hm);
-    hit.position.set(xPos, 45, 0);
-    hit.userData = { slotIdx: i };   // 0-8, shared between both sets
-
-    track.add(prod);
-    track.add(hit);
-
-    slots[i].groups.push(prod);
-    slots[i].hits.push(hit);
-    allHitMeshes.push(hit);
-  });
-}
-
-// ── Scroll state — start at TOTAL/2 so set-0 centre is on screen with content on both sides
-let scrollX = TOTAL / 2;
+// scrollX = 0 → items distribute symmetrically: item N/2 near x=0, others on both sides
+let scrollX = 0;
 const SCROLL_SPEED = 0.10; // units per frame — faster base speed
 
 // ── Drag state
@@ -396,7 +380,7 @@ updateWorldPerPx();
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 let hoveredIdx = -1;
-const hitMeshes = allHitMeshes;
+const hitMeshes = slots.map(s => s.hit);
 
 function getHoveredIdx(clientX, clientY) {
   const rect = cv.getBoundingClientRect();
@@ -452,6 +436,12 @@ window.addEventListener('mousemove', e => {
   }
 });
 
+// Scroll wheel drives the carousel (page has no vertical scroll, so always active)
+cv.addEventListener('wheel', e => {
+  e.preventDefault();
+  scrollX += e.deltaY * 0.28; // feels natural on both mouse wheel and trackpad
+}, { passive: false });
+
 // ── Resize
 function resize() {
   const w = window.innerWidth, h = window.innerHeight;
@@ -474,16 +464,18 @@ function animate() {
   // Auto-scroll — stop when hovering or dragging
   if(!isDragging && hoveredIdx === -1) scrollX += SCROLL_SPEED;
 
-  // Seamless wrap — at the boundary, set-1 world positions === set-0 world positions
+  // Keep scrollX in [0, TOTAL) for numerical stability
   scrollX = ((scrollX % TOTAL) + TOTAL) % TOTAL;
 
-  // world x of item j  =  j*SLOT  +  track.position.x  =  j*SLOT - scrollX + SLOT/2
-  track.position.x = -scrollX + SLOT / 2;
-
-  // Smooth scale — apply to both set copies so hover on either looks identical
-  slots.forEach(s => {
+  // Virtual scroll: wrap each item's x independently into [-TOTAL/2, TOTAL/2)
+  // Items teleport at the edges (x ≈ ±TOTAL/2 ≈ ±369) — well outside camera view (±~120)
+  slots.forEach((s, i) => {
+    let x = i * SLOT - scrollX;
+    x = ((x + TOTAL/2) % TOTAL + TOTAL) % TOTAL - TOTAL/2;
+    s.group.position.x = x;
+    s.hit.position.x   = x;
     s.scale += (s.targetScale - s.scale) * 0.1;
-    s.groups.forEach(g => g.scale.setScalar(s.scale));
+    s.group.scale.setScalar(s.scale);
   });
 
   ren.render(scene, cam);
