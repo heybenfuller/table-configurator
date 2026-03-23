@@ -381,15 +381,16 @@ const PRODS = [
     features: [
       '¾" Baltic birch plywood, B/BB grade · void-free core',
       '2-coat hand-rubbed oil finish, food-safe when cured',
-      'Ships fully assembled in custom crating',
+      'Ships flat-packed · assembles in ~30 min with included hardware',
       'Made to order in Brooklyn · 5–7 week lead time',
     ],
     assembly: [
-      'Two-person lift required — assembled piece weighs 90–130 lbs',
-      'Ships fully assembled — no on-site assembly needed',
-      'Protect floors with felt pads before placing',
+      'Ships flat-packed — top panel and base parts separate',
+      'Two people · ~30 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — no measuring, no glue needed',
+      'Slide web into dados, drive screws; set top, drive screws from below',
     ],
-    ship: { badge: 'Free freight shipping', note: 'Contiguous US · white-glove available' },
+    ship: { badge: 'Free freight shipping', note: 'Flat-packed · Contiguous US' },
     ctaLabel: 'Order This Table',
     state: { si:0, wi:0, hi:0 },
     configs: [
@@ -432,6 +433,34 @@ const PRODS = [
       camCt={x:0,y:d.H*0.42,z:0}; camSc=Math.max(d.L,d.W,d.H)*1.65+50;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
+    getCuts(st) {
+      const d=this.getDims(st);
+      return {
+        parts:[
+          {name:'Top Panel',    qty:1, L:d.L,      W:d.W,      notes:'Face grain along length'},
+          {name:'Left Flange',  qty:1, L:d.baseW,  W:d.panelH, notes:'Dado for web at depth centre; pocket holes on top edge'},
+          {name:'Right Flange', qty:1, L:d.baseW,  W:d.panelH, notes:'Dado for web at depth centre; pocket holes on top edge'},
+          {name:'Web / Spine',  qty:1, L:d.webLen, W:d.panelH, notes:'Vertical grain; ends slip into flange dados'},
+        ],
+        cncOps:[
+          {part:'L + R Flange \u2014 inner face', op:'Dado',         spec:'\u00beW \u00d7 \u215e" deep, centred on depth ('+(+(d.baseW/2).toFixed(2))+'"), full height \u2014 receives web ends. No glue.'},
+          {part:'L + R Flange \u2014 inner face', op:'Pocket holes \u00d72 each', spec:'15\u00b0 angled bore (step drill \u00d8\u215c"), on inner face at mid-height \u2014 screw from flange into web end face'},
+          {part:'Top Panel \u2014 underside',    op:'Pocket holes \u00d74 per end', spec:'15\u00b0 angled bore at 3", '+(+(d.W/2).toFixed(1))+'", '+(+(d.W-3)).toFixed(1)+'" from each end \u2014 screw from top underside into flange top edge'},
+        ],
+        hardware:[
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse', qty:16, notes:'Square drive \u2014 4 top-to-flange per side, 2 web-to-flange per side'},
+          {item:'Felt pad \u00be" dia.',              qty:8,  notes:'Self-adhesive \u2014 under base corners'},
+        ],
+        assembly:[
+          '1. Stand both flanges up, dado faces toward each other',
+          '2. Slide web ends into flange dados (snug fit; tap gently if needed)',
+          '3. From each flange inner face, drive 2 pocket screws into web end faces',
+          '4. Flip base; set top panel centred on base',
+          '5. From underside of top, drive 4 pocket screws per flange into flange top edge',
+          '6. Stand upright; attach felt pads to base corners',
+        ]
+      };
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -452,10 +481,10 @@ const PRODS = [
       'Made to order in Brooklyn · 4–6 week lead time',
     ],
     assembly: [
-      'Two-person assembly required — uprights are heavy',
-      'Estimated assembly time: 45–60 minutes',
-      'Follow the numbered step-by-step instruction sheet',
-      'Wall anchor to studs is strongly recommended',
+      'Ships flat-packed — uprights, shelves, and hardware bag',
+      'One or two people · ~30 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — tap shelves into dados, drive face screws',
+      'Anti-tip strap to wall stud strongly recommended — included',
     ],
     ship: { badge: 'Free shipping', note: 'Flat-packed · Contiguous US' },
     ctaLabel: 'Order This Unit',
@@ -472,7 +501,7 @@ const PRODS = [
     },
     price(st) {
       const d=this.getDims(st);
-      const sqIn=2*(T*d.H*d.D) + d.nShelves*(d.W-2*T)*d.D;
+      const sqIn=2*(d.H*d.D) + d.nShelves*(d.W-2*T)*d.D;
       const labor=120 + st.wi*40 + st.hi*20;
       return calcRetail(sqIn, labor, 45, 95);
     },
@@ -496,6 +525,33 @@ const PRODS = [
       camCt={x:0,y:d.H/2,z:0}; camSc=Math.max(d.W,d.H)*1.4+30;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
+    getCuts(st) {
+      const d=this.getDims(st);
+      const gap=+((d.H-T)/(d.nShelves-1)).toFixed(3);
+      const dadoList=Array.from({length:d.nShelves},(_,i)=>+(i*gap).toFixed(3)+'"').join(', ');
+      const shW=+(d.W-2*T).toFixed(3);
+      return {
+        parts:[
+          {name:'Upright', qty:2,          L:d.H,  W:d.D,  notes:d.nShelves+' dadoes at: '+dadoList+' from bottom; locking pilot holes through outer face at each dado centre'},
+          {name:'Shelf',   qty:d.nShelves, L:shW,  W:d.D,  notes:'Face grain up; fits into dado \u2014 no glue'},
+        ],
+        cncOps:[
+          {part:'L + R Upright \u2014 inner face', op:'Dado (\u00d7'+d.nShelves+' each)', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.D+'"), at: '+dadoList+' from bottom edge. No glue.'},
+          {part:'L + R Upright \u2014 outer face', op:'Countersunk pilot (\u00d7'+d.nShelves+' each)', spec:'At each dado centre: #10 pilot through outer face \u2014 locking screw drives into shelf end grain'},
+        ],
+        hardware:[
+          {item:'Flat-head screw #8 \u00d7 1\u00bc" coarse', qty:d.nShelves*4, notes:'2 per shelf per upright \u2014 pre-drilled, customer drives from outer face'},
+          {item:'Anti-tip strap + #8 \u00d7 2\u00bd" wall screw', qty:1, notes:'Anchor to wall stud'},
+        ],
+        assembly:[
+          '1. Lay one upright flat, dado side up',
+          '2. Tap all '+d.nShelves+' shelves into dados (rubber mallet if needed)',
+          '3. Drive '+d.nShelves*2+' locking screws from outer face into shelf end grain',
+          '4. Stand unit; bring second upright over, tap shelves in, drive '+d.nShelves*2+' screws',
+          '5. Stand fully upright; attach anti-tip strap to wall stud',
+        ]
+      };
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -512,15 +568,16 @@ const PRODS = [
       '¾" Baltic birch · void-free B/BB grade',
       'Trestle base: two flanges + web spine',
       '2-coat hand-rubbed oil finish',
-      'Ships fully assembled',
+      'Ships flat-packed · assembles in ~20 min with included hardware',
       'Made to order · 4–6 week lead time',
     ],
     assembly: [
-      'Ships fully assembled — no assembly needed',
-      'Two-person lift recommended — piece is 40–65 lbs',
-      'Use felt pads underneath to protect flooring',
+      'Ships flat-packed — top panel, flanges, web separate',
+      'Two people · ~20 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — no measuring, no glue needed',
+      'Slide web into flange dados; drive screws; set top, screws from below',
     ],
-    ship: { badge: 'Free freight shipping', note: 'Contiguous US · white-glove available' },
+    ship: { badge: 'Free freight shipping', note: 'Flat-packed · Contiguous US' },
     ctaLabel: 'Order This Table',
     state: { si:0, wi:0 },
     configs: [
@@ -559,6 +616,32 @@ const PRODS = [
       camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.L,d.W,d.H)*1.8+30;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
+    getCuts(st) {
+      const d=this.getDims(st);
+      return {
+        parts:[
+          {name:'Top Panel',    qty:1, L:d.L,      W:d.W,      notes:'Face grain along length'},
+          {name:'Left Flange',  qty:1, L:d.baseW,  W:d.panelH, notes:'Dado for web at depth centre; pocket holes on top edge'},
+          {name:'Right Flange', qty:1, L:d.baseW,  W:d.panelH, notes:'Dado for web at depth centre; pocket holes on top edge'},
+          {name:'Web / Spine',  qty:1, L:d.webLen, W:d.panelH, notes:'Vertical grain; ends into flange dados'},
+        ],
+        cncOps:[
+          {part:'L + R Flange \u2014 inner face', op:'Dado', spec:'\u00beW \u00d7 \u215e" deep, centred on depth ('+(+(d.baseW/2).toFixed(2))+'"), full height. No glue.'},
+          {part:'L + R Flange \u2014 inner face', op:'Pocket holes \u00d72 each', spec:'15\u00b0 angled bore \u2014 screw from flange into web end face'},
+          {part:'Top Panel \u2014 underside',    op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore at even spacing near each end \u2014 screw into flange top edge'},
+        ],
+        hardware:[
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse', qty:10, notes:'3 top-to-flange per side, 2 web-to-flange per side'},
+          {item:'Felt pad \u00be" dia.',              qty:4,  notes:'Under base corners'},
+        ],
+        assembly:[
+          '1. Stand flanges up, dado faces inward',
+          '2. Slide web ends into datos (no glue); drive 2 pocket screws per flange into web face',
+          '3. Set top on base; drive 3 pocket screws per flange from underside',
+          '4. Attach felt pads to base corners',
+        ]
+      };
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -570,18 +653,19 @@ const PRODS = [
     modelPrefix: 'BS-CB',
     tabLabel: 'Box',
     breadcrumb: 'Tables › Coffee',
-    desc: 'A box-frame coffee table with an open lower shelf — two end panels, a top, a bottom shelf, and a connecting back panel for rigidity. Storage and surface in one clean piece.',
+    desc: 'A box-frame coffee table with an open lower shelf — top, bottom, two end panels, and a dado-jointed shelf, all in ¾" Baltic birch. Pocket-screwed corners, no glue. Ships flat.',
     features: [
       '¾" Baltic birch · void-free B/BB grade',
       'Open lower shelf for books, remotes, magazines',
       '2-coat hand-rubbed oil finish',
-      'Ships fully assembled',
+      'Ships flat-packed · assembles in ~25 min with included hardware',
       'Made to order · 4–6 week lead time',
     ],
     assembly: [
-      'Ships fully assembled — no assembly needed',
-      'Two-person lift recommended — piece is 45–70 lbs',
-      'Use felt pads underneath to protect flooring',
+      'Ships flat-packed — 4 panels, shelf, and hardware bag',
+      'One or two people · ~25 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — no measuring, no glue needed',
+      'Shelf taps into end panel dados; pocket screws close top and bottom corners',
     ],
     ship: { badge: 'Free freight shipping', note: 'Contiguous US · white-glove available' },
     ctaLabel: 'Order This Table',
@@ -622,6 +706,35 @@ const PRODS = [
       camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.L,d.W,d.H)*1.85+30;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
+    getCuts(st) {
+      const d=this.getDims(st);
+      return {
+        parts:[
+          {name:'Top Panel',    qty:1, L:d.L,                    W:d.W, notes:'Full width; pocket holes on underside near each end'},
+          {name:'Bottom Panel', qty:1, L:d.L,                    W:d.W, notes:'Full width; pocket holes on top face near each end'},
+          {name:'End Panel',    qty:2, L:+(d.innerH).toFixed(3), W:d.W, notes:'Dado for shelf at '+d.shelfY+'" from bottom; countersunk pilot on outer face at dado centre'},
+          {name:'Lower Shelf',  qty:1, L:+(d.innerL).toFixed(3), W:d.W, notes:'Fits into end panel dados \u2014 no glue'},
+        ],
+        cncOps:[
+          {part:'L + R End Panel \u2014 inner face', op:'Dado', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.W+'"), at '+d.shelfY+'" from bottom. No glue.'},
+          {part:'L + R End Panel \u2014 outer face', op:'Countersunk pilot \u00d71 each', spec:'At dado centre: #10 pilot \u2014 locking screw from outside into shelf end grain'},
+          {part:'Top Panel \u2014 underside',        op:'Pocket holes \u00d74 per end', spec:'15\u00b0 angled bore, evenly spaced near each end \u2014 screw into top edge of end panel'},
+          {part:'Bottom Panel \u2014 top face',      op:'Pocket holes \u00d74 per end', spec:'15\u00b0 angled bore, evenly spaced near each end \u2014 screw into bottom edge of end panel'},
+        ],
+        hardware:[
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse',  qty:18, notes:'16 for top+bottom; 2 spare'},
+          {item:'Flat-head screw #8 \u00d7 1" coarse', qty:2,  notes:'Shelf locking from end panel outer face'},
+          {item:'Felt pad \u00be" dia.',               qty:4,  notes:'Under bottom corners'},
+        ],
+        assembly:[
+          '1. Tap lower shelf into dado in one end panel; drive 1 locking screw from outer face',
+          '2. Tap shelf other end into second end panel; drive 1 locking screw',
+          '3. Set bottom panel; drive 4 pocket screws per end from bottom inside face',
+          '4. Set top panel; drive 4 pocket screws per end from top underside',
+          '5. Flip right-side up; attach felt pads',
+        ]
+      };
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -638,13 +751,14 @@ const PRODS = [
       '¾" Baltic birch · void-free B/BB grade',
       'Box construction: top, bottom, sides, and mid-shelf',
       '2-coat hand-rubbed oil finish',
-      'Ships fully assembled',
+      'Ships flat-packed · assembles in ~20 min with included hardware',
       'Made to order · 3–5 week lead time',
     ],
     assembly: [
-      'Ships fully assembled — no assembly needed',
-      'Single person can move — piece weighs 18–28 lbs',
-      'Use felt pads underneath to protect flooring',
+      'Ships flat-packed — 4 panels, shelf, and hardware bag',
+      'One person · ~20 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — no measuring, no glue needed',
+      'Shelf taps into dado; pocket screws close top and bottom corners',
     ],
     ship: { badge: 'Free shipping', note: 'Boxed · Contiguous US' },
     ctaLabel: 'Order This Table',
@@ -686,6 +800,37 @@ const PRODS = [
       camCt={x:0,y:d.H*0.45,z:0}; camSc=Math.max(d.L,d.W,d.H)*2.2+20;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
+    getCuts(st) {
+      const d=this.getDims(st);
+      const iW=+(d.L-2*T).toFixed(3);
+      const dadoFromBottom=+(d.shelfY-T).toFixed(3);
+      return {
+        parts:[
+          {name:'Top Panel',    qty:1, L:d.L, W:d.W, notes:'Full width; pocket holes on underside near each end'},
+          {name:'Bottom Panel', qty:1, L:d.L, W:d.W, notes:'Full width; pocket holes on top face near each end'},
+          {name:'Side Panel',   qty:2, L:d.W, W:+(d.innerH).toFixed(3), notes:'Dado for mid shelf at '+dadoFromBottom+'" from bottom (inner face); countersunk pilot at dado centre (outer face)'},
+          {name:'Mid Shelf',    qty:1, L:iW,  W:d.W, notes:'Fits into side panel dados \u2014 no glue'},
+        ],
+        cncOps:[
+          {part:'L + R Side Panel \u2014 inner face', op:'Dado', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.W+'"), at '+dadoFromBottom+'" from bottom. No glue.'},
+          {part:'L + R Side Panel \u2014 outer face', op:'Countersunk pilot \u00d71 each', spec:'At dado centre: #10 pilot \u2014 locking screw from outside into shelf end grain'},
+          {part:'Top Panel \u2014 underside',         op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore \u2014 screw into top edge of side panel'},
+          {part:'Bottom Panel \u2014 top face',       op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore \u2014 screw into bottom edge of side panel'},
+        ],
+        hardware:[
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse',  qty:14, notes:'12 for top+bottom; 2 spare'},
+          {item:'Flat-head screw #8 \u00d7 1" coarse', qty:2,  notes:'Shelf locking from side outer faces'},
+          {item:'Felt pad \u00be" dia.',               qty:4,  notes:'Under bottom corners'},
+        ],
+        assembly:[
+          '1. Tap mid shelf into dado in one side panel; drive locking screw from outside',
+          '2. Tap shelf other end into second side panel; drive locking screw',
+          '3. Set bottom panel; drive 3 pocket screws per side from inside bottom face',
+          '4. Set top panel; drive 3 pocket screws per side from underside',
+          '5. Attach felt pads to bottom corners',
+        ]
+      };
+    },
   },
 
   // ─────────────────────────────────────────────────────────────
@@ -706,10 +851,10 @@ const PRODS = [
       'Made to order · 3–4 week lead time',
     ],
     assembly: [
-      'Wall mounting required — drill and level needed',
-      'Hold level, drill through interior rail into studs, drive screws',
-      'Screws sit inside the box — invisible once mounted',
-      'One person can mount; piece weighs 8–22 lbs',
+      'Ships flat-packed — all panels, shelves, hardware bag, and stud template',
+      'Assemble box first: all holes pre-drilled by CNC, pocket screws close corners (~15 min)',
+      'Hold assembled unit level against wall; drill through mounting rail into studs',
+      'Drive 2 structural screws from inside — invisible once shelves are in place',
     ],
     ship: { badge: 'Free shipping', note: 'Boxed · Contiguous US' },
     ctaLabel: 'Order This Shelf',
@@ -729,7 +874,7 @@ const PRODS = [
     },
     price(st) {
       const d=this.getDims(st);
-      const sqIn=2*(d.L*d.D) + 2*(T*d.H*d.D) + d.shelves*(d.innerL*d.D);
+      const sqIn=2*(d.L*d.D) + 2*(d.innerH*d.D) + d.shelves*(d.innerL*d.D);
       const labor=60+st.li*20+(st.si||0)*15;
       return calcRetail(sqIn, labor, 25, 40);
     },
@@ -759,14 +904,50 @@ const PRODS = [
         const shg=new THREE.BoxGeometry(d.innerL,T,d.D);
         const shm=new THREE.Mesh(shg, mFlat()); shm.position.set(0,shY,0); shm.castShadow=true; grp.add(shm); eL(shm,shg);
       }
-      // Mounting rail — 3" tall strip inside near top, flush with back wall
-      const railH=3, railDepth=T;
+      // Mounting rail — 1" tall strip inside near top, flush with back wall
+      const railH=1, railDepth=T;
       const rg=new THREE.BoxGeometry(d.innerL, railH, railDepth);
-      const rm=new THREE.Mesh(rg, mFlat());
+      const rm=new THREE.Mesh(rg, mF.clone());
       rm.position.set(0, wallY+d.H/2-T-railH/2, -(d.D/2-railDepth/2));
       rm.castShadow=true; grp.add(rm); eL(rm,rg);
       camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.L,d.H,40)*2.0+20;
       document.getElementById('b-dim').textContent=d.dimStr;
+    },
+    getCuts(st) {
+      const d=this.getDims(st);
+      const compartH=+(d.innerH/(d.shelves+1)).toFixed(3);
+      const dadoList=Array.from({length:d.shelves},(_,i)=>+(compartH*(i+1)-T/2).toFixed(3)+'"').join(', ');
+      const railL=+(d.innerL).toFixed(3);
+      return {
+        parts:[
+          {name:'Top Panel',     qty:1,        L:d.L,   W:d.D, notes:'Full width; 3 countersunk holes from top face for mounting rail attachment; pocket holes on underside near each end'},
+          {name:'Bottom Panel',  qty:1,        L:d.L,   W:d.D, notes:'Full width; pocket holes on top face near each end'},
+          {name:'Side Panel',    qty:2,        L:d.D,   W:+(d.innerH).toFixed(3), notes:d.shelves+' dado(s) at: '+dadoList+' from bottom (inner face); countersunk pilot at each dado centre (outer face)'},
+          {name:'Shelf',         qty:d.shelves, L:railL, W:d.D, notes:'Fits into side panel dados \u2014 no glue'},
+          {name:'Mounting Rail', qty:1,        L:railL, W:3,   notes:'2 clearance holes \u00d8\u215c" for #10\u00d73" stud screws; sits flush with back edge inside top'},
+        ],
+        cncOps:[
+          {part:'L + R Side Panel \u2014 inner face', op:'Dado (\u00d7'+d.shelves+' each)', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.D+'"), at: '+dadoList+' from bottom. No glue.'},
+          {part:'L + R Side Panel \u2014 outer face', op:'Countersunk pilot (\u00d7'+d.shelves+' each)', spec:'At each dado centre \u2014 locking screw from outside into shelf end grain'},
+          {part:'Top Panel \u2014 top face',          op:'Countersunk holes \u00d73', spec:'At 3", '+(+(d.L/2).toFixed(1))+'", and '+(d.L-3)+'" from left end \u2014 screw into mounting rail below'},
+          {part:'Top Panel \u2014 underside',         op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore \u2014 screw into top edge of side panel'},
+          {part:'Bottom Panel \u2014 top face',       op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore \u2014 screw into bottom edge of side panel'},
+          {part:'Mounting Rail',                     op:'Clearance holes \u00d72', spec:'\u00d8\u215c" at 16" centres from rail centre \u2014 for #10\u00d73" structural screws into studs'},
+        ],
+        hardware:[
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse',    qty:14, notes:'Corners + top-to-rail'},
+          {item:'Flat-head screw #8 \u00d7 1" coarse',   qty:d.shelves*2, notes:'Shelf locking from side outer faces'},
+          {item:'Structural screw #10 \u00d7 3"',        qty:2,  notes:'Wall mount into studs \u2014 included'},
+          {item:'Paper stud template',                   qty:1,  notes:'Print and tape to wall for level drilling guide'},
+        ],
+        assembly:[
+          '1. Attach mounting rail to underside of top panel (3 screws from top face)',
+          '2. Tap shelves into side panel dados; drive locking screws from outer faces',
+          '3. Set bottom panel; drive 3 pocket screws per side from inside bottom face',
+          '4. Set top panel over sides; drive 3 pocket screws per side from underside',
+          '5. Tape paper template to wall; drill into studs; hold unit level, drive 2 structural screws',
+        ]
+      };
     },
   },
 
@@ -784,14 +965,14 @@ const PRODS = [
       '¾" Baltic birch plywood throughout · no particle board',
       'Bottom shelf holds 4–8 pairs of shoes',
       'Bench seat rated for 300 lbs',
-      'Finger-joint construction, glued + screwed',
+      'Dado-jointed shelf + pocket-screwed corners — no glue needed',
       'Made to order · 3–5 week lead time',
     ],
     assembly: [
-      'Two-person assembly recommended — panels are heavy',
-      'Estimated assembly time: 30–45 minutes',
-      'Follow the numbered sequence in the instruction sheet',
-      'Pre-drill pilot holes as instructed to avoid splitting',
+      'Ships flat-packed — end panels, seat, shelf, dividers (if selected), hardware bag',
+      'One or two people · ~25 min · drill + #2 square-head bit',
+      'All holes pre-drilled by CNC — no measuring, no glue needed',
+      'Shelf taps into end panel dados; pocket screws close seat corners and dividers',
     ],
     ship: { badge: 'Free shipping', note: 'Flat-packed · Contiguous US' },
     ctaLabel: 'Order This Bench',
@@ -810,7 +991,7 @@ const PRODS = [
     price(st) {
       const d=this.getDims(st);
       const innerW=d.W-2*T;
-      const sqIn=d.W*d.D + 2*(T*d.H*d.D) + innerW*d.D + d.divCt*(T*(d.H-T-2)*d.D);
+      const sqIn=d.W*d.D + 2*(d.H*d.D) + innerW*d.D + d.divCt*((d.H-T-d.shelfY-T)*d.D);
       const labor=100 + st.wi*30 + (st.di===1?40:0);
       return calcRetail(sqIn, labor, 35, 70);
     },
@@ -841,6 +1022,47 @@ const PRODS = [
       }
       camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.W,d.H,d.D)*2.4+20;
       document.getElementById('b-dim').textContent=d.dimStr;
+    },
+    getCuts(st) {
+      const d=this.getDims(st);
+      const innerW=+(d.W-2*T).toFixed(3);
+      const divH=+(d.H-T-d.shelfY-T).toFixed(3);
+      const dadoFromBottom=+(d.shelfY-T/2).toFixed(3);
+      const parts=[
+        {name:'Seat Top',     qty:1,       L:d.W,    W:d.D, notes:'Full width; pocket holes on underside near each end; pocket holes at each divider position if selected'},
+        {name:'End Panel',    qty:2,       L:d.D,    W:d.H, notes:'Dado for shelf at '+dadoFromBottom+'" from bottom; countersunk pilot at dado centre (outer face)'},
+        {name:'Bottom Shelf', qty:1,       L:innerW, W:d.D, notes:'Fits into end panel dados \u2014 no glue'},
+      ];
+      const cncOps=[
+        {part:'L + R End Panel \u2014 inner face', op:'Dado', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.D+'"), at '+dadoFromBottom+'" from bottom. No glue.'},
+        {part:'L + R End Panel \u2014 outer face', op:'Countersunk pilot \u00d71 each', spec:'At dado centre \u2014 locking screw from outside into shelf end grain'},
+        {part:'Seat Top \u2014 underside',          op:'Pocket holes \u00d73 per end', spec:'15\u00b0 angled bore near each end \u2014 screw into top edge of end panel'},
+      ];
+      if(d.divCt>0){
+        const step=+(innerW/(d.divCt+1)).toFixed(3);
+        const divPositions=Array.from({length:d.divCt},(_,i)=>+(step*(i+1)).toFixed(3)+'"').join(', ');
+        parts.push({name:'Divider', qty:d.divCt, L:d.D, W:divH, notes:'Position from left end of seat: '+divPositions});
+        cncOps.push({part:'Seat Top \u2014 underside', op:'Pocket holes \u00d71 per divider', spec:'15\u00b0 angled bore at divider positions: '+divPositions+' from left end'});
+        cncOps.push({part:'Bottom Shelf \u2014 top face', op:'Pocket holes \u00d71 per divider', spec:'15\u00b0 angled bore at divider positions: '+divPositions+' from left end'});
+      }
+      const screwQty=6+(d.divCt*2);
+      const hardware=[
+        {item:'Pocket screw #8 \u00d7 1\u00bc" coarse', qty:screwQty, notes:'Seat corners + dividers'},
+        {item:'Flat-head screw #8 \u00d7 1" coarse', qty:2, notes:'Shelf locking from end panel outer faces'},
+        {item:'Felt pad \u00be" dia.', qty:4, notes:'Under end panel corners'},
+      ];
+      const asm=[
+        '1. Tap bottom shelf into dado in one end panel; drive locking screw from outside',
+        '2. Tap shelf other end into second end panel; drive locking screw',
+      ];
+      if(d.divCt>0){
+        asm.push('3. Insert dividers in position; drive pocket screw from shelf top face into each divider bottom');
+        asm.push('4. Set seat top; drive 3 pocket screws per end and 1 per divider from underside');
+      } else {
+        asm.push('3. Set seat top; drive 3 pocket screws per end from underside');
+      }
+      asm.push((d.divCt>0?'5':'4')+'. Attach felt pads to end panel corners');
+      return { parts, cncOps, hardware, assembly:asm };
     },
   },
 
@@ -954,7 +1176,7 @@ function renderPanel() {
   // Shipping row + CTA
   html += `<div class="ship-row"><span class="ship-badge">${p.ship.badge}</span><span class="ship-note">${p.ship.note}</span></div>`;
   html += `<button class="btn-cart" onclick="openQ()">${p.ctaLabel}</button>`;
-  html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Cutlist</button>`;
+  html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Production Packet</button>`;
   html += `<div class="pd-trust">Handcrafted in Brooklyn, NY<br>30-day satisfaction guarantee · Made to order</div>`;
 
   document.getElementById('pd-content').innerHTML = html;
@@ -994,22 +1216,55 @@ function buildMobileNav() {
 //  CSV Cutlist
 // ═══════════════════════════════════════════════════════════════
 function downloadCSV() {
-  const p=curProd, d=p.getDims(p.state), pr=p.price(p.state);
-  const q=v => `"${String(v).replace(/"/g,'""')}"`;
-  const edNo=editionNum(p.state);
-  const rows=[
-    q(`Ben Studios — ${p.name} Cutlist`),
-    `${q('Generated')},${q(new Date().toLocaleString())}`,
-    `${q('Model')},${q(`${p.modelPrefix} · No. ${edNo} / 100`)}`,
-    `${q('Dimensions')},${q(d.dimStr)}`,
-    `${q('Material')},${q('¾" Baltic Birch Plywood, B/BB Grade')}`,
-    `${q('Finish')},${q('2-coat hand-rubbed penetrating oil')}`,
-    `${q('Retail Price')},${q('$'+pr.retail)}`,
-    `${q('Made in')},${q('Brooklyn, NY · Built to order')}`,
-  ];
-  const blob=new Blob([rows.join('\n')],{type:'text/csv;charset=utf-8;'});
+  const p=curProd, st=p.state, d=p.getDims(st), pr=p.price(st);
+  const q=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const edNo=editionNum(st);
+  const fin=finishState==='edgeband'?'Oiled + Edge Band':'Oiled';
+  const total=pr.retail+(finishState==='edgeband'?EB_UPCHARGE:0);
+  const cuts=p.getCuts?p.getCuts(st):null;
+  const R=[];
+
+  R.push(q('BEN STUDIOS \u2014 PRODUCTION PACKET'));
+  R.push(q(p.name.toUpperCase()+' \u2014 '+d.dimStr+' \u2014 '+fin));
+  R.push(`${q('Model')},${q(p.modelPrefix+' \u00b7 No. '+edNo+' / 100')}`);
+  R.push(`${q('Generated')},${q(new Date().toLocaleString())}`);
+  R.push(`${q('Material')},${q('\u00be" Baltic Birch Plywood \u00b7 B/BB Grade \u00b7 void-free core')}`);
+  R.push(`${q('Retail Price')},${q('$'+total+' incl. shipping')}`);
+  R.push('');
+  R.push(q('JOINERY SYSTEM: Dado joints (no glue) + CNC pocket holes. Customer drives screws only \u2014 no drilling, no glue. Include pocket hole operations in CNC RFQ.'));
+  R.push('');
+
+  if(cuts){
+    R.push(q('PART LIST'));
+    R.push([q('Part'),q('Qty'),q('L (in)'),q('W (in)'),q('T (in)'),q('Notes')].join(','));
+    cuts.parts.forEach(pt=>{
+      R.push([q(pt.name),q(pt.qty),q(pt.L),q(pt.W),q('0.75'),q(pt.notes||'')].join(','));
+    });
+    R.push('');
+
+    if(cuts.cncOps&&cuts.cncOps.length){
+      R.push(q('CNC OPERATIONS \u2014 all from the face of each panel. Pocket holes: 15\u00b0 angled bore (step drill \u00d8\u215c"). Include all in RFQ.'));
+      R.push([q('Part(s)'),q('Operation'),q('Specification')].join(','));
+      cuts.cncOps.forEach(op=>{R.push([q(op.part),q(op.op),q(op.spec)].join(','));});
+      R.push('');
+    }
+
+    if(cuts.hardware&&cuts.hardware.length){
+      R.push(q('HARDWARE (ship in bag with order)'));
+      R.push([q('Item'),q('Qty'),q('Notes')].join(','));
+      cuts.hardware.forEach(h=>{R.push([q(h.item),q(h.qty),q(h.notes||'')].join(','));});
+      R.push('');
+    }
+
+    if(cuts.assembly&&cuts.assembly.length){
+      R.push(q('CUSTOMER ASSEMBLY'));
+      cuts.assembly.forEach((s,i)=>{R.push(`${q('Step '+(i+1))},${q(s)}`);});
+    }
+  }
+
+  const blob=new Blob([R.join('\n')],{type:'text/csv;charset=utf-8;'});
   const url=URL.createObjectURL(blob);
-  Object.assign(document.createElement('a'),{href:url,download:`benstudios_${p.id}_cutlist.csv`}).click();
+  Object.assign(document.createElement('a'),{href:url,download:`benstudios_${p.id}_production_packet.csv`}).click();
   URL.revokeObjectURL(url);
 }
 
@@ -1038,8 +1293,10 @@ function sendQ() {
   const edNo=editionNum(p.state);
   const finishLabel = finishState==='edgeband' ? 'Oiled + Edge Band' : 'Oiled';
   const totalRetail = pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
-  const subj=`Order: ${p.name} — $${totalRetail}`;
-  const body=`Order Details\n${p.name}\n${p.modelPrefix} · No. ${edNo} / 100\n${d.dimStr}\n${finishLabel}\nPrice: $${totalRetail}\n\nCustomer: ${nm}\nEmail: ${em}\n${nt?'Notes: '+nt+'\n':''}\nPlaced via Ben Studios configurator`;
+  const cuts2=p.getCuts?p.getCuts(p.state):null;
+  const partsSum=cuts2?cuts2.parts.map(pt=>`  ${pt.name} x${pt.qty}  (${pt.L}" x ${pt.W}" x 0.75")`).join('\n'):'see configurator';
+  const subj=`New Order — ${p.name} — $${totalRetail} — ${nm}`;
+  const body=`ORDER\n=====\nProduct: ${p.name}\nModel: ${p.modelPrefix} · No. ${edNo} / 100\nDimensions: ${d.dimStr}\nFinish: ${finishLabel}\nPrice: $${totalRetail} incl. shipping\n\nCUSTOMER\n========\nName: ${nm}\nEmail: ${em}\n${nt?'Notes: '+nt+'\n':''}\nPARTS\n=====\n${partsSum}\n\nNEXT: Download Production Packet from configurator to send to CNC shop.\nPlaced via benstudios.com configurator`;
   window.open(`mailto:${SELLER}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`);
   closeQ();
 }
