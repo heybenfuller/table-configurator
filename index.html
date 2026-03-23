@@ -297,12 +297,14 @@ function buildProduct(id, ty) {
     box(iW,T,D,mFlat(),0,H-T/2,0,g);
     box(iW,T,D,mFlat(),0,T/2,0,g);
     [1,2,3,4].forEach(i=>box(iW,T,D,mFlat(),0,T+iH*(i/5),0,g));
-  } else if(id==='shelving' && ty===1) { // Wall shelf
-    const W=36,D=12,H=6;
-    box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
-    box(W,H-T,T,[mF.clone(),mF.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()],0,(H-T)/2,-(D/2-T/2),g);
-    [-1,1].forEach(s=>box(T,H-T,D-1,mStand(),s*(W/2-5),(H-T)/2,0,g));
-    g.position.y = 36; // mount at 36" to look natural
+  } else if(id==='shelving' && ty===1) { // Wall shelf — floating box, wall-mounted
+    const L=36,D=12,H=20,iL=L-2*T,iH=H-2*T;
+    const cy=35; // centre-height — shelf spans 25"–45", looks like wall mount
+    box(L,T,D, mFlat(), 0, cy+H/2-T/2, 0, g);                       // top
+    box(L,T,D, mFlat(), 0, cy-H/2+T/2, 0, g);                       // bottom
+    [-1,1].forEach(s=>box(T,iH,D, mStand(), s*(L/2-T/2), cy, 0, g)); // sides
+    const gap=iH/3;
+    [1,2].forEach(i=>box(iL,T,D, mFlat(), 0, cy-H/2+T+gap*i, 0, g)); // 2 shelves
   } else if(id==='seating' && ty===0) { // Bench
     const W=48,H=18,D=12,iH=H-T,iW=W-2*T;
     box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
