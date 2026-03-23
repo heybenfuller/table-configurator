@@ -1091,27 +1091,31 @@ const PRODS = [
 //  Product switching
 // ═══════════════════════════════════════════════════════════════
 let curProd = PRODS[0];
+let noTypeSelected = true; // true until user explicitly picks a style
 
 function switchProd(id) {
   curProd = PRODS.find(p => p.id===id) || PRODS[0];
+  noTypeSelected = true;   // require explicit style pick — no auto-render
   zm=1; th=0; ph=0.25;
   syncNav();
-  rebuild();
+  clearGrp();              // empty the 3D view
+  renderPanel();
 }
 
 function rebuild() {
   clearGrp();
-  curProd.build(curProd.state);
-  updCam();
+  if(!noTypeSelected) { curProd.build(curProd.state); updCam(); }
   renderPanel();
 }
 
 function setOpt(key, val) {
   curProd.state[key] = val;
-  if(key === 'ty' && curProd.onTypeChange) curProd.onTypeChange();
+  if(key === 'ty') {
+    if(curProd.onTypeChange) curProd.onTypeChange();
+    noTypeSelected = false; // style chosen — now we can render
+  }
   clearGrp();
-  curProd.build(curProd.state);
-  updCam();
+  if(!noTypeSelected) { curProd.build(curProd.state); updCam(); }
   renderPanel();
 }
 
@@ -1135,31 +1139,30 @@ const EB_UPCHARGE = 120; // flat edge band upcharge added to retail
 
 function renderPanel() {
   const p=curProd, st=p.state;
-  const dims=p.getDims(st);
-  const pr=p.price(st);
-  const totalRetail = pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
-  const edNo=editionNum(st);
   let html='';
 
-  // Category picker — top of hierarchy
+  // ── 1. Category picker ───────────────────────────────────────
   html += `<div class="cfg-grp" style="margin-bottom:4px"><div class="pills">`;
   PRODS.forEach(pr => {
     html += `<button class="pill${pr.id===p.id?' on':''}" onclick="switchProd('${pr.id}')">${pr.tabLabel}</button>`;
   });
   html += `</div></div>`;
 
-  html += `<h1 class="pd-name">${p.name}</h1>`;
-  html += `<div class="edition-row">
-    <span class="edition-badge">${p.modelPrefix} · No.&nbsp;${edNo} / 100</span>
-    <span class="edition-no">Limited Edition</span>
-  </div>`;
-  html += `<div class="pd-price">$${totalRetail.toLocaleString()}</div>`;
-  html += `<div class="pd-sub">${dims.subStr}</div>`;
-  html += `<div class="pd-dim-badge">${dims.dimStr}</div>`;
-  html += `<div class="pd-rule"></div>`;
+  // ── 2. Style / type picker ───────────────────────────────────
+  html += `<div class="cfg-grp"><div class="cfg-lbl">Style${!noTypeSelected?` <span class="cfg-val">— ${p.types[st.ty].typeLabel}</span>`:''}</div><div class="pills">`;
+  p.types.forEach((t,i) => {
+    html += `<button class="pill${!noTypeSelected&&i===st.ty?' on':''}" onclick="setOpt('ty',${i})">${t.typeLabel}${t.typeSub?`<span class="pill-sub">${t.typeSub}</span>`:''}</button>`;
+  });
+  html += `</div></div>`;
 
-  // Config options
-  p.configs.forEach(cfg => {
+  // ── No type chosen yet — stop here ──────────────────────────
+  if(noTypeSelected) {
+    document.getElementById('pd-content').innerHTML = html;
+    return;
+  }
+
+  // ── 3. Dimension / option pickers for the chosen type ────────
+  p.types[st.ty].configs.forEach(cfg => {
     const cur=st[cfg.key];
     html += `<div class="cfg-grp"><div class="cfg-lbl">${cfg.label} <span class="cfg-val">— ${cfg.items[cur].lb}</span></div><div class="pills">`;
     cfg.items.forEach((item,i) => {
@@ -1168,9 +1171,8 @@ function renderPanel() {
     html += `</div></div>`;
   });
 
-  // Finish / edge banding
+  // ── 4. Finish / edge banding ─────────────────────────────────
   const ebOn = finishState === 'edgeband';
-  const ebUpcharge = 120;
   html += `<div class="cfg-grp">
     <div class="cfg-lbl">Finish</div>
     <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border:1.5px solid var(--blk);background:var(--off);margin-bottom:6px;">
@@ -1180,25 +1182,42 @@ function renderPanel() {
     <label style="display:flex;align-items:center;gap:10px;padding:9px 14px;border:1.5px solid ${ebOn?'var(--blk)':'var(--lt)'};background:${ebOn?'var(--blk)':'var(--wht)'};color:${ebOn?'var(--wht)':'#555'};cursor:pointer;transition:all 0.1s;user-select:none;">
       <input type="checkbox" ${ebOn?'checked':''} onchange="setFinish(this.checked?'edgeband':'oiled')" style="width:13px;height:13px;cursor:pointer;accent-color:${ebOn?'#fff':'var(--blk)'};">
       <span style="font-size:11px;font-weight:500;">+ Edge Band</span>
-      <span style="font-size:10px;${ebOn?'color:rgba(255,255,255,0.5)':'color:#AAA'};margin-left:auto;">+$${ebUpcharge}</span>
+      <span style="font-size:10px;${ebOn?'color:rgba(255,255,255,0.5)':'color:#AAA'};margin-left:auto;">+$${EB_UPCHARGE}</span>
     </label>
     <div style="font-size:10px;color:#AAA;margin-top:8px;line-height:1.6;">Solid maple strip covers all exposed plywood edges — cleaner look, hides the layers.</div>
   </div>`;
 
   html += `<div class="pd-rule"></div>`;
 
-  // Description + features
+  // ── 5. Product summary (name / price / dims) — after all selections
+  const dims=p.getDims(st);
+  const pr=p.price(st);
+  const totalRetail=pr.retail+(finishState==='edgeband'?EB_UPCHARGE:0);
+  const edNo=editionNum(st);
+
+  html += `<h1 class="pd-name">${p.name}</h1>`;
+  html += `<div class="edition-row">
+    <span class="edition-badge">${p.modelPrefix} · No.&nbsp;${edNo} / 100</span>
+    <span class="edition-no">Limited Edition</span>
+  </div>`;
+  html += `<div class="pd-price">$${totalRetail.toLocaleString()}</div>`;
+  html += `<div class="pd-sub">${dims.subStr}</div>`;
+  html += `<div class="pd-dim-badge">${dims.dimStr}</div>`;
+
+  html += `<div class="pd-rule"></div>`;
+
+  // ── 6. Description + features ────────────────────────────────
   html += `<p class="pd-desc">${p.desc}</p>`;
   html += `<ul class="pd-feats">`;
   p.features.forEach(f => { html += `<li>${f}</li>`; });
   html += `</ul>`;
 
-  // Assembly & safety warnings
+  // ── 7. Assembly & safety ─────────────────────────────────────
   html += `<div class="asm-warn"><div class="asm-warn-title">Assembly &amp; Safety</div><ul>`;
   p.assembly.forEach(a => { html += `<li>${a}</li>`; });
   html += `</ul></div>`;
 
-  // Shipping row + CTA
+  // ── 8. CTA ───────────────────────────────────────────────────
   html += `<div class="ship-row"><span class="ship-badge">${p.ship.badge}</span><span class="ship-note">${p.ship.note}</span></div>`;
   html += `<button class="btn-cart" onclick="openQ()">${p.ctaLabel}</button>`;
   html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Production Packet</button>`;
@@ -1349,6 +1368,7 @@ if (urlProd && PRODS.find(p => p.id === urlProd)) {
     if (ti >= 0 && ti < curProd.types.length) {
       curProd.state.ty = ti;
       curProd.onTypeChange();
+      noTypeSelected = false; // type pre-selected from landing page — go straight to configurator
     }
   }
 }
