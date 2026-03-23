@@ -140,13 +140,13 @@
   <div class="hd-inner">
     <a class="logo" href="index.html">Ben<span>·</span>Studios</a>
     <nav class="hd-nav" id="hd-nav">
-      <a onclick="switchProd('table')">Dining</a>
-      <a onclick="switchProd('coffee-slab')">Coffee</a>
+      <a onclick="switchProd('table')">Table</a>
+      <a onclick="switchProd('coffee-slab')">Slab</a>
+      <a onclick="switchProd('coffee-box')">Box</a>
       <a onclick="switchProd('sidetable')">Side Table</a>
-      <a onclick="switchProd('shelving')">Shelving</a>
-      <a onclick="switchProd('bench')">Bench</a>
-      <a onclick="switchProd('entryshelf')">Accessories</a>
-      <a onclick="switchProd('plans')">Plans</a>
+      <a onclick="switchProd('shelving')">Shelf</a>
+      <a onclick="switchProd('shelf')">Wall Shelving</a>
+      <a onclick="switchProd('bench')">Shoe Bench</a>
     </nav>
   </div>
 </header>
@@ -373,7 +373,7 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'table',
-    name: 'Baltic Birch Dining Table',
+    name: 'Dining Table',
     modelPrefix: 'BS-DT',
     tabLabel: 'Table',
     breadcrumb: 'Tables › Dining',
@@ -439,14 +439,14 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'shelving',
-    name: 'Baltic Birch Shelving System',
+    name: 'Shelf',
     modelPrefix: 'BS-SH',
-    tabLabel: 'Shelving',
+    tabLabel: 'Shelf',
     breadcrumb: 'Shelving › Freestanding',
-    desc: 'Freestanding shelving built from ¾" Baltic birch with steel shelf-pin hardware. Flat-packed with all hardware included — designed for two-person assembly in under an hour.',
+    desc: 'Freestanding shelving built from ¾" Baltic birch. Shelves are dado-routed into the uprights — no exposed hardware, no pins, no brackets. Clean from every angle.',
     features: [
-      '¾" Baltic birch uprights + shelves · void-free',
-      'Matte black steel shelf pins · adjustable in 1¼" increments',
+      '¾" Baltic birch uprights + shelves · void-free B/BB grade',
+      'Dado-routed joinery · shelves sit flush into uprights',
       'Anti-tip wall anchor included',
       '2-coat hand-rubbed oil finish',
       'Made to order in Brooklyn · 4–6 week lead time',
@@ -491,13 +491,7 @@ const PRODS = [
         const y=i*gap+T/2;
         const sg=new THREE.BoxGeometry(shW,T,d.D);
         const sm=new THREE.Mesh(sg, mFlat()); sm.position.set(0,y,0); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
-        // Shelf pins (small metal cylinders at mid-height shelves)
-        if(i>0 && i<d.nShelves-1) {
-          [-1,1].forEach(s => {
-            const pg=new THREE.CylinderGeometry(0.28,0.28,1.4,8);
-            const pm=new THREE.Mesh(pg, mMetal); pm.position.set(s*(d.W/2-T-1), y-T/2-0.7, d.D/2-2); grp.add(pm);
-          });
-        }
+        // Shelves dado-routed into uprights — no visible hardware
       }
       camCt={x:0,y:d.H/2,z:0}; camSc=Math.max(d.W,d.H)*1.4+30;
       document.getElementById('b-dim').textContent=d.dimStr;
@@ -509,9 +503,9 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'coffee-slab',
-    name: 'Slab Coffee Table',
+    name: 'Slab',
     modelPrefix: 'BS-CT',
-    tabLabel: 'Coffee Table',
+    tabLabel: 'Slab',
     breadcrumb: 'Tables › Coffee',
     desc: 'A low, wide coffee table built on the same trestle logic as the dining table — two end panels and a connecting web, all in ¾" Baltic birch. Clean, minimal, and very sturdy.',
     features: [
@@ -572,9 +566,9 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'coffee-box',
-    name: 'Box Coffee Table',
+    name: 'Box',
     modelPrefix: 'BS-CB',
-    tabLabel: 'Box Coffee Table',
+    tabLabel: 'Box',
     breadcrumb: 'Tables › Coffee',
     desc: 'A box-frame coffee table with an open lower shelf — two end panels, a top, a bottom shelf, and a connecting back panel for rigidity. Storage and surface in one clean piece.',
     features: [
@@ -635,7 +629,7 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'sidetable',
-    name: 'Baltic Birch Side Table',
+    name: 'Side Table',
     modelPrefix: 'BS-ST',
     tabLabel: 'Side Table',
     breadcrumb: 'Tables › Side',
@@ -699,41 +693,44 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'shelf',
-    name: 'Floating Wall Box',
-    modelPrefix: 'BS-WB',
-    tabLabel: 'Wall Box',
+    name: 'Wall Shelving',
+    modelPrefix: 'BS-WS',
+    tabLabel: 'Wall Shelving',
     breadcrumb: 'Shelving › Floating',
-    desc: 'A wall-mounted box in ¾" Baltic birch — top, bottom, two sides, and a mid-shelf. Hardware mounts flush inside; nothing visible from the front. Clean enough for any room.',
+    desc: 'A wall-mounted shelf unit in ¾" Baltic birch — top, bottom, two sides, and 1–3 internal shelves. Hardware mounts flush inside; nothing visible from the front. Clean enough for any room.',
     features: [
       '¾" Baltic birch · B/BB grade',
       'Concealed wall-mount cleat — no visible hardware',
-      'One internal shelf, open front',
+      '1–3 internal shelves, open front',
       'Stud-mount hardware included',
       'Made to order · 3–4 week lead time',
     ],
     assembly: [
       'Wall mounting required — drill and level needed',
-      'One person can mount; piece weighs 8–18 lbs',
+      'One person can mount; piece weighs 8–22 lbs',
       'Mount cleat into studs; box slides onto cleat',
       'Follow the included paper template for placement',
     ],
     ship: { badge: 'Free shipping', note: 'Boxed · Contiguous US' },
     ctaLabel: 'Order This Shelf',
-    state: { li:0, di:0 },
+    state: { li:0, di:0, si:0 },
     configs: [
       { label:'Width', key:'li', items:[ {lb:'24"',sub:'small'}, {lb:'36"',sub:'standard'}, {lb:'48"',sub:'wide'} ] },
       { label:'Depth', key:'di', items:[ {lb:'8"',sub:'slim'}, {lb:'10"',sub:'standard'}, {lb:'12"',sub:'deep'} ] },
+      { label:'Shelves', key:'si', items:[ {lb:'1',sub:'one shelf'}, {lb:'2',sub:'two shelves'}, {lb:'3',sub:'three shelves'} ] },
     ],
     getDims(st) {
-      const Ls=[24,36,48], Ds=[8,10,12]; const H=10;
-      const L=Ls[st.li], D=Ds[st.di];
+      const Ls=[24,36,48], Ds=[8,10,12], Ss=[1,2,3];
+      const L=Ls[st.li], D=Ds[st.di], shelves=Ss[st.si||0];
+      const H=10+(shelves-1)*10; // 10", 20", 30"
       const innerL=L-2*T, innerH=H-2*T;
-      return { L, D, H, innerL, innerH, dimStr:`${L}" W × ${D}" D × ${H}" H`, subStr:`${L}" wide · wall-mounted box` };
+      const shelfLabel=shelves===1?'1 shelf':`${shelves} shelves`;
+      return { L, D, H, shelves, innerL, innerH, dimStr:`${L}" W × ${D}" D × ${H}" H`, subStr:`${L}" wide · ${shelfLabel}` };
     },
     price(st) {
       const d=this.getDims(st);
-      const sqIn=2*(d.L*d.D) + 2*(T*d.H*d.D) + d.innerL*d.D;
-      const labor=60+st.li*20;
+      const sqIn=2*(d.L*d.D) + 2*(T*d.H*d.D) + d.shelves*(d.innerL*d.D);
+      const labor=60+st.li*20+(st.si||0)*15;
       return calcRetail(sqIn, labor, 25, 40);
     },
     build(st) {
@@ -755,10 +752,14 @@ const PRODS = [
         const sg=new THREE.BoxGeometry(T,d.innerH,d.D);
         const sm=new THREE.Mesh(sg, mStand()); sm.position.set(s*(d.L/2-T/2),wallY,0); sm.castShadow=true; grp.add(sm); eL(sm,sg);
       });
-      // Mid shelf
-      const mhg=new THREE.BoxGeometry(d.innerL,T,d.D);
-      const mhm=new THREE.Mesh(mhg, mFlat()); mhm.position.set(0,wallY,0); mhm.castShadow=true; grp.add(mhm); eL(mhm,mhg);
-      camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.L,40)*1.7+20;
+      // Internal shelves — evenly distributed
+      const compartH=d.innerH/(d.shelves+1);
+      for(let i=1;i<=d.shelves;i++){
+        const shY=(wallY-d.H/2+T)+compartH*i;
+        const shg=new THREE.BoxGeometry(d.innerL,T,d.D);
+        const shm=new THREE.Mesh(shg, mFlat()); shm.position.set(0,shY,0); shm.castShadow=true; grp.add(shm); eL(shm,shg);
+      }
+      camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.L,d.H,40)*2.0+20;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
   },
@@ -768,9 +769,9 @@ const PRODS = [
   // ─────────────────────────────────────────────────────────────
   {
     id: 'bench',
-    name: 'Plywood Shoe Bench',
+    name: 'Shoe Bench',
     modelPrefix: 'BS-SB',
-    tabLabel: 'Bench',
+    tabLabel: 'Shoe Bench',
     breadcrumb: 'Storage › Entryway',
     desc: 'An entryway bench and shoe rack in one. Solid ¾" Baltic birch throughout — bench seat, end panels, bottom shelf, and optional dividers. Oiled finish stands up to daily use.',
     features: [
@@ -837,343 +838,6 @@ const PRODS = [
     },
   },
 
-  // ─────────────────────────────────────────────────────────────
-  //  8. ENTRYWAY SHELF
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'entryshelf',
-    name: 'Entryway Shelf',
-    modelPrefix: 'BS-ES',
-    tabLabel: 'Shelf',
-    breadcrumb: 'Accessories › Shelf',
-    desc: 'A minimal wall shelf for your entryway — keys, mail, sunglasses. One flat ¾" Baltic birch panel with a back lip to keep things in place. Concealed French cleat mount, nothing visible from the front.',
-    features: [
-      '¾" Baltic birch throughout',
-      'Back lip and side returns keep items from sliding',
-      'Concealed French cleat — no visible wall hardware',
-      'Stud-mount hardware included',
-      'Made to order · 2–3 week lead time',
-    ],
-    assembly: [
-      'Drill into studs for secure mounting',
-      'Use included paper template for hole placement',
-      'One person can install — piece weighs 3–7 lbs',
-    ],
-    ship: { badge: 'Free shipping', note: 'Boxed · Contiguous US' },
-    ctaLabel: 'Order This Shelf',
-    state: { wi: 0 },
-    configs: [
-      { label: 'Width', key: 'wi', items: [ {lb:'18"',sub:'small'}, {lb:'24"',sub:'standard'}, {lb:'36"',sub:'wide'} ] },
-    ],
-    getDims(st) {
-      const Ws = [18, 24, 36]; const W = Ws[st.wi];
-      const D = 6, lip = 1.75;
-      return { W, D, lip, dimStr: `${W}" W × ${D}" D`, subStr: `${W}" wide · 6" deep · wall-mounted` };
-    },
-    price(st) {
-      const d = this.getDims(st);
-      const sqIn = d.W*d.D + d.W*d.lip + 2*(d.D*d.lip);
-      return calcAccessoryRetail(sqIn, 25 + st.wi*10, 8, 18);
-    },
-    build(st) {
-      buildMats();
-      const d = this.getDims(st);
-      const wallY = 46;
-      const wg = new THREE.PlaneGeometry(d.W+20, 22);
-      const wm = new THREE.Mesh(wg, new THREE.MeshStandardMaterial({ color:0xECE8E2, roughness:1 }));
-      wm.position.set(0, wallY+3, -(d.D/2+0.3)); grp.add(wm);
-      // Shelf panel
-      const sg = new THREE.BoxGeometry(d.W, T, d.D);
-      const sm = new THREE.Mesh(sg, mFlat()); sm.position.set(0, wallY, 0); sm.castShadow=true; grp.add(sm); eL(sm, sg);
-      // Back lip
-      const lg = new THREE.BoxGeometry(d.W, d.lip, T);
-      const lm = new THREE.Mesh(lg, [mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
-      lm.position.set(0, wallY+T/2+d.lip/2, -(d.D/2-T/2)); lm.castShadow=true; grp.add(lm); eL(lm, lg);
-      // Side returns
-      [-1,1].forEach(s => {
-        const rg = new THREE.BoxGeometry(T, d.lip, d.D);
-        const rm = new THREE.Mesh(rg, mStand()); rm.position.set(s*(d.W/2-T/2), wallY+T/2+d.lip/2, 0); grp.add(rm); eL(rm, rg);
-      });
-      camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.W,40)*1.5+12;
-      document.getElementById('b-dim').textContent=d.dimStr;
-    },
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  //  9. BOOKENDS
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'bookends',
-    name: 'Baltic Birch Bookends',
-    modelPrefix: 'BS-BE',
-    tabLabel: 'Bookends',
-    breadcrumb: 'Accessories › Bookends',
-    desc: 'Sold as a set of two. Each bookend is an L-shaped piece of ¾" Baltic birch — a vertical plate and a weighted base that slides under your books. Heavy enough to stay put. The exposed edge grain shows all 13 plies.',
-    features: [
-      'Set of 2 · ¾" Baltic birch throughout',
-      'L-shaped: vertical plate + horizontal base',
-      'Exposed plywood edge grain — 13 plies visible',
-      '2-coat hand-rubbed oil finish',
-      'Made to order · 2–3 week lead time',
-    ],
-    assembly: ['No assembly required — ships as two finished pieces.'],
-    ship: { badge: 'Free shipping', note: 'Gift-boxed · Contiguous US' },
-    ctaLabel: 'Order a Set',
-    state: { si: 0 },
-    configs: [
-      { label: 'Size', key: 'si', items: [ {lb:'Small',sub:'5"×5"'}, {lb:'Medium',sub:'7"×7"'}, {lb:'Large',sub:'9"×9"'} ] },
-    ],
-    getDims(st) {
-      const Ss = [5, 7, 9]; const S = Ss[st.si];
-      const base = Math.round(S*0.85);
-      return { S, base, dimStr: `${S}" × ${S}" per bookend · set of 2`, subStr: `Set of 2 · ${S}" tall` };
-    },
-    price(st) {
-      const d = this.getDims(st);
-      const sqIn = 2*(d.S*d.S + d.S*d.base);
-      return calcAccessoryRetail(sqIn, 20+st.si*8, 8, 15);
-    },
-    build(st) {
-      buildMats();
-      const d = this.getDims(st);
-      const gap = d.S*1.4;
-      [-1,1].forEach(s => {
-        const xOff = s*(gap/2+T/2);
-        // Vertical plate
-        const vg = new THREE.BoxGeometry(T, d.S, d.base);
-        const vm = new THREE.Mesh(vg, mStand()); vm.position.set(xOff, d.S/2, 0); vm.castShadow=true; grp.add(vm); eL(vm, vg);
-        // Base plate
-        const bg = new THREE.BoxGeometry(d.base, T, d.base);
-        const bm = new THREE.Mesh(bg, mFlat()); bm.position.set(xOff, T/2, 0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm, bg);
-      });
-      camCt={x:0,y:d.S*0.38,z:0}; camSc=(gap+d.S*2)*1.25+10;
-      document.getElementById('b-dim').textContent=d.dimStr;
-    },
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  //  10. KEY TRAY
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'keytray',
-    name: 'Key Tray',
-    modelPrefix: 'BS-KT',
-    tabLabel: 'Key Tray',
-    breadcrumb: 'Accessories › Tray',
-    desc: 'A catch-all tray cut from ¾" Baltic birch with finger-jointed corners. For keys, cards, coins — whatever lands at your door. Low walls keep things visible; oiled finish wipes clean.',
-    features: [
-      '¾" Baltic birch · B/BB grade',
-      '1½" sides — holds essentials without clutter',
-      'Finger-jointed corners, glued',
-      '2-coat hand-rubbed oil finish',
-      'Made to order · 2–3 week lead time',
-    ],
-    assembly: ['Ships assembled — no assembly needed.'],
-    ship: { badge: 'Free shipping', note: 'Gift-boxed · Contiguous US' },
-    ctaLabel: 'Order This Tray',
-    state: { si: 0 },
-    configs: [
-      { label: 'Size', key: 'si', items: [ {lb:'Small',sub:'8"×5"'}, {lb:'Large',sub:'12"×6"'} ] },
-    ],
-    getDims(st) {
-      const dims=[[8,5],[12,6]]; const [L,W]=dims[st.si]; const wallH=1.5;
-      return { L, W, wallH, dimStr:`${L}" L × ${W}" W × ${wallH}" sides`, subStr:`${L}" long · 1½" walls` };
-    },
-    price(st) {
-      const d=this.getDims(st);
-      const sqIn=d.L*d.W + 2*(d.L*d.wallH) + 2*(d.W*d.wallH);
-      return calcAccessoryRetail(sqIn, 18+st.si*10, 5, 12);
-    },
-    build(st) {
-      buildMats();
-      const d=this.getDims(st);
-      // Base
-      const bg=new THREE.BoxGeometry(d.L,T,d.W);
-      const bm=new THREE.Mesh(bg,mFlat()); bm.position.set(0,T/2,0); bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
-      // Long walls (front/back)
-      [-1,1].forEach(s => {
-        const wg=new THREE.BoxGeometry(d.L,d.wallH,T);
-        const wm=new THREE.Mesh(wg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
-        wm.position.set(0,T+d.wallH/2,s*(d.W/2-T/2)); wm.castShadow=true; grp.add(wm); eL(wm,wg);
-      });
-      // Short walls (sides)
-      [-1,1].forEach(s => {
-        const wg=new THREE.BoxGeometry(T,d.wallH,d.W-2*T);
-        const wm=new THREE.Mesh(wg,mStand()); wm.position.set(s*(d.L/2-T/2),T+d.wallH/2,0); grp.add(wm); eL(wm,wg);
-      });
-      camCt={x:0,y:d.wallH*0.6,z:0}; camSc=Math.max(d.L,d.W)*2.6;
-      document.getElementById('b-dim').textContent=d.dimStr;
-    },
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  //  11. CANDLE HOLDER SET
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'candleholder',
-    name: 'Candle Holder Set',
-    modelPrefix: 'BS-CH',
-    tabLabel: 'Candles',
-    breadcrumb: 'Accessories › Candle Holders',
-    desc: 'Solid Baltic birch blocks at staggered heights, each with a drilled candle well. Beautifully simple — the edge grain on all four sides shows the full plywood stack. Works with tea lights or standard 1⅜" tapers.',
-    features: [
-      'Solid ¾" Baltic birch laminated to thickness',
-      'Drilled candle well — tea light or standard taper',
-      'Staggered heights — arranged as a set',
-      'Edge grain visible on all 4 sides',
-      '2-coat oil finish · Made to order · 2–3 week lead time',
-    ],
-    assembly: ['Ships finished — ready to use.'],
-    ship: { badge: 'Free shipping', note: 'Gift-boxed · Contiguous US' },
-    ctaLabel: 'Order This Set',
-    state: { si: 0 },
-    configs: [
-      { label: 'Set', key: 'si', items: [ {lb:'Set of 2',sub:'2 heights'}, {lb:'Set of 3',sub:'3 heights'} ] },
-    ],
-    getDims(st) {
-      const sets=[ {heights:[3.5,6],base:3}, {heights:[3,5,7.5],base:3} ];
-      const s=sets[st.si];
-      return { heights:s.heights, base:s.base,
-        dimStr:`${s.base}"×${s.base}" base · ${s.heights[0]}"–${s.heights[s.heights.length-1]}" tall`,
-        subStr:`Set of ${s.heights.length} · ${s.base}" base` };
-    },
-    price(st) {
-      const d=this.getDims(st);
-      const sqIn=d.heights.reduce((a,h)=>a+4*(d.base*h)+2*(d.base*d.base),0);
-      return calcAccessoryRetail(sqIn, 25+st.si*15, 10, 15);
-    },
-    build(st) {
-      buildMats();
-      const d=this.getDims(st);
-      const n=d.heights.length;
-      const spacing=d.base*1.6;
-      const totalW=(n-1)*spacing;
-      d.heights.forEach((h,i) => {
-        const xPos=-totalW/2+i*spacing;
-        const bg=new THREE.BoxGeometry(d.base,h,d.base);
-        // Edge grain on sides, face on top/bottom
-        const bm=new THREE.Mesh(bg,[mE.clone(),mE.clone(),mFT.clone(),mF.clone(),mE.clone(),mE.clone()]);
-        bm.position.set(xPos,h/2,0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
-        // Candle well indicator
-        const cg=new THREE.CylinderGeometry(0.5,0.5,0.4,12);
-        const cm=new THREE.Mesh(cg,new THREE.MeshStandardMaterial({color:0x2A1A0A,roughness:0.9,metalness:0}));
-        cm.position.set(xPos,h+0.1,0); grp.add(cm);
-      });
-      const maxH=Math.max(...d.heights);
-      camCt={x:0,y:maxH*0.45,z:0}; camSc=Math.max(totalW+d.base*2,maxH)*2.0+8;
-      document.getElementById('b-dim').textContent=d.dimStr;
-    },
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  //  12. COASTERS
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'coasters',
-    name: 'Baltic Birch Coasters',
-    modelPrefix: 'BS-CO',
-    tabLabel: 'Coasters',
-    breadcrumb: 'Accessories › Coasters',
-    desc: 'Cut from ¾" Baltic birch and oiled on both sides. The edge grain on all four sides shows the full 13-ply stack — a detail that makes the whole set. Comes with a matching plywood holder.',
-    features: [
-      '¾" Baltic birch — 13-ply edge grain on all sides',
-      '3¾" × 3¾" square · fits standard mugs and glasses',
-      'Oiled both sides — water-resistant and easy to wipe',
-      'Includes matching plywood holder',
-      'Made to order · 2–3 week lead time',
-    ],
-    assembly: ['Ships as a complete set — no assembly needed.'],
-    ship: { badge: 'Free shipping', note: 'Gift-boxed · Contiguous US' },
-    ctaLabel: 'Order This Set',
-    state: { si: 0 },
-    configs: [
-      { label: 'Set', key: 'si', items: [ {lb:'Set of 4',sub:'with holder'}, {lb:'Set of 6',sub:'with holder'} ] },
-    ],
-    getDims(st) {
-      const counts=[4,6]; const n=counts[st.si]; const size=3.75;
-      return { n, size, dimStr:`${size}" × ${size}" · set of ${n}`, subStr:`Set of ${n} · ${size}" square` };
-    },
-    price(st) {
-      const d=this.getDims(st);
-      const sqInEach=2*(d.size*d.size)+4*(d.size*T);
-      return calcAccessoryRetail(sqInEach*d.n+20, 18+st.si*5, 6, 12);
-    },
-    build(st) {
-      buildMats();
-      const d=this.getDims(st);
-      const spread=1.3, totalW=(d.n-1)*spread;
-      for(let i=0;i<d.n;i++) {
-        const xPos=-totalW/2+i*spread;
-        const cg=new THREE.BoxGeometry(d.size,T,d.size);
-        const cm=new THREE.Mesh(cg,mFlat()); cm.position.set(xPos,T/2+i*0.08,-i*0.25); cm.castShadow=cm.receiveShadow=true; grp.add(cm); eL(cm,cg);
-      }
-      // Holder at right
-      const hx=totalW/2+d.size*0.85, hw=d.size+0.4, hh=T+d.n*0.08+1.0, hd=d.size+0.4;
-      [-1,1].forEach(s => {
-        const hg=new THREE.BoxGeometry(T,hh,hd);
-        const hm=new THREE.Mesh(hg,mStand()); hm.position.set(hx+s*(hw/2-T/2),hh/2,0); grp.add(hm); eL(hm,hg);
-      });
-      const hbg=new THREE.BoxGeometry(hw,T,hd);
-      const hbm=new THREE.Mesh(hbg,mFlat()); hbm.position.set(hx,T/2,0); grp.add(hbm); eL(hbm,hbg);
-      camCt={x:(hx)/2,y:T*2,z:0}; camSc=(totalW+d.size*4)*2.2;
-      document.getElementById('b-dim').textContent=d.dimStr;
-    },
-  },
-
-  // ─────────────────────────────────────────────────────────────
-  //  13. CUTLIST PLANS — DIGITAL DOWNLOAD
-  // ─────────────────────────────────────────────────────────────
-  {
-    id: 'plans',
-    name: 'Cutlist Plans — PDF',
-    modelPrefix: 'BS-PL',
-    tabLabel: 'Plans',
-    breadcrumb: 'Digital › Cut Plans',
-    isDigital: true,
-    desc: 'A complete PDF cutlist for any Ben Studios piece — every part labeled with exact dimensions, grain direction, and edge treatment. Includes material takeoff, fastener list, and assembly sequence. Cut it yourself or hand it to any local shop.',
-    features: [
-      'Complete part list with exact cut dimensions',
-      'Grain direction and edge treatment noted per part',
-      'Material takeoff — exact sheet count with cut optimization',
-      'Step-by-step assembly sequence with diagrams',
-      'Available for any piece in the Ben Studios collection',
-      'PDF delivered by email within 24 hours',
-    ],
-    assembly: ['Digital download — no physical product. PDF by email within 24 hours of order.'],
-    ship: { badge: 'Digital delivery', note: 'PDF by email · within 24 hours' },
-    ctaLabel: 'Purchase Plans — $40',
-    state: { pi: 0 },
-    configs: [
-      { label: 'Product', key: 'pi', items: [
-        {lb:'Dining Table',sub:'BS-DT'}, {lb:'Coffee Table',sub:'BS-CT'},
-        {lb:'Shelving',sub:'BS-SH'}, {lb:'Side Table',sub:'BS-ST'},
-        {lb:'Wall Box',sub:'BS-WB'}, {lb:'Shoe Bench',sub:'BS-SB'},
-      ]},
-    ],
-    getDims(st) {
-      const names=['Dining Table','Coffee Table','Shelving System','Side Table','Floating Wall Box','Shoe Bench'];
-      return { dimStr:`PDF · ${names[st.pi]} Plans`, subStr:'Complete cutlist · all parts labeled' };
-    },
-    price(st) { return { retail: 40 }; },
-    build(st) {
-      buildMats();
-      // Stylized plywood sheet with red cut lines — represents a cutlist
-      const shW=48, shD=96, shH=T*4;
-      const sg=new THREE.BoxGeometry(shW,shH,shD);
-      const sm=new THREE.Mesh(sg,mFlat()); sm.position.set(0,shH/2,0); grp.add(sm); eL(sm,sg);
-      const lineMat=new THREE.LineBasicMaterial({color:0xD4001A,transparent:true,opacity:0.7});
-      [8,16,24,32,40].forEach(x => {
-        const pts=[new THREE.Vector3(x-shW/2,shH+0.1,-shD/2),new THREE.Vector3(x-shW/2,shH+0.1,shD/2)];
-        grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat.clone()));
-      });
-      [16,32,48,64,80].forEach(z => {
-        const pts=[new THREE.Vector3(-shW/2,shH+0.1,z-shD/2),new THREE.Vector3(shW/2,shH+0.1,z-shD/2)];
-        grp.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat.clone()));
-      });
-      camCt={x:0,y:shH*1.5,z:0}; camSc=Math.max(shW,shD)*0.88;
-      document.getElementById('b-dim').textContent='PDF Cutlist Plans · $40';
-    },
-  },
 
 ]; // end PRODS
 
@@ -1226,23 +890,16 @@ function renderPanel() {
   const p=curProd, st=p.state;
   const dims=p.getDims(st);
   const pr=p.price(st);
-  const totalRetail = p.isDigital ? pr.retail : pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
+  const totalRetail = pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
   const edNo=editionNum(st);
   let html='';
 
   html += `<div class="breadcrumb">Home <span>›</span> ${p.breadcrumb}</div>`;
   html += `<h1 class="pd-name">${p.name}</h1>`;
-  if (p.isDigital) {
-    html += `<div class="edition-row">
-      <span class="edition-badge">${p.modelPrefix} · Digital Download</span>
-      <span class="edition-no">Instant plans, build it yourself</span>
-    </div>`;
-  } else {
-    html += `<div class="edition-row">
-      <span class="edition-badge">${p.modelPrefix} · No.&nbsp;${edNo} / 100</span>
-      <span class="edition-no">Limited Edition</span>
-    </div>`;
-  }
+  html += `<div class="edition-row">
+    <span class="edition-badge">${p.modelPrefix} · No.&nbsp;${edNo} / 100</span>
+    <span class="edition-no">Limited Edition</span>
+  </div>`;
   html += `<div class="pd-price">$${totalRetail.toLocaleString()}</div>`;
   html += `<div class="pd-sub">${dims.subStr}</div>`;
   html += `<div class="pd-dim-badge">${dims.dimStr}</div>`;
@@ -1258,19 +915,22 @@ function renderPanel() {
     html += `</div></div>`;
   });
 
-  // Finish / edge banding — physical products only
-  if (!p.isDigital) {
-    const ebOn = finishState === 'edgeband';
-    const ebUpcharge = 120;
-    html += `<div class="cfg-grp">
-      <div class="cfg-lbl">Finish <span class="cfg-val">— ${ebOn ? 'Oiled + Edge Band' : 'Oiled'}</span></div>
-      <div class="pills">
-        <button class="pill${!ebOn?' on':''}" onclick="setFinish('oiled')">Oiled<span class="pill-sub">standard</span></button>
-        <button class="pill${ebOn?' on':''}" onclick="setFinish('edgeband')">Edge Banded<span class="pill-sub">+$${ebUpcharge}</span></button>
-      </div>
-      <div style="font-size:10px;color:#AAA;margin-top:8px;line-height:1.6;">Edge banding covers all exposed plywood edges with a solid maple strip — cleaner look, hides the layers.</div>
-    </div>`;
-  }
+  // Finish / edge banding
+  const ebOn = finishState === 'edgeband';
+  const ebUpcharge = 120;
+  html += `<div class="cfg-grp">
+    <div class="cfg-lbl">Finish</div>
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border:1.5px solid var(--blk);background:var(--off);margin-bottom:6px;">
+      <span style="font-size:11px;font-weight:600;letter-spacing:0.02em;">Oiled</span>
+      <span style="font-size:9px;color:#AAA;text-transform:uppercase;letter-spacing:0.08em;">standard · all pieces</span>
+    </div>
+    <label style="display:flex;align-items:center;gap:10px;padding:9px 14px;border:1.5px solid ${ebOn?'var(--blk)':'var(--lt)'};background:${ebOn?'var(--blk)':'var(--wht)'};color:${ebOn?'var(--wht)':'#555'};cursor:pointer;transition:all 0.1s;user-select:none;">
+      <input type="checkbox" ${ebOn?'checked':''} onchange="setFinish(this.checked?'edgeband':'oiled')" style="width:13px;height:13px;cursor:pointer;accent-color:${ebOn?'#fff':'var(--blk)'};">
+      <span style="font-size:11px;font-weight:500;">+ Edge Band</span>
+      <span style="font-size:10px;${ebOn?'color:rgba(255,255,255,0.5)':'color:#AAA'};margin-left:auto;">+$${ebUpcharge}</span>
+    </label>
+    <div style="font-size:10px;color:#AAA;margin-top:8px;line-height:1.6;">Solid maple strip covers all exposed plywood edges — cleaner look, hides the layers.</div>
+  </div>`;
 
   html += `<div class="pd-rule"></div>`;
 
@@ -1288,10 +948,8 @@ function renderPanel() {
   // Shipping row + CTA
   html += `<div class="ship-row"><span class="ship-badge">${p.ship.badge}</span><span class="ship-note">${p.ship.note}</span></div>`;
   html += `<button class="btn-cart" onclick="openQ()">${p.ctaLabel}</button>`;
-  if (!p.isDigital) {
-    html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Sample Cutlist</button>`;
-  }
-  html += `<div class="pd-trust">${p.isDigital ? 'PDF delivered within 24 hours · full money-back guarantee' : 'Handcrafted in Brooklyn, NY<br>30-day satisfaction guarantee · Made to order'}</div>`;
+  html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Cutlist</button>`;
+  html += `<div class="pd-trust">Handcrafted in Brooklyn, NY<br>30-day satisfaction guarantee · Made to order</div>`;
 
   document.getElementById('pd-content').innerHTML = html;
 }
@@ -1355,20 +1013,14 @@ function downloadCSV() {
 function openQ() {
   const p=curProd, d=p.getDims(p.state), pr=p.price(p.state);
   const edNo=editionNum(p.state);
-  const totalRetail = p.isDigital ? pr.retail : pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
-  let specHtml;
-  if (p.isDigital) {
-    specHtml = `<strong>${p.name}</strong><br>${d.subStr}<br>${p.modelPrefix} · Digital PDF<br><br>`+
-      `<strong style="font-size:18px">$${totalRetail}</strong>`+
-      `<span style="font-size:10px;color:#999;margin-left:8px">delivered by email within 24 hrs</span>`;
-  } else {
-    const finishLabel = finishState==='edgeband' ? 'Oiled + Edge Band' : 'Oiled';
-    specHtml = `<strong>${p.name}</strong><br>${d.dimStr}<br>`+
-      `${p.modelPrefix} · No. ${edNo} / 100 · ${finishLabel}<br><br>`+
-      `<strong style="font-size:18px">$${totalRetail.toLocaleString()}</strong>`+
-      `<span style="font-size:10px;color:#999;margin-left:8px">incl. shipping</span>`;
-  }
-  document.getElementById('m-spec').innerHTML = specHtml;
+  const finishLabel = finishState==='edgeband' ? 'Oiled + Edge Band' : 'Oiled';
+  const totalRetail = pr.retail + (finishState==='edgeband' ? EB_UPCHARGE : 0);
+  document.getElementById('m-spec').innerHTML=
+    `<strong>${p.name}</strong><br>`+
+    `${d.dimStr}<br>`+
+    `${p.modelPrefix} · No. ${edNo} / 100 · ${finishLabel}<br><br>`+
+    `<strong style="font-size:18px">$${totalRetail.toLocaleString()}</strong>`+
+    `<span style="font-size:10px;color:#999;margin-left:8px">incl. shipping</span>`;
   document.getElementById('modal').style.display='flex';
 }
 function closeQ() { document.getElementById('modal').style.display='none'; }

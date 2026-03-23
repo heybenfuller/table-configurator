@@ -76,7 +76,7 @@
 
     /* thumbnail area */
     .card-img {
-      width: 100%; aspect-ratio: 1/1;
+      width: 100%; aspect-ratio: 3/2;
       background: var(--off);
       display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden;
@@ -161,30 +161,30 @@
 <!-- Hero -->
 <section class="hero">
   <div class="hero-left">
-    <div class="hero-kicker">Made to Order · Brooklyn, NY</div>
-    <h1 class="hero-h">Baltic birch,<br>built to last.</h1>
-    <p class="hero-sub">Every piece is cut and assembled by hand from void-free Baltic birch plywood. No shortcuts, no particle board. Configure your dimensions, order direct.</p>
-    <a class="hero-cta" href="#products">Browse the collection ↓</a>
+    <div class="hero-kicker">Designed + built in Brooklyn</div>
+    <h1 class="hero-h">One material.<br>All the way through.</h1>
+    <p class="hero-sub">Baltic birch plywood, ¾" thick, B/BB grade. We don't hide the edges — the edges are the point. Configure your dimensions and order direct.</p>
+    <a class="hero-cta" href="#products">Shop the collection ↓</a>
   </div>
   <div class="hero-right">
     <div class="hero-stat">
-      <div class="hero-stat-n">¾"</div>
-      <div class="hero-stat-l">B/BB grade · void-free core</div>
+      <div class="hero-stat-n">13</div>
+      <div class="hero-stat-l">plies per sheet — all visible on every edge</div>
+    </div>
+    <div class="hero-rule"></div>
+    <div class="hero-stat">
+      <div class="hero-stat-n">1</div>
+      <div class="hero-stat-l">material used — Baltic birch, nothing else</div>
     </div>
     <div class="hero-rule"></div>
     <div class="hero-stat">
       <div class="hero-stat-n">100</div>
-      <div class="hero-stat-l">Units per edition · limited run</div>
+      <div class="hero-stat-l">pieces per edition — limited, numbered, yours</div>
     </div>
     <div class="hero-rule"></div>
     <div class="hero-stat">
-      <div class="hero-stat-n">2–7 wk</div>
-      <div class="hero-stat-l">Lead time · ships fully assembled</div>
-    </div>
-    <div class="hero-rule"></div>
-    <div class="hero-stat">
-      <div class="hero-stat-n">100%</div>
-      <div class="hero-stat-l">Oiled finish · food-safe when cured</div>
+      <div class="hero-stat-n">0</div>
+      <div class="hero-stat-l">veneers, fillers, or particle board</div>
     </div>
   </div>
 </section>
@@ -242,17 +242,12 @@ function calcRetail(sqIn, labor, oilCost, shipCost) {
   const cost = mat + labor + oilCost + shipCost;
   return Math.ceil(cost / (1 - MARGIN) / 10) * 10;
 }
-function calcAccessoryRetail(sqIn, labor, oilCost, shipCost) {
-  const mat = sqIn * (SPR * WASTE / SHEET);
-  const cost = mat + labor + oilCost + shipCost;
-  return Math.ceil(cost / (1 - MARGIN) / 5) * 5;
-}
 
 const CATALOG = [
   {
     id: 'table',
     cat: 'Dining',
-    name: 'Baltic Birch Dining Table',
+    name: 'Dining Table',
     desc: 'Trestle base, configurable length and height. Seats 4 to 8.',
     fromPrice: calcRetail(
       48*30 + 2*(22*29.25) + 26.5*29.25,
@@ -263,7 +258,7 @@ const CATALOG = [
   {
     id: 'coffee-slab',
     cat: 'Coffee Table',
-    name: 'Slab Coffee Table',
+    name: 'Slab',
     desc: 'Low trestle form, 16" height. Clean and minimal.',
     fromPrice: calcRetail(
       40*20 + 2*(14*15.25) + 22.5*15.25,
@@ -274,7 +269,7 @@ const CATALOG = [
   {
     id: 'coffee-box',
     cat: 'Coffee Table',
-    name: 'Box Coffee Table',
+    name: 'Box',
     desc: 'Open box frame with lower shelf. Open both sides.',
     fromPrice: calcRetail(
       2*(40*20) + 2*(T*14.5*20) + 38.5*20,
@@ -285,7 +280,7 @@ const CATALOG = [
   {
     id: 'sidetable',
     cat: 'Side Table',
-    name: 'Baltic Birch Side Table',
+    name: 'Side Table',
     desc: 'Box construction with internal shelf. Three sizes.',
     fromPrice: calcRetail(
       2*(14*14) + 2*(T*20.5*14) + 12.5*12.5,
@@ -296,7 +291,7 @@ const CATALOG = [
   {
     id: 'shelving',
     cat: 'Shelving',
-    name: 'Freestanding Shelving System',
+    name: 'Shelf',
     desc: '4–6 shelves, adjustable steel pins, anti-tip anchor.',
     fromPrice: calcRetail(
       2*(T*56*10) + 4*(22.5*10),
@@ -307,8 +302,8 @@ const CATALOG = [
   {
     id: 'shelf',
     cat: 'Wall Shelf',
-    name: 'Floating Wall Box',
-    desc: 'Wall-mounted box with internal shelf. No visible hardware.',
+    name: 'Wall Shelving',
+    desc: 'Wall-mounted shelf unit, 1–3 shelves. No visible hardware.',
     fromPrice: calcRetail(
       2*(24*8) + 2*(T*8.5*8) + 22.5*8,
       60, 25, 40
@@ -318,7 +313,7 @@ const CATALOG = [
   {
     id: 'bench',
     cat: 'Bench',
-    name: 'Plywood Shoe Bench',
+    name: 'Shoe Bench',
     desc: 'Entryway bench with shoe storage below. Up to 4 bays.',
     fromPrice: calcRetail(
       24*12 + 2*(T*18*12) + 22.5*12,
@@ -326,55 +321,7 @@ const CATALOG = [
     ),
     camAngle: { th: 0.6, ph: 0.28, scale: 2.8 },
   },
-  {
-    id: 'entryshelf',
-    cat: 'Accessories',
-    name: 'Entryway Shelf',
-    desc: 'Wall-mounted shelf with back lip and side returns. Keys, mail, sunglasses.',
-    fromPrice: calcAccessoryRetail(18*6 + 18*1.75 + 2*(6*1.75), 25, 8, 18),
-    camAngle: { th: 0.55, ph: 0.32, scale: 1.6 },
-  },
-  {
-    id: 'bookends',
-    cat: 'Accessories',
-    name: 'Baltic Birch Bookends',
-    desc: 'Set of 2 L-shaped bookends. Solid ¾" plywood with exposed edge grain.',
-    fromPrice: calcAccessoryRetail(2*(5*5 + 5*4), 20, 8, 15),
-    camAngle: { th: 0.55, ph: 0.30, scale: 1.4 },
-  },
-  {
-    id: 'keytray',
-    cat: 'Accessories',
-    name: 'Key Tray',
-    desc: 'Catch-all tray with finger-jointed corners. 1½" walls, oiled finish.',
-    fromPrice: calcAccessoryRetail(8*5 + 2*(8*1.5) + 2*(5*1.5), 18, 5, 12),
-    camAngle: { th: 0.55, ph: 0.42, scale: 2.8 },
-  },
-  {
-    id: 'candleholder',
-    cat: 'Accessories',
-    name: 'Candle Holder Set',
-    desc: 'Staggered birch blocks with drilled candle wells. Set of 2 or 3.',
-    fromPrice: calcAccessoryRetail(4*(3*3.5)+2*(3*3) + 4*(3*6)+2*(3*3), 25, 10, 15),
-    camAngle: { th: 0.55, ph: 0.32, scale: 2.2 },
-  },
-  {
-    id: 'coasters',
-    cat: 'Accessories',
-    name: 'Baltic Birch Coasters',
-    desc: 'Set of 4 or 6 with matching plywood holder. 13-ply edge grain on all sides.',
-    fromPrice: calcAccessoryRetail(4*(2*(3.75*3.75)+4*(3.75*T)) + 20, 18, 6, 12),
-    camAngle: { th: 0.55, ph: 0.38, scale: 2.5 },
-  },
-  {
-    id: 'plans',
-    cat: 'Digital',
-    name: 'Cutlist Plans — PDF',
-    desc: 'Complete cut plans for any Ben Studios piece. Cut it yourself or take to a shop.',
-    fromPrice: 40,
-    isDigital: true,
-    camAngle: { th: 0.55, ph: 0.38, scale: 1.0 },
-  },
+
 ];
 
 // ═══════════════════════════════════════════════════════════════
@@ -397,8 +344,8 @@ CATALOG.forEach(prod => {
       <div class="card-name">${prod.name}</div>
       <div class="card-desc">${prod.desc}</div>
       <div class="card-footer">
-        <div class="card-price">$${prod.fromPrice.toLocaleString()}<span>${prod.isDigital ? 'pdf download' : 'from · oiled'}</span></div>
-        <div class="card-arrow">${prod.isDigital ? 'View →' : 'Configure →'}</div>
+        <div class="card-price">from $${prod.fromPrice.toLocaleString()}<span>oiled</span></div>
+        <div class="card-arrow">Configure →</div>
       </div>
     </div>
   `;
