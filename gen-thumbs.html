@@ -141,11 +141,12 @@ const PRODUCTS = [
     id: 'coffee-box', label: 'Box Coffee Table',
     build() {
       const L=48, W=24, H=16, innerL=L-2*T, innerH=H-2*T, shelfY=4;
-      const mk=(g,y,cast=false)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,0);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
-      const tg=new THREE.BoxGeometry(L,T,W); mk(tg,H-T/2,true);
-      const bg=new THREE.BoxGeometry(L,T,W); mk(bg,T/2);
+      const mk=(g,y,cast=false,zOff=0)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,zOff);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
+      // Top with 1" front overhang
+      mk(new THREE.BoxGeometry(L,T,W+1), H-T/2, true, 0.5);
+      mk(new THREE.BoxGeometry(L,T,W), T/2);
       [-1,1].forEach(s=>{const eg=new THREE.BoxGeometry(T,innerH,W);const em=new THREE.Mesh(eg,mStand());em.position.set(s*(L/2-T/2),T+innerH/2,0);em.castShadow=true;grp.add(em);eL(em,eg);});
-      const sg=new THREE.BoxGeometry(innerL,T,W); mk(sg,shelfY,true);
+      mk(new THREE.BoxGeometry(innerL,T,W), shelfY, true);
       return { cx:0, cy:H*0.45, cz:0, sc:Math.max(L,W)*2.7 };
     }
   },
@@ -153,8 +154,9 @@ const PRODUCTS = [
     id: 'sidetable', label: 'Side Table',
     build() {
       const L=18, W=18, H=24, innerH=H-2*T, shelfY=Math.round(H*0.45), iW=L-2*T;
-      const mk=(g,y,cast=false)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,0);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
-      mk(new THREE.BoxGeometry(L,T,W), H-T/2, true);
+      const mk=(g,y,cast=false,zOff=0)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,zOff);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
+      // Top with 1" front overhang
+      mk(new THREE.BoxGeometry(L,T,W+1), H-T/2, true, 0.5);
       mk(new THREE.BoxGeometry(L,T,W), T/2);
       [-1,1].forEach(s=>{const sg=new THREE.BoxGeometry(T,innerH,W);const sm=new THREE.Mesh(sg,mStand());sm.position.set(s*(L/2-T/2),T+innerH/2,0);sm.castShadow=true;grp.add(sm);eL(sm,sg);});
       mk(new THREE.BoxGeometry(iW,T,W), shelfY);
@@ -167,14 +169,16 @@ const PRODUCTS = [
       const W=36, H=70, D=12, nShelves=5, gap=(H-T)/(nShelves-1), shW=W-2*T;
       [-1,1].forEach(s=>{const ug=new THREE.BoxGeometry(T,H,D);const um=new THREE.Mesh(ug,mStand());um.position.set(s*(W/2-T/2),H/2,0);um.castShadow=true;grp.add(um);eL(um,ug);});
       for(let i=0;i<nShelves;i++){const y=i*gap+T/2;const sg=new THREE.BoxGeometry(shW,T,D);const sm=new THREE.Mesh(sg,mFlat());sm.position.set(0,y,0);sm.castShadow=true;grp.add(sm);eL(sm,sg);}
+      // Top cap — sits on uprights, 1" front overhang
+      const cg=new THREE.BoxGeometry(W,T,D+1);const cm=new THREE.Mesh(cg,mFlat());cm.position.set(0,H+T/2,0.5);cm.castShadow=true;grp.add(cm);eL(cm,cg);
       return { cx:0, cy:H*0.45, cz:0, sc:Math.max(W,H)*2.2 };
     }
   },
   {
     id: 'shelf', label: 'Wall Shelving',
     build() {
-      // Show 2-shelf version as thumbnail (H=20")
-      const L=36, D=10, H=20, shelves=2, innerL=L-2*T, innerH=H-2*T;
+      // Show 2-shelf version as thumbnail (H=20", D=12" standard)
+      const L=36, D=12, H=20, shelves=2, innerL=L-2*T, innerH=H-2*T;
       const mk=(g,y,mats=null)=>{const m=new THREE.Mesh(g,mats||mFlat());m.position.set(0,y,0);grp.add(m);eL(m,g);};
       mk(new THREE.BoxGeometry(L,T,D), H/2-T/2);
       mk(new THREE.BoxGeometry(L,T,D), -H/2+T/2);
@@ -193,8 +197,9 @@ const PRODUCTS = [
     id: 'bench', label: 'Shoe Bench',
     build() {
       const W=36, H=18, D=12, shelfY=7, innerW=W-2*T, divCt=2;
-      const mk=(g,y,cast=false)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,0);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
-      mk(new THREE.BoxGeometry(W,T,D), H-T/2, true);
+      const mk=(g,y,cast=false,zOff=0)=>{const m=new THREE.Mesh(g,mFlat());m.position.set(0,y,zOff);if(cast)m.castShadow=true;grp.add(m);eL(m,g);};
+      // Seat with 1" front overhang
+      mk(new THREE.BoxGeometry(W,T,D+1), H-T/2, true, 0.5);
       [-1,1].forEach(s=>{const eg=new THREE.BoxGeometry(T,H,D);const em=new THREE.Mesh(eg,mStand());em.position.set(s*(W/2-T/2),H/2,0);em.castShadow=true;grp.add(em);eL(em,eg);});
       mk(new THREE.BoxGeometry(innerW,T,D), shelfY, true);
       const divH=H-T-shelfY-T, step=innerW/(divCt+1);

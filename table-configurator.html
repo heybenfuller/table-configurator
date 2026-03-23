@@ -472,37 +472,38 @@ const PRODS = [
     modelPrefix: 'BS-SH',
     tabLabel: 'Shelf',
     breadcrumb: 'Shelving › Freestanding',
-    desc: 'Freestanding shelving built from ¾" Baltic birch. Shelves are dado-routed into the uprights — no exposed hardware, no pins, no brackets. Clean from every angle.',
+    desc: 'Freestanding shelving built from ¾" Baltic birch. Shelves dado-routed into the uprights, a top cap closing the case — no exposed hardware, no pins, no brackets. The cap overhangs 1" past the front face, tying it to the rest of the line. Clean from every angle.',
     features: [
-      '¾" Baltic birch uprights + shelves · void-free B/BB grade',
-      'Dado-routed joinery · shelves sit flush into uprights',
+      '¾" Baltic birch uprights + shelves + top cap · void-free B/BB grade',
+      'Top cap overhangs 1" — shadow line that unifies with the full collection',
+      'Dado-routed joinery · shelves sit flush into uprights — no glue',
       'Anti-tip wall anchor included',
       '2-coat hand-rubbed oil finish',
       'Made to order in Brooklyn · 4–6 week lead time',
     ],
     assembly: [
-      'Ships flat-packed — uprights, shelves, and hardware bag',
+      'Ships flat-packed — uprights, shelves, top cap, and hardware bag',
       'One or two people · ~30 min · drill + #2 square-head bit',
-      'All holes pre-drilled by CNC — tap shelves into dados, drive face screws',
+      'All holes pre-drilled by CNC — tap shelves into dados, drive face screws, set cap',
       'Anti-tip strap to wall stud strongly recommended — included',
     ],
     ship: { badge: 'Free shipping', note: 'Flat-packed · Contiguous US' },
     ctaLabel: 'Order This Unit',
-    state: { wi:0, hi:0, di:0 },
+    state: { wi:0, hi:0 },
     configs: [
       { label:'Width',  key:'wi', items:[ {lb:'24"',sub:'narrow'}, {lb:'36"',sub:'standard'}, {lb:'48"',sub:'wide'} ] },
-      { label:'Shelves',key:'hi', items:[ {lb:'4 Shelves',sub:'56" tall'}, {lb:'5 Shelves',sub:'70" tall'}, {lb:'6 Shelves',sub:'84" tall'} ] },
-      { label:'Depth',  key:'di', items:[ {lb:'10"',sub:'books'}, {lb:'12"',sub:'standard'}, {lb:'16"',sub:'deep'} ] },
+      { label:'Shelves',key:'hi', items:[ {lb:'4 Shelves',sub:'56¾" tall'}, {lb:'5 Shelves',sub:'70¾" tall'}, {lb:'6 Shelves',sub:'84¾" tall'} ] },
     ],
     getDims(st) {
-      const Ws=[24,36,48], Hs=[56,70,84], Ns=[4,5,6], Ds=[10,12,16];
-      const W=Ws[st.wi], H=Hs[st.hi], nShelves=Ns[st.hi], D=Ds[st.di];
-      return { W, H, D, nShelves, dimStr:`${W}" W × ${D}" D × ${H}" H`, subStr:`${nShelves} shelves · ${W}" wide` };
+      const Ws=[24,36,48], Hs=[56,70,84], Ns=[4,5,6]; const D=12;
+      const W=Ws[st.wi], H=Hs[st.hi], nShelves=Ns[st.hi];
+      const totalH=H+T; // uprights H + top cap T
+      return { W, H, D, nShelves, totalH, dimStr:`${W}" W × ${D}" D × ${+(totalH).toFixed(2)}" H`, subStr:`${nShelves} shelves · ${W}" wide` };
     },
     price(st) {
       const d=this.getDims(st);
-      const sqIn=2*(d.H*d.D) + d.nShelves*(d.W-2*T)*d.D;
-      const labor=120 + st.wi*40 + st.hi*20;
+      const sqIn=2*(d.H*d.D) + d.nShelves*(d.W-2*T)*d.D + d.W*(d.D+1); // uprights + shelves + top cap (with overhang)
+      const labor=130 + st.wi*40 + st.hi*20;
       return calcRetail(sqIn, labor, 45, 95);
     },
     build(st) {
@@ -520,8 +521,10 @@ const PRODS = [
         const y=i*gap+T/2;
         const sg=new THREE.BoxGeometry(shW,T,d.D);
         const sm=new THREE.Mesh(sg, mFlat()); sm.position.set(0,y,0); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
-        // Shelves dado-routed into uprights — no visible hardware
       }
+      // Top cap — sits on uprights, 1" front overhang
+      const cg=new THREE.BoxGeometry(d.W,T,d.D+1);
+      const cm=new THREE.Mesh(cg, mFlat()); cm.position.set(0,d.H+T/2,0.5); cm.castShadow=true; grp.add(cm); eL(cm,cg);
       camCt={x:0,y:d.H/2,z:0}; camSc=Math.max(d.W,d.H)*1.4+30;
       document.getElementById('b-dim').textContent=d.dimStr;
     },
@@ -532,23 +535,27 @@ const PRODS = [
       const shW=+(d.W-2*T).toFixed(3);
       return {
         parts:[
-          {name:'Upright', qty:2,          L:d.H,  W:d.D,  notes:d.nShelves+' dadoes at: '+dadoList+' from bottom; locking pilot holes through outer face at each dado centre'},
-          {name:'Shelf',   qty:d.nShelves, L:shW,  W:d.D,  notes:'Face grain up; fits into dado \u2014 no glue'},
+          {name:'Upright',  qty:2,          L:d.H,    W:d.D,    notes:d.nShelves+' dadoes at: '+dadoList+' from bottom; locking pilot holes on outer face at each dado centre; pocket holes on top edge'},
+          {name:'Shelf',    qty:d.nShelves, L:shW,    W:d.D,    notes:'Face grain up; fits into dado \u2014 no glue'},
+          {name:'Top Cap',  qty:1,          L:d.W,    W:d.D+1,  notes:'1" front overhang (shift 0.5" fwd); pocket holes on underside near each end \u2014 screws into upright top edges'},
         ],
         cncOps:[
-          {part:'L + R Upright \u2014 inner face', op:'Dado (\u00d7'+d.nShelves+' each)', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.D+'"), at: '+dadoList+' from bottom edge. No glue.'},
-          {part:'L + R Upright \u2014 outer face', op:'Countersunk pilot (\u00d7'+d.nShelves+' each)', spec:'At each dado centre: #10 pilot through outer face \u2014 locking screw drives into shelf end grain'},
+          {part:'L + R Upright \u2014 inner face', op:'Dado (\u00d7'+d.nShelves+' each)', spec:'\u00beW \u00d7 \u215e" deep, full depth ('+d.D+'"), at: '+dadoList+' from bottom. No glue.'},
+          {part:'L + R Upright \u2014 outer face', op:'Countersunk pilot (\u00d7'+d.nShelves+' each)', spec:'At each dado centre: #10 pilot \u2014 locking screw into shelf end grain'},
+          {part:'Top Cap \u2014 underside', op:'Pocket holes \u00d72 per end', spec:'15\u00b0 angled bore near each end \u2014 screw into top edge of each upright'},
         ],
         hardware:[
-          {item:'Flat-head screw #8 \u00d7 1\u00bc" coarse', qty:d.nShelves*4, notes:'2 per shelf per upright \u2014 pre-drilled, customer drives from outer face'},
-          {item:'Anti-tip strap + #8 \u00d7 2\u00bd" wall screw', qty:1, notes:'Anchor to wall stud'},
+          {item:'Flat-head screw #8 \u00d7 1\u00bc" coarse', qty:d.nShelves*4, notes:'2 per shelf per upright \u2014 from outer face'},
+          {item:'Pocket screw #8 \u00d7 1\u00bc" coarse',    qty:4,            notes:'2 per end \u2014 top cap to upright top edges'},
+          {item:'Anti-tip strap + #8 \u00d7 2\u00bd" wall screw', qty:1,       notes:'Anchor to wall stud'},
         ],
         assembly:[
           '1. Lay one upright flat, dado side up',
           '2. Tap all '+d.nShelves+' shelves into dados (rubber mallet if needed)',
           '3. Drive '+d.nShelves*2+' locking screws from outer face into shelf end grain',
           '4. Stand unit; bring second upright over, tap shelves in, drive '+d.nShelves*2+' screws',
-          '5. Stand fully upright; attach anti-tip strap to wall stud',
+          '5. Set top cap on uprights (1" overhang at front); drive 4 pocket screws from underside into upright top edges',
+          '6. Stand fully upright; attach anti-tip strap to wall stud',
         ]
       };
     },
@@ -653,9 +660,10 @@ const PRODS = [
     modelPrefix: 'BS-CB',
     tabLabel: 'Box',
     breadcrumb: 'Tables › Coffee',
-    desc: 'A box-frame coffee table with an open lower shelf — top, bottom, two end panels, and a dado-jointed shelf, all in ¾" Baltic birch. Pocket-screwed corners, no glue. Ships flat.',
+    desc: 'A box-frame coffee table with an open lower shelf — top, bottom, two end panels, and a dado-jointed shelf, all in ¾" Baltic birch. The top panel overhangs 1" past the front face, creating a shadow line at eye level. Pocket-screwed corners, no glue. Ships flat.',
     features: [
       '¾" Baltic birch · void-free B/BB grade',
+      'Top panel overhangs 1" — clean shadow line from every angle',
       'Open lower shelf for books, remotes, magazines',
       '2-coat hand-rubbed oil finish',
       'Ships flat-packed · assembles in ~25 min with included hardware',
@@ -682,16 +690,16 @@ const PRODS = [
     },
     price(st) {
       const d=this.getDims(st);
-      const sqIn=d.L*d.W + d.innerL*d.W + 2*(T*d.H*d.W) + d.innerL*d.W;
+      const sqIn=d.L*(d.W+1) + d.innerL*d.W + 2*(T*d.H*d.W) + d.innerL*d.W;
       const labor=180 + st.si*35 + st.wi*20;
       return calcRetail(sqIn, labor, 45, 95);
     },
     build(st) {
       buildMats();
       const d=this.getDims(st);
-      // Top
-      const tg=new THREE.BoxGeometry(d.L,T,d.W);
-      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+      // Top (1" front overhang — shadow line)
+      const tg=new THREE.BoxGeometry(d.L,T,d.W+1);
+      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
       // Bottom
       const btg=new THREE.BoxGeometry(d.L,T,d.W);
       const btm=new THREE.Mesh(btg, mFlat()); btm.position.set(0,T/2,0); btm.receiveShadow=true; grp.add(btm); eL(btm,btg);
@@ -710,8 +718,8 @@ const PRODS = [
       const d=this.getDims(st);
       return {
         parts:[
-          {name:'Top Panel',    qty:1, L:d.L,                    W:d.W, notes:'Full width; pocket holes on underside near each end'},
-          {name:'Bottom Panel', qty:1, L:d.L,                    W:d.W, notes:'Full width; pocket holes on top face near each end'},
+          {name:'Top Panel',    qty:1, L:d.L, W:d.W+1, notes:'1" front overhang — shift 0.5" forward from centre; pocket holes on underside near each end'},
+          {name:'Bottom Panel', qty:1, L:d.L, W:d.W,   notes:'Full width; pocket holes on top face near each end'},
           {name:'End Panel',    qty:2, L:+(d.innerH).toFixed(3), W:d.W, notes:'Dado for shelf at '+d.shelfY+'" from bottom; countersunk pilot on outer face at dado centre'},
           {name:'Lower Shelf',  qty:1, L:+(d.innerL).toFixed(3), W:d.W, notes:'Fits into end panel dados \u2014 no glue'},
         ],
@@ -746,9 +754,10 @@ const PRODS = [
     modelPrefix: 'BS-ST',
     tabLabel: 'Side Table',
     breadcrumb: 'Tables › Side',
-    desc: 'A compact side table built like a box — top, bottom, two sides, and a mid-shelf, all in ¾" Baltic birch. Clean exposed edges, oiled finish. Works as a nightstand, accent table, or plant stand.',
+    desc: 'A compact side table built like a box — top, bottom, two sides, and a mid-shelf, all in ¾" Baltic birch. The top overhangs 1" past the front face — a shadow line that gives the piece a considered, architectural edge. Works as a nightstand, accent table, or plant stand.',
     features: [
       '¾" Baltic birch · void-free B/BB grade',
+      'Top panel overhangs 1" — shadow line at the front edge',
       'Box construction: top, bottom, sides, and mid-shelf',
       '2-coat hand-rubbed oil finish',
       'Ships flat-packed · assembles in ~20 min with included hardware',
@@ -774,8 +783,8 @@ const PRODS = [
     },
     price(st) {
       const d=this.getDims(st);
-      // top + bottom + 2 side panels + mid shelf
-      const sqIn=2*(d.L*d.W) + 2*(d.innerH*d.W) + (d.L-2*T)*(d.W-2*T);
+      // top (with 1" overhang) + bottom + 2 side panels + mid shelf
+      const sqIn=d.L*(d.W+1) + d.L*d.W + 2*(d.innerH*d.W) + (d.L-2*T)*(d.W-2*T);
       const labor=90 + st.si*15;
       return calcRetail(sqIn, labor, 30, 60);
     },
@@ -783,9 +792,9 @@ const PRODS = [
       buildMats();
       const d=this.getDims(st);
       const iW=d.L-2*T; // inner width between side panels
-      // Top
-      const tg=new THREE.BoxGeometry(d.L,T,d.W);
-      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+      // Top (1" front overhang — shadow line)
+      const tg=new THREE.BoxGeometry(d.L,T,d.W+1);
+      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
       // Bottom
       const bg=new THREE.BoxGeometry(d.L,T,d.W);
       const bm=new THREE.Mesh(bg, mFlat()); bm.position.set(0,T/2,0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
@@ -806,8 +815,8 @@ const PRODS = [
       const dadoFromBottom=+(d.shelfY-T).toFixed(3);
       return {
         parts:[
-          {name:'Top Panel',    qty:1, L:d.L, W:d.W, notes:'Full width; pocket holes on underside near each end'},
-          {name:'Bottom Panel', qty:1, L:d.L, W:d.W, notes:'Full width; pocket holes on top face near each end'},
+          {name:'Top Panel',    qty:1, L:d.L, W:d.W+1, notes:'1" front overhang — shift 0.5" forward from centre; pocket holes on underside near each end'},
+          {name:'Bottom Panel', qty:1, L:d.L, W:d.W,   notes:'Full width; pocket holes on top face near each end'},
           {name:'Side Panel',   qty:2, L:d.W, W:+(d.innerH).toFixed(3), notes:'Dado for mid shelf at '+dadoFromBottom+'" from bottom (inner face); countersunk pilot at dado centre (outer face)'},
           {name:'Mid Shelf',    qty:1, L:iW,  W:d.W, notes:'Fits into side panel dados \u2014 no glue'},
         ],
@@ -861,11 +870,11 @@ const PRODS = [
     state: { li:0, di:0, si:0 },
     configs: [
       { label:'Width', key:'li', items:[ {lb:'24"',sub:'small'}, {lb:'36"',sub:'standard'}, {lb:'48"',sub:'wide'} ] },
-      { label:'Depth', key:'di', items:[ {lb:'8"',sub:'slim'}, {lb:'10"',sub:'standard'}, {lb:'12"',sub:'deep'} ] },
+      { label:'Depth', key:'di', items:[ {lb:'12"',sub:'standard'}, {lb:'16"',sub:'deep'} ] },
       { label:'Shelves', key:'si', items:[ {lb:'1',sub:'one shelf'}, {lb:'2',sub:'two shelves'}, {lb:'3',sub:'three shelves'} ] },
     ],
     getDims(st) {
-      const Ls=[24,36,48], Ds=[8,10,12], Ss=[1,2,3];
+      const Ls=[24,36,48], Ds=[12,16], Ss=[1,2,3];
       const L=Ls[st.li], D=Ds[st.di], shelves=Ss[st.si||0];
       const H=10+(shelves-1)*10; // 10", 20", 30"
       const innerL=L-2*T, innerH=H-2*T;
@@ -960,9 +969,10 @@ const PRODS = [
     modelPrefix: 'BS-SB',
     tabLabel: 'Shoe Bench',
     breadcrumb: 'Storage › Entryway',
-    desc: 'An entryway bench and shoe rack in one. Solid ¾" Baltic birch throughout — bench seat, end panels, bottom shelf, and optional dividers. Oiled finish stands up to daily use.',
+    desc: 'An entryway bench and shoe rack in one. Solid ¾" Baltic birch throughout — bench seat, end panels, bottom shelf, and optional dividers. The seat overhangs 1" past the front face so you\'re not knocking your shins into the end panels. Oiled finish stands up to daily use.',
     features: [
       '¾" Baltic birch plywood throughout · no particle board',
+      'Seat overhangs 1" — comfortable to sit on, cleaner to look at',
       'Bottom shelf holds 4–8 pairs of shoes',
       'Bench seat rated for 300 lbs',
       'Dado-jointed shelf + pocket-screwed corners — no glue needed',
@@ -991,7 +1001,7 @@ const PRODS = [
     price(st) {
       const d=this.getDims(st);
       const innerW=d.W-2*T;
-      const sqIn=d.W*d.D + 2*(d.H*d.D) + innerW*d.D + d.divCt*((d.H-T-d.shelfY-T)*d.D);
+      const sqIn=d.W*(d.D+1) + 2*(d.H*d.D) + innerW*d.D + d.divCt*((d.H-T-d.shelfY-T)*d.D);
       const labor=100 + st.wi*30 + (st.di===1?40:0);
       return calcRetail(sqIn, labor, 35, 70);
     },
@@ -999,9 +1009,9 @@ const PRODS = [
       buildMats();
       const d=this.getDims(st);
       const innerW=d.W-2*T;
-      // Seat top
-      const tg=new THREE.BoxGeometry(d.W,T,d.D);
-      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+      // Seat top (1" front overhang — ergonomic + shadow line)
+      const tg=new THREE.BoxGeometry(d.W,T,d.D+1);
+      const tm=new THREE.Mesh(tg, mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
       // End panels
       [-1,1].forEach(s => {
         const eg=new THREE.BoxGeometry(T,d.H,d.D);
@@ -1029,7 +1039,7 @@ const PRODS = [
       const divH=+(d.H-T-d.shelfY-T).toFixed(3);
       const dadoFromBottom=+(d.shelfY-T/2).toFixed(3);
       const parts=[
-        {name:'Seat Top',     qty:1,       L:d.W,    W:d.D, notes:'Full width; pocket holes on underside near each end; pocket holes at each divider position if selected'},
+        {name:'Seat Top',     qty:1,       L:d.W,    W:d.D+1, notes:'1" front overhang — shift 0.5" forward; pocket holes on underside near each end; pocket holes at each divider position if selected'},
         {name:'End Panel',    qty:2,       L:d.D,    W:d.H, notes:'Dado for shelf at '+dadoFromBottom+'" from bottom; countersunk pilot at dado centre (outer face)'},
         {name:'Bottom Shelf', qty:1,       L:innerW, W:d.D, notes:'Fits into end panel dados \u2014 no glue'},
       ];
