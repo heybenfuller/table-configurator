@@ -324,24 +324,23 @@ function buildProduct(id, ty) {
 // ═══════════════════════════════════════════════════════════
 //  Carousel
 // ═══════════════════════════════════════════════════════════
-const SLOT = 88;    // spacing between products
+const SLOT = 62;    // spacing between products — tight family feel
 const N = ITEMS.length;
 const TOTAL = N * SLOT;
 
 const track = new THREE.Group();
 scene.add(track);
 
-// Build each product, store its group and hit-plane
+// Build each product, store its group and hit-box
 const slots = ITEMS.map((item, i) => {
   const prod = buildProduct(item.id, item.ty);
   prod.position.x = i * SLOT - TOTAL/2 + SLOT/2;
 
-  // Invisible hit plane for raycasting
-  const hg = new THREE.PlaneGeometry(SLOT - 8, 80);
-  const hm = new THREE.MeshBasicMaterial({ visible:false, side:THREE.DoubleSide });
+  // Tall invisible box — covers full slot width + height including voids inside pieces
+  const hg = new THREE.BoxGeometry(SLOT - 4, 90, 20);
+  const hm = new THREE.MeshBasicMaterial({ visible:false, side:THREE.FrontSide });
   const hit = new THREE.Mesh(hg, hm);
-  hit.rotation.x = -Math.PI/2;
-  hit.position.set(prod.position.x, 1, 0);
+  hit.position.set(prod.position.x, 45, 0);
   hit.userData = { slotIdx: i };
 
   track.add(prod);
@@ -361,7 +360,22 @@ for(let i=0;i<DUP;i++){
 
 // ── Scroll state
 let scrollX = 0;
-const SCROLL_SPEED = 0.018; // units per frame
+const SCROLL_SPEED = 0.10; // units per frame — faster base speed
+
+// ── Drag state
+let isDragging = false;
+let dragStartClientX = 0;
+let dragStartScrollX = 0;
+let dragDelta = 0; // track how far we dragged to suppress click
+
+// World units visible per screen pixel (updated on resize)
+let worldPerPx = 1;
+function updateWorldPerPx() {
+  const halfFov = (44 / 2) * Math.PI / 180;
+  const visibleWidth = 2 * 290 * Math.tan(halfFov);
+  worldPerPx = visibleWidth / window.innerWidth;
+}
+updateWorldPerPx();
 
 // ── Raycasting
 const raycaster = new THREE.Raycaster();
@@ -369,46 +383,59 @@ const mouse = new THREE.Vector2();
 let hoveredIdx = -1;
 const hitMeshes = slots.map(s => s.hit);
 
-function onMouseMove(e) {
+function getHoveredIdx(clientX, clientY) {
   const rect = cv.getBoundingClientRect();
-  mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
-
+  mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
   raycaster.setFromCamera(mouse, cam);
   const hits = raycaster.intersectObjects(hitMeshes);
+  return hits.length > 0 ? hits[0].object.userData.slotIdx : -1;
+}
 
+function setHovered(idx) {
+  if(idx === hoveredIdx) return;
+  if(hoveredIdx !== -1) slots[hoveredIdx].targetScale = 1;
+  hoveredIdx = idx;
   const tt = document.getElementById('tooltip');
   const tn = document.getElementById('tooltip-name');
-
-  if(hits.length > 0) {
-    const idx = hits[0].object.userData.slotIdx;
-    if(idx !== hoveredIdx) {
-      if(hoveredIdx !== -1) slots[hoveredIdx].targetScale = 1;
-      hoveredIdx = idx;
-      slots[idx].targetScale = 1.12;
-      tn.textContent = ITEMS[idx].name;
-      tt.style.opacity = '1';
-    }
+  if(idx !== -1) {
+    slots[idx].targetScale = 1.10;
+    tn.textContent = ITEMS[idx].name;
+    tt.style.opacity = '1';
     document.body.classList.add('over-product');
   } else {
-    if(hoveredIdx !== -1) {
-      slots[hoveredIdx].targetScale = 1;
-      hoveredIdx = -1;
-    }
     tt.style.opacity = '0';
     document.body.classList.remove('over-product');
   }
 }
 
-function onClick() {
-  if(hoveredIdx !== -1) {
+cv.addEventListener('mousedown', e => {
+  isDragging = true;
+  dragStartClientX = e.clientX;
+  dragStartScrollX = scrollX;
+  dragDelta = 0;
+  document.body.style.cursor = 'grabbing';
+});
+
+window.addEventListener('mouseup', e => {
+  if(!isDragging) return;
+  isDragging = false;
+  document.body.style.cursor = '';
+  // Only navigate if it was a click (not a drag)
+  if(Math.abs(dragDelta) < 4 && hoveredIdx !== -1) {
     const item = ITEMS[hoveredIdx];
     window.location.href = `table-configurator.html?p=${item.id}&ty=${item.ty}`;
   }
-}
+});
 
-window.addEventListener('mousemove', onMouseMove);
-cv.addEventListener('click', onClick);
+window.addEventListener('mousemove', e => {
+  if(isDragging) {
+    dragDelta = e.clientX - dragStartClientX;
+    scrollX = dragStartScrollX - dragDelta * worldPerPx;
+  } else {
+    setHovered(getHoveredIdx(e.clientX, e.clientY));
+  }
+});
 
 // ── Resize
 function resize() {
@@ -416,6 +443,7 @@ function resize() {
   ren.setSize(w, h, false);
   cam.aspect = w/h;
   cam.updateProjectionMatrix();
+  updateWorldPerPx();
 }
 window.addEventListener('resize', resize);
 resize();
@@ -427,22 +455,17 @@ const clock = new THREE.Clock();
 
 function animate() {
   requestAnimationFrame(animate);
-  const dt = clock.getDelta();
 
-  // Auto-scroll (pause slightly when hovering)
-  const pauseScroll = hoveredIdx !== -1;
-  if(!pauseScroll) scrollX += SCROLL_SPEED;
+  // Auto-scroll — stop when hovering or dragging
+  if(!isDragging && hoveredIdx === -1) scrollX += SCROLL_SPEED;
 
-  // Wrap
-  if(scrollX > SLOT) scrollX -= SLOT;
+  // Seamless wrap over full track
+  scrollX = ((scrollX % TOTAL) + TOTAL) % TOTAL;
 
-  track.position.x = -scrollX;
+  track.position.x = -scrollX + TOTAL/2 - SLOT/2;
 
-  // Spin each product
-  slots.forEach((s, i) => {
-    s.group.rotation.y += 0.003;
-
-    // Smooth scale
+  // Smooth scale per slot (no rotation)
+  slots.forEach(s => {
     s.scale += (s.targetScale - s.scale) * 0.1;
     s.group.scale.setScalar(s.scale);
   });
