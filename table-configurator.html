@@ -965,8 +965,9 @@ const PRODS = [
             const sm=new THREE.Mesh(sg,mStand()); sm.position.set(s*(d.W/2-T/2),d.innerH/2,0); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
           });
           // Back panel (solid, between side panels, floor to seat)
+          // Geometry is (W, H, T) — thin in Z, so visible faces are +Z/-Z (indices 4,5) → face grain
           const bpg=new THREE.BoxGeometry(d.innerW,d.innerH,T);
-          const bpm=new THREE.Mesh(bpg,mStand()); bpm.position.set(0,d.innerH/2,-(d.D/2-T/2)); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
+          const bpm=new THREE.Mesh(bpg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]); bpm.position.set(0,d.innerH/2,-(d.D/2-T/2)); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
           // Footrest stretcher (front, at 6")
           const fg=new THREE.BoxGeometry(d.innerW,T,d.D);
           const fm=new THREE.Mesh(fg,mFlat()); fm.position.set(0,d.stretcherY,0); fm.castShadow=true; grp.add(fm); eL(fm,fg);
