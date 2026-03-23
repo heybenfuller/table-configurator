@@ -931,9 +931,9 @@ const PRODS = [
       {
         name:'Stool', prefix:'BS-SL', bread:'Seating \u203A Stool',
         typeLabel:'Stool', typeSub:'counter or bar height',
-        desc:'A stool built like the rest of the line \u2014 two solid side panels, a low stretcher for your feet, and a seat that overhangs 1" at the front. \u00BE" Baltic birch throughout, pocket-screwed, no glue. Counter or bar height.',
-        features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','1" seat overhang \u2014 shadow line consistent with the full collection','Low footrest stretcher between side panels','Dado-jointed stretcher + pocket-screwed seat \u2014 no glue','2-coat hand-rubbed oil finish','Made to order \u00B7 3\u20134 week lead time'],
-        assembly:['Ships flat-packed \u2014 seat, 2 side panels, stretcher, hardware bag','One person \u00B7 ~15 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Stretcher taps into side panel dados; seat pocket-screws from underside'],
+        desc:'A three-sided box stool \u2014 two side panels, a solid back panel, and a front footrest, all in \u00BE" Baltic birch. The seat overhangs 1" at the front. Open front lets you tuck your feet in. Rated for 250 lbs. Counter or bar height.',
+        features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Three-panel box construction \u2014 rated 250 lbs','1" seat overhang \u2014 shadow line consistent with the full collection','Front footrest stretcher dado-jointed into side panels','Solid back panel for anti-rack rigidity','2-coat hand-rubbed oil finish','Made to order \u00B7 3\u20134 week lead time'],
+        assembly:['Ships flat-packed \u2014 seat, 2 side panels, back panel, stretcher, hardware bag','One person \u00B7 ~15 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Stretcher taps into side panel dados; back panel pocket-screws between sides; seat screws from underside'],
         ship:{badge:'Free shipping',note:'Boxed \u00B7 Contiguous US'},
         ctaLabel:'Order This Stool',
         configs:[
@@ -949,18 +949,24 @@ const PRODS = [
         },
         price(st){
           const d=this.getDims(st);
-          const sqIn=d.W*(d.D+1)+2*(d.D*d.innerH)+d.innerW*d.D;
-          const labor=70+st.c0*20;
-          return calcRetail(sqIn,labor,20,45);
+          const sqIn=d.W*(d.D+1)+2*(d.D*d.innerH)+d.innerW*d.innerH+d.innerW*d.D;
+          const labor=80+st.c0*20;
+          return calcRetail(sqIn,labor,25,45);
         },
         build(st){
           buildMats(); const d=this.getDims(st);
+          // Seat (1" front overhang)
           const tg=new THREE.BoxGeometry(d.W,T,d.D+1);
           const tm=new THREE.Mesh(tg,mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+          // Side panels
           [-1,1].forEach(s=>{
             const sg=new THREE.BoxGeometry(T,d.innerH,d.D);
             const sm=new THREE.Mesh(sg,mStand()); sm.position.set(s*(d.W/2-T/2),d.innerH/2,0); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
           });
+          // Back panel (solid, between side panels, floor to seat)
+          const bpg=new THREE.BoxGeometry(d.innerW,d.innerH,T);
+          const bpm=new THREE.Mesh(bpg,mStand()); bpm.position.set(0,d.innerH/2,-(d.D/2-T/2)); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
+          // Footrest stretcher (front, at 6")
           const fg=new THREE.BoxGeometry(d.innerW,T,d.D);
           const fm=new THREE.Mesh(fg,mFlat()); fm.position.set(0,d.stretcherY,0); fm.castShadow=true; grp.add(fm); eL(fm,fg);
           camCt={x:0,y:d.H*0.45,z:0}; camSc=Math.max(d.W,d.H,d.D)*2.5+20;
@@ -971,20 +977,22 @@ const PRODS = [
           return{
             parts:[
               {name:'Seat',qty:1,L:d.W,W:d.D+1,notes:'1" front overhang; pocket holes on underside near each end'},
-              {name:'Side Panel',qty:2,L:d.D,W:+(d.innerH).toFixed(3),notes:'Dado for stretcher at '+d.stretcherY+'" from bottom; countersunk pilot at dado centre (outer face)'},
+              {name:'Side Panel',qty:2,L:d.D,W:+(d.innerH).toFixed(3),notes:'Dado for stretcher at '+d.stretcherY+'" from bottom; countersunk pilot at dado centre (outer face); pocket holes on back edge for back panel'},
+              {name:'Back Panel',qty:1,L:+(d.innerW).toFixed(3),W:+(d.innerH).toFixed(3),notes:'Fits between side panels flush with back edge; pocket holes on top edge for seat attachment'},
               {name:'Footrest Stretcher',qty:1,L:+(d.innerW).toFixed(3),W:d.D,notes:'Fits into side panel dados \u2014 no glue'},
             ],
             cncOps:[
               {part:'L + R Side Panel \u2014 inner face',op:'Dado',spec:'\u00BEW \u00D7 \u215E" deep, full depth ('+d.D+'"), at '+d.stretcherY+'" from bottom. No glue.'},
               {part:'L + R Side Panel \u2014 outer face',op:'Countersunk pilot \u00D71 each',spec:'At dado centre: #10 pilot \u2014 locking screw into stretcher end grain'},
-              {part:'Seat \u2014 underside',op:'Pocket holes \u00D73 per end',spec:'15\u00B0 angled bore near each end \u2014 screw into top edge of side panel'},
+              {part:'L + R Side Panel \u2014 back edge',op:'Pocket holes \u00D73 each',spec:'15\u00B0 angled bore \u2014 screw into back panel end grain'},
+              {part:'Seat \u2014 underside',op:'Pocket holes \u00D73 per end + \u00D72 along back',spec:'15\u00B0 angled bore \u2014 screw into top edges of side panels and back panel'},
             ],
             hardware:[
-              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:6,notes:'3 per side \u2014 seat to side panel top edges'},
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:14,notes:'6 seat-to-sides, 2 seat-to-back, 6 sides-to-back'},
               {item:'Flat-head screw #8 \u00D7 1" coarse',qty:2,notes:'1 per side \u2014 stretcher locking from outer face'},
               {item:'Felt pad \u00BE" dia.',qty:4,notes:'Under side panel bottom edges'},
             ],
-            assembly:['1. Tap stretcher into dado in one side panel; drive locking screw from outside','2. Tap stretcher other end into second side panel; drive locking screw','3. Set seat on top of side panels; drive 3 pocket screws per side from underside','4. Attach felt pads to bottom edges of side panels']
+            assembly:['1. Tap stretcher into dado in one side panel; drive locking screw from outside','2. Tap stretcher other end into second side panel; drive locking screw','3. Set back panel between side panels flush with back edge; drive 3 pocket screws per side into back panel','4. Set seat on top; drive pocket screws from underside into side panels and back panel top edge','5. Attach felt pads to bottom edges of side panels']
           };
         },
       },
@@ -992,66 +1000,66 @@ const PRODS = [
       // ── 2 · Daybed ────────────────────────────────────────────
       {
         name:'Daybed', prefix:'BS-DB', bread:'Seating \u203A Daybed',
-        typeLabel:'Daybed', typeSub:'platform \u00B7 open front storage',
-        desc:'A low platform frame for a cushion or thin mattress \u2014 three walls and a structural centre divider, open at the front for blanket and pillow storage. Slightly narrower and shorter than a standard twin so nothing overhangs. Push against a wall, throw on a cushion, done.',
-        features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Designed for 4\u20136" mattress or cushion (not included)','Open front for storage \u2014 blankets, pillows, shoes','Centre structural support divides storage into two bays','Three-wall surround \u2014 push against wall for daybed use','Dado-jointed + pocket-screwed \u2014 no glue','Made to order \u00B7 4\u20136 week lead time'],
-        assembly:['Ships flat-packed \u2014 platform, end panels, back panel, centre support, hardware bag','Two people \u00B7 ~30 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Pocket screws attach walls to platform from underside'],
+        typeLabel:'Daybed', typeSub:'twin platform \u00B7 storage below',
+        desc:'A raised platform frame sized for a standard twin mattress. \u00BE" Baltic birch end panels, a bottom storage shelf, and a structural centre support. The platform overhangs 1" at the front. Open front for blankets, pillows, shoes. Push against a wall, throw on a mattress, done. Rated for 350 lbs.',
+        features:['\u00BE" Baltic birch throughout \u00B7 void-free B/BB grade','Twin mattress size (75" \u00D7 38") \u2014 mattress not included','Raised platform at 14" \u2014 with 6" mattress, sleeping surface at 20"','Open front storage below platform \u2014 blankets, shoes, bins','Centre structural support rated 350 lbs \u2014 splits storage into two bays','1" platform overhang at front \u2014 shadow line consistent with collection','Dado-jointed shelf + pocket-screwed corners \u2014 no glue','Made to order in Brooklyn \u00B7 5\u20137 week lead time'],
+        assembly:['Ships flat-packed \u2014 platform, end panels, shelf, centre support, hardware bag','Two people \u00B7 ~30 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into end panel dados; platform pocket-screws from underside'],
         ship:{badge:'Free freight shipping',note:'Flat-packed \u00B7 Contiguous US'},
         ctaLabel:'Order This Daybed',
-        configs:[
-          {label:'Size',key:'c0',items:[{lb:'Standard',sub:'72"\u00D736"'},{lb:'Compact',sub:'60"\u00D730"'}]},
-        ],
+        configs:[],
         getDims(st){
-          const sizes=[[72,36],[60,30]];
-          const [L,W]=sizes[st.c0];
-          const H=10;
-          const innerL=L-2*T;
-          const endH=H-T;
-          return{L,W,H,innerL,endH,dimStr:`${L}" L \u00D7 ${W}" W \u00D7 ${H}" H (frame)`,subStr:st.c0===0?'72\u00D736" \u00B7 fits twin cushion':'60\u00D730" \u00B7 compact'};
+          const L=75,W=38,H=14,shelfY=5;
+          const innerW=L-2*T;
+          const supH=H-T-shelfY-T;
+          return{L,W,H,shelfY,innerW,supH,dimStr:`${L}" L \u00D7 ${W}" W \u00D7 ${H}" H (frame)`,subStr:'Twin platform \u00B7 75\u00D738" \u00B7 storage below'};
         },
         price(st){
           const d=this.getDims(st);
-          const sqIn=d.L*d.W+2*(d.W*d.endH)+d.innerL*d.endH+d.W*d.endH;
-          const labor=200+(st.c0===0?40:0);
-          return calcRetail(sqIn,labor,55,([150,120])[st.c0]);
+          const sqIn=d.L*(d.W+1)+2*(d.H*d.W)+d.innerW*d.W+d.W*d.supH;
+          const labor=280;
+          return calcRetail(sqIn,labor,75,195);
         },
         build(st){
           buildMats(); const d=this.getDims(st);
-          // Platform (bottom)
-          const bg=new THREE.BoxGeometry(d.L,T,d.W);
-          const bm=new THREE.Mesh(bg,mFlat()); bm.position.set(0,T/2,0); bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
-          // End panels
+          // Platform / top (1" front overhang — mattress sits on this)
+          const tg=new THREE.BoxGeometry(d.L,T,d.W+1);
+          const tm=new THREE.Mesh(tg,mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+          // End panels (full height)
           [-1,1].forEach(s=>{
-            const eg=new THREE.BoxGeometry(T,d.endH,d.W);
-            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.L/2-T/2),T+d.endH/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
+            const eg=new THREE.BoxGeometry(T,d.H,d.W);
+            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.L/2-T/2),d.H/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
           });
-          // Back panel (flush with back edge, between end panels)
-          const bkg=new THREE.BoxGeometry(d.innerL,d.endH,T);
-          const bkm=new THREE.Mesh(bkg,mStand()); bkm.position.set(0,T+d.endH/2,-(d.W/2-T/2)); bkm.castShadow=true; grp.add(bkm); eL(bkm,bkg);
-          // Centre support (structural divider, runs front to back)
-          const cg=new THREE.BoxGeometry(T,d.endH,d.W);
-          const cm=new THREE.Mesh(cg,mStand()); cm.position.set(0,T+d.endH/2,0); cm.castShadow=true; grp.add(cm); eL(cm,cg);
+          // Bottom storage shelf (dados into end panels)
+          const bg=new THREE.BoxGeometry(d.innerW,T,d.W);
+          const bm=new THREE.Mesh(bg,mFlat()); bm.position.set(0,d.shelfY,0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
+          // Centre support (structural, shelf to platform)
+          const cg=new THREE.BoxGeometry(T,d.supH,d.W);
+          const cm=new THREE.Mesh(cg,mStand()); cm.position.set(0,d.shelfY+T+d.supH/2,0); cm.castShadow=true; grp.add(cm); eL(cm,cg);
           camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.L,d.W,d.H)*1.6+40;
           document.getElementById('b-dim').textContent=d.dimStr;
         },
         getCuts(st){
           const d=this.getDims(st);
+          const dadoFromBottom=+(d.shelfY-T/2).toFixed(3);
           return{
             parts:[
-              {name:'Platform / Bottom',qty:1,L:d.L,W:d.W,notes:'Face grain along length; pocket holes on top face near each end, at centre, and along back edge'},
-              {name:'End Panel',qty:2,L:d.W,W:+(d.endH).toFixed(3),notes:'Pocket holes on bottom edge for platform attachment'},
-              {name:'Back Panel',qty:1,L:+(d.innerL).toFixed(3),W:+(d.endH).toFixed(3),notes:'Fits between end panels at back edge; pocket holes on bottom edge and both short ends'},
-              {name:'Centre Support',qty:1,L:d.W,W:+(d.endH).toFixed(3),notes:'Structural divider at midpoint; pocket holes on bottom edge'},
+              {name:'Platform / Top',qty:1,L:d.L,W:d.W+1,notes:'1" front overhang; mattress sits on this surface; pocket holes on underside near each end and at centre'},
+              {name:'End Panel',qty:2,L:d.W,W:d.H,notes:'Dado for shelf at '+dadoFromBottom+'" from bottom; countersunk pilot at dado centre (outer face)'},
+              {name:'Storage Shelf',qty:1,L:+(d.innerW).toFixed(3),W:d.W,notes:'Fits into end panel dados \u2014 no glue'},
+              {name:'Centre Support',qty:1,L:d.W,W:+(d.supH).toFixed(3),notes:'Structural vertical panel at midpoint; pocket screws from platform and shelf'},
             ],
             cncOps:[
-              {part:'Platform \u2014 top face',op:'Pocket holes \u00D73 per end + \u00D72 at centre + \u00D73 along back',spec:'15\u00B0 angled bore \u2014 attach end panels, centre support, and back panel from below'},
-              {part:'End Panels \u2014 inner face',op:'Pocket holes \u00D72 each',spec:'15\u00B0 angled bore \u2014 attach back panel from end into back panel end grain'},
+              {part:'L + R End Panel \u2014 inner face',op:'Dado',spec:'\u00BEW \u00D7 \u215E" deep, full depth ('+d.W+'"), at '+dadoFromBottom+'" from bottom. No glue.'},
+              {part:'L + R End Panel \u2014 outer face',op:'Countersunk pilot \u00D71 each',spec:'At dado centre \u2014 locking screw from outside into shelf end grain'},
+              {part:'Platform \u2014 underside',op:'Pocket holes \u00D74 per end + \u00D72 at centre',spec:'15\u00B0 angled bore \u2014 screw into top edge of end panels and centre support'},
+              {part:'Storage Shelf \u2014 top face',op:'Pocket holes \u00D71 at centre',spec:'15\u00B0 angled bore at centre \u2014 screw into centre support bottom edge'},
             ],
             hardware:[
-              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:20,notes:'Platform-to-ends, platform-to-back, platform-to-centre, ends-to-back'},
-              {item:'Felt pad \u00BE" dia.',qty:6,notes:'Under platform at corners and centre'},
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:12,notes:'8 platform-to-ends, 2 platform-to-centre, 1 shelf-to-centre, 1 spare'},
+              {item:'Flat-head screw #8 \u00D7 1" coarse',qty:2,notes:'Shelf locking from end panel outer faces'},
+              {item:'Felt pad \u00BE" dia.',qty:6,notes:'Under end panel corners and centre support base'},
             ],
-            assembly:['1. Set platform flat; position end panels at each end; drive pocket screws from platform top face into end panel bottom edges','2. Position centre support at midpoint; drive pocket screws from platform into support bottom edge','3. Set back panel between end panels flush with back edge; drive pocket screws from platform and from end panels into back panel ends','4. Attach felt pads under platform at corners and centre']
+            assembly:['1. Tap storage shelf into dado in one end panel; drive locking screw from outside','2. Tap shelf into second end panel; drive locking screw','3. Insert centre support at midpoint on shelf; drive pocket screw from shelf top face into support base','4. Set platform on top of end panels and centre support; drive 4 pocket screws per end and 2 into centre support from underside','5. Attach felt pads under end panels and centre support']
           };
         },
       },
