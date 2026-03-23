@@ -189,7 +189,7 @@
 // ═══════════════════════════════════════════════════════════════
 //  Constants
 // ═══════════════════════════════════════════════════════════════
-const T = 0.75, SHEET = 3600, SPR = 185, WASTE = 1.2, MARGIN = 0.40;
+const T = 0.75, SHEET = 3600, SPR = 150, WASTE = 1.1, MARGIN = 0.40;
 const SELLER = 'hello@benstudios.com';
 const FACE = [200,172,128], EDGE = [155,126,88];
 
@@ -350,8 +350,10 @@ canvas.addEventListener('touchend', () => tt=null);
 //  Pricing helper (40% gross margin)
 // ═══════════════════════════════════════════════════════════════
 function calcRetail(sqIn, labor, oilCost, shipCost) {
-  const sheets = Math.ceil(sqIn * WASTE / SHEET);
-  const mat = sheets * SPR;
+  // Per-sqIn material rate — assumes batched CNC jobs (no full-sheet penalty)
+  const rate = SPR * WASTE / SHEET; // $/sqIn
+  const mat = sqIn * rate;
+  const sheets = +(mat / SPR).toFixed(2); // fractional sheets, for reference
   const cost = mat + labor + oilCost + shipCost;
   return { sheets, mat, labor, cost, retail: Math.ceil(cost / (1 - MARGIN) / 10) * 10 };
 }
