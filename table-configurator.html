@@ -64,6 +64,18 @@
     .pill-sub { font-size: 9px; color: #AAA; margin-left: 5px; font-weight: 400; }
     .pill.on .pill-sub { color: rgba(255,255,255,0.45); }
 
+    /* ── Product type cards ──────────────────────────────────── */
+    .prod-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 7px; }
+    .prod-card { display: flex; flex-direction: column; border: 1.5px solid var(--lt); background: var(--wht); cursor: pointer; transition: border-color 0.12s, box-shadow 0.12s; padding: 0; overflow: hidden; -webkit-user-select: none; user-select: none; text-align: left; font-family: inherit; }
+    .prod-card:hover { border-color: #999; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .prod-card.on { border-color: var(--blk); box-shadow: 0 2px 8px rgba(0,0,0,0.10); }
+    .card-img { width: 100%; aspect-ratio: 4/3; background: var(--off); overflow: hidden; }
+    .card-img img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .card-img-ph { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #CCC; font-size: 9px; letter-spacing: 0.08em; }
+    .card-lbl { padding: 7px 9px 8px; }
+    .card-name { font-size: 11px; font-weight: 600; letter-spacing: 0.01em; color: var(--blk); line-height: 1.25; display: block; }
+    .card-sub { font-size: 9px; color: var(--mid); margin-top: 2px; line-height: 1.35; display: block; }
+
     /* ── Features ───────────────────────────────────────────── */
     .pd-desc { font-size: 13px; line-height: 1.8; color: #444; margin-bottom: 16px; }
     .pd-feats { list-style: none; margin-bottom: 16px; }
@@ -86,6 +98,10 @@
     .btn-cart:hover { background: #B00016; }
     .btn-sec { display: block; width: 100%; padding: 12px; background: transparent; color: var(--mid); border: 1px solid var(--lt); font-family: inherit; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; margin-bottom: 18px; transition: all 0.12s; }
     .btn-sec:hover { border-color: var(--blk); color: var(--blk); }
+    .cta-row { display: flex; gap: 8px; margin-bottom: 8px; }
+    .cta-row .btn-cart { flex: 3; margin-bottom: 0; }
+    .btn-plans { flex: 2; display: block; padding: 16px 10px; background: var(--blk); color: var(--wht); border: none; font-family: inherit; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; cursor: pointer; transition: background 0.12s; white-space: nowrap; }
+    .btn-plans:hover { background: #333; }
     .pd-trust { font-size: 10px; color: #CCC; letter-spacing: 0.04em; text-align: center; line-height: 1.6; }
 
     /* ── Modal ──────────────────────────────────────────────── */
@@ -140,9 +156,8 @@
   <div class="hd-inner">
     <a class="logo" href="index.html">Ben<span>·</span>Studios</a>
     <nav class="hd-nav" id="hd-nav">
-      <a onclick="switchProd('tables')">Tables</a>
-      <a onclick="switchProd('shelving')">Shelving</a>
-      <a onclick="switchProd('seating')">Seating</a>
+      <a onclick="location.href='index.html'">Shop</a>
+      <a onclick="location.href='index.html#about'">About</a>
     </nav>
   </div>
 </header>
@@ -160,10 +175,22 @@
   </div>
 </div>
 
-<!-- Mobile bottom product nav -->
-<nav class="mob-prodnav" id="mob-prodnav">
-  <div class="mob-prodnav-inner" id="mob-prodnav-inner"></div>
-</nav>
+<!-- Mobile bottom nav removed — product selection now via flat card grid -->
+
+<div class="modal-bg" id="modal-plans" style="display:none" onclick="if(event.target===this)closePlans()">
+  <div class="modal">
+    <div class="modal-hd">
+      <span class="modal-ti">Order Build Plans — $40</span>
+      <button class="modal-x" onclick="closePlans()">×</button>
+    </div>
+    <div class="modal-bd">
+      <div class="modal-sp" id="plans-spec"></div>
+      <div class="mf"><label>Name</label><input id="p-name" placeholder="Your full name"></div>
+      <div class="mf"><label>Email</label><input id="p-email" type="email" placeholder="you@email.com"></div>
+      <button class="modal-go" onclick="sendPlans()">Order Plans — $40</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-bg" id="modal" style="display:none" onclick="if(event.target===this)closeQ()">
   <div class="modal">
@@ -377,7 +404,7 @@ const PRODS = [
       // ── 0 · Dining Table (trestle) ────────────────────────────
       {
         name:'Dining Table', prefix:'BS-DT', bread:'Tables \u203A Dining',
-        typeLabel:'Dining', typeSub:'trestle \u00B7 seats 4\u20138',
+        typeLabel:'Dining table', typeSub:'trestle \u00B7 seats 4\u20138',
         desc:'Built to order from \u00BE" void-free Baltic birch, finished with two coats of hand-rubbed penetrating oil. The trestle base and top are cut from the same sheet stock \u2014 clean, honest construction that gets better with use.',
         features:['\u00BE" Baltic birch plywood, B/BB grade \u00B7 void-free core','2-coat hand-rubbed oil finish, food-safe when cured','Ships flat-packed \u00B7 assembles in ~30 min with included hardware','Made to order in Brooklyn \u00B7 5\u20137 week lead time'],
         assembly:['Ships flat-packed \u2014 top panel and base parts separate','Two people \u00B7 ~30 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Slide web into dados, drive screws; set top, drive screws from below'],
@@ -444,7 +471,7 @@ const PRODS = [
       // ── 1 · Coffee Table (trestle) ────────────────────────────
       {
         name:'Coffee Table', prefix:'BS-CT', bread:'Tables \u203A Coffee',
-        typeLabel:'Coffee', typeSub:'trestle \u00B7 16" height',
+        typeLabel:'Coffee table', typeSub:'trestle \u00B7 16" height',
         desc:'A low, wide coffee table built on the same trestle logic as the dining table \u2014 two end panels and a connecting web, all in \u00BE" Baltic birch. Clean, minimal, and very sturdy.',
         features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Trestle base: two flanges + web spine','2-coat hand-rubbed oil finish','Ships flat-packed \u00B7 assembles in ~20 min with included hardware','Made to order \u00B7 4\u20136 week lead time'],
         assembly:['Ships flat-packed \u2014 top panel, flanges, web separate','Two people \u00B7 ~20 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Slide web into flange dados; drive screws; set top, screws from below'],
@@ -508,7 +535,7 @@ const PRODS = [
       // ── 2 · Coffee + Shelf (box frame) ────────────────────────
       {
         name:'Coffee + Shelf', prefix:'BS-CB', bread:'Tables \u203A Coffee',
-        typeLabel:'Coffee + Shelf', typeSub:'box frame \u00B7 lower shelf',
+        typeLabel:'Coffee table with shelf', typeSub:'box frame \u00B7 lower shelf',
         desc:'A minimal coffee table \u2014 a top, two end panels, and a dado-jointed lower shelf, all in \u00BE" Baltic birch. No bottom panel \u2014 the end panels run straight to the ground, giving the piece a light, open feel. The top overhangs 1" past the front face. Pocket-screwed, no glue. Ships flat.',
         features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Top panel overhangs 1" \u2014 clean shadow line from every angle','Open base \u2014 no bottom panel, end panels sit directly on floor','Lower shelf for books, remotes, magazines','2-coat hand-rubbed oil finish','Ships flat-packed \u00B7 assembles in ~15 min with included hardware','Made to order \u00B7 4\u20136 week lead time'],
         assembly:['Ships flat-packed \u2014 top, 2 end panels, shelf, and hardware bag','One person \u00B7 ~15 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into end panel dados; pocket screws attach top to end panels'],
@@ -574,7 +601,7 @@ const PRODS = [
       // ── 3 · Side Table (box frame) ────────────────────────────
       {
         name:'Side Table', prefix:'BS-ST', bread:'Tables \u203A Side',
-        typeLabel:'Side', typeSub:'box frame \u00B7 accent / nightstand',
+        typeLabel:'Side table with shelf', typeSub:'box frame \u00B7 accent / nightstand',
         desc:'A compact side table built like a box \u2014 top, bottom, two sides, and a mid-shelf, all in \u00BE" Baltic birch. The top overhangs 1" past the front face \u2014 a shadow line that gives the piece a considered, architectural edge. Works as a nightstand, accent table, or plant stand.',
         features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Top panel overhangs 1" \u2014 shadow line at the front edge','Box construction: top, bottom, sides, and mid-shelf','2-coat hand-rubbed oil finish','Ships flat-packed \u00B7 assembles in ~20 min with included hardware','Made to order \u00B7 3\u20135 week lead time'],
         assembly:['Ships flat-packed \u2014 4 panels, shelf, and hardware bag','One person \u00B7 ~20 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into dado; pocket screws close top and bottom corners'],
@@ -637,6 +664,72 @@ const PRODS = [
           };
         },
       },
+
+      // ── 4 · Desk ──────────────────────────────────────────────
+      {
+        name:'Desk', prefix:'BS-DK', bread:'Tables \u203A Desk',
+        typeLabel:'Desk with shelf', typeSub:'writing \u00B7 rear shelf',
+        desc:'A writing desk built on the same two end panels + top logic as the rest of the line. The shelf sits at the rear half of the desk only \u2014 so your chair tucks all the way under and your legs have full clearance in the front. The shelf is there for a laptop, drives, books \u2014 you reach over the desk surface to get to it. No back panel, no modesty panel.',
+        features:['\u00BE\u2033 Baltic birch \u00B7 void-free B/BB grade','Top overhangs 1\u2033 at the front \u2014 shadow line consistent with the full collection','Rear-set shelf (half desk depth) \u2014 full leg clearance in front, storage at back','Chair tucks all the way under \u2014 shelf never crosses the legwell','2-coat hand-rubbed oil finish','Ships flat-packed \u00B7 assembles in ~20 min with included hardware','Made to order in Brooklyn \u00B7 4\u20136 week lead time'],
+        assembly:['Ships flat-packed \u2014 top, 2 end panels, rear shelf, hardware bag','One person \u00B7 ~20 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into end panel dados; top pocket-screws from underside'],
+        ship:{badge:'Free freight shipping',note:'Flat-packed \u00B7 Contiguous US'},
+        ctaLabel:'Order This Desk',
+        configs:[
+          {label:'Width',key:'c0',items:[{lb:'48"',sub:'compact'},{lb:'54"',sub:'standard'},{lb:'60"',sub:'wide'}]},
+          {label:'Depth',key:'c1',items:[{lb:'20"',sub:'shallow'},{lb:'24"',sub:'standard'}]},
+        ],
+        getDims(st){
+          const Ws=[48,54,60],Ds=[20,24]; const H=29.5, shelfY=8;
+          const W=Ws[st.c0], D=Ds[st.c1], innerW=W-2*T;
+          const shelfD=Math.round(D/2);              // shelf is rear half only
+          const shelfZ=-(D/2-shelfD/2);              // pushed to back edge
+          return{W,D,H,shelfY,shelfD,shelfZ,innerW,dimStr:`${W}" W \u00D7 ${D}" D \u00D7 ${H}" H`,subStr:`${W}" wide \u00B7 rear shelf \u00B7 full legwell`};
+        },
+        price(st){
+          const d=this.getDims(st);
+          const sqIn=d.W*(d.D+1)+2*(d.H*d.D)+d.innerW*d.shelfD;
+          const labor=170+st.c0*30+st.c1*20;
+          return calcRetail(sqIn,labor,50,115+st.c0*20);
+        },
+        build(st){
+          buildMats(); const d=this.getDims(st);
+          const iW=d.W-2*T;
+          const tg=new THREE.BoxGeometry(d.W,T,d.D+1);
+          const tm=new THREE.Mesh(tg,mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
+          [-1,1].forEach(s=>{
+            const eg=new THREE.BoxGeometry(T,d.H-T,d.D);
+            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.W/2-T/2),(d.H-T)/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
+          });
+          // Shelf set to rear half — legwell completely clear in front
+          const sg=new THREE.BoxGeometry(iW,T,d.shelfD);
+          const sm=new THREE.Mesh(sg,mFlat()); sm.position.set(0,d.shelfY,d.shelfZ); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
+          camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.W,d.H,d.D)*1.8+30;
+          document.getElementById('b-dim').textContent=d.dimStr;
+        },
+        getCuts(st){
+          const d=this.getDims(st);
+          const iW=+(d.W-2*T).toFixed(3);
+          const dadoY=+(d.shelfY-T/2).toFixed(3);
+          return{
+            parts:[
+              {name:'Top Panel',qty:1,L:d.W,W:d.D+1,notes:'1" front overhang; pocket holes on underside near each end'},
+              {name:'End Panel',qty:2,L:d.D,W:d.H,notes:'Dado for shelf at '+dadoY+'" from bottom, '+d.shelfD+'" deep from back edge (inner face); countersunk pilot at dado centre (outer face)'},
+              {name:'Rear Shelf',qty:1,L:iW,W:d.shelfD,notes:'Half-depth shelf — sits at rear; fits into end panel dados from back edge. No glue.'},
+            ],
+            cncOps:[
+              {part:'L + R End Panel \u2014 inner face',op:'Dado (partial depth)',spec:'\u00BEW \u00D7 \u215E" deep, '+d.shelfD+'" from back edge (not full depth), at '+dadoY+'" from bottom. No glue.'},
+              {part:'L + R End Panel \u2014 outer face',op:'Countersunk pilot \u00D71 each',spec:'At dado centre: #10 pilot \u2014 locking screw from outside into shelf end grain'},
+              {part:'Top Panel \u2014 underside',op:'Pocket holes \u00D73 per end',spec:'15\u00B0 angled bore near each end \u2014 screw into top edge of end panel'},
+            ],
+            hardware:[
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:6,notes:'3 per end \u2014 top to end panels'},
+              {item:'Flat-head screw #8 \u00D7 1" coarse',qty:2,notes:'1 per side \u2014 shelf locking from end panel outer face'},
+              {item:'Felt pad \u00BE" dia.',qty:4,notes:'Under end panel bottom corners'},
+            ],
+            assembly:['1. Tap rear shelf into dado in one end panel (from back edge); drive locking screw from outer face','2. Tap shelf other end into second end panel; drive locking screw','3. Set top panel (1" overhang at front); drive 3 pocket screws per end from underside into end panel top edges','4. Attach felt pads to bottom corners of end panels']
+          };
+        },
+      },
     ],
     get name(){ return this.types[this.state.ty].name; },
     get modelPrefix(){ return this.types[this.state.ty].prefix; },
@@ -668,7 +761,7 @@ const PRODS = [
       // ── 0 · Freestanding Bookcase ─────────────────────────────
       {
         name:'Bookcase', prefix:'BS-SH', bread:'Shelving \u203A Freestanding',
-        typeLabel:'Freestanding', typeSub:'bookcase with top cap',
+        typeLabel:'Shelves for books', typeSub:'bookcase with top cap',
         desc:'Freestanding shelving built from \u00BE" Baltic birch. Shelves dado-routed into the uprights, a top cap closing the case \u2014 no exposed hardware, no pins, no brackets. The cap overhangs 1" past the front face, tying it to the rest of the line. Clean from every angle.',
         features:['\u00BE" Baltic birch uprights + shelves + top cap \u00B7 void-free B/BB grade','Top cap overhangs 1" \u2014 shadow line that unifies with the full collection','Dado-routed joinery \u00B7 shelves sit flush into uprights \u2014 no glue','Anti-tip wall anchor included','2-coat hand-rubbed oil finish','Made to order in Brooklyn \u00B7 4\u20136 week lead time'],
         assembly:['Ships flat-packed \u2014 uprights, shelves, top cap, and hardware bag','One or two people \u00B7 ~30 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 tap shelves into dados, drive face screws, set cap','Anti-tip strap to wall stud strongly recommended \u2014 included'],
@@ -737,10 +830,10 @@ const PRODS = [
       // ── 1 · Wall-Mounted Shelving ─────────────────────────────
       {
         name:'Wall Shelving', prefix:'BS-WS', bread:'Shelving \u203A Floating',
-        typeLabel:'Wall-Mounted', typeSub:'floating box \u00B7 stud mount',
-        desc:'A wall-mounted shelf unit in \u00BE" Baltic birch \u2014 top, bottom, two sides, 1\u20133 internal shelves, and a solid mounting rail inside that screws directly into studs. Nothing visible from the front.',
-        features:['\u00BE" Baltic birch \u00B7 B/BB grade','Interior mounting rail screws into studs \u2014 no visible hardware','1\u20133 internal shelves, open front','Stud-mount screws and paper template included','Made to order \u00B7 3\u20134 week lead time'],
-        assembly:['Ships flat-packed \u2014 all panels, shelves, hardware bag, and stud template','Assemble box first: all holes pre-drilled by CNC, pocket screws close corners (~15 min)','Hold assembled unit level against wall; drill through mounting rail into studs','Drive 2 structural screws from inside \u2014 invisible once shelves are in place'],
+        typeLabel:'Wall-Mounted shelves', typeSub:'floating box \u00B7 stud mount',
+        desc:'A wall-mounted shelf unit in \u00BE" Baltic birch \u2014 top, bottom, two sides, 1\u20133 internal shelves, and a 2-piece French cleat that makes mounting safe and solo-friendly. The wall cleat goes up first, screwed firmly into studs. The unit hooks over it and physically cannot tip forward \u2014 weight locks it tighter.',
+        features:['\u00BE" Baltic birch \u00B7 B/BB grade','2-piece French cleat \u2014 hooks to wall, self-locking under load (cannot tip forward)','Multiple stud screws \u00B7 toggle bolt backups included for off-stud positions','1\u20133 internal shelves, dado-jointed \u00B7 open front','Paper level template + all hardware included','Made to order \u00B7 3\u20134 week lead time'],
+        assembly:['Ships flat-packed \u2014 all panels, cleats, hardware bag, and level template','Assemble box first: CNC pre-drilled, pocket screws close corners (~15 min). Attach unit cleat to back of top panel (3 screws).','Tape paper template to wall at desired height; mark stud locations. Screw wall cleat into 2+ studs with #10\u00D73" structural screws; use toggle bolts for off-stud holes. Check level.','Hook unit cleat over wall cleat \u2014 slides in from the front and locks. No bolts through the wall needed. Cannot tip forward.'],
         ship:{badge:'Free shipping',note:'Boxed \u00B7 Contiguous US'},
         ctaLabel:'Order This Shelf',
         configs:[
@@ -782,11 +875,17 @@ const PRODS = [
             const shg=new THREE.BoxGeometry(d.innerL,T,d.D);
             const shm=new THREE.Mesh(shg,mFlat()); shm.position.set(0,shY,0); shm.castShadow=true; grp.add(shm); eL(shm,shg);
           }
-          const railH=1,railDepth=T;
-          const rg=new THREE.BoxGeometry(d.innerL,railH,railDepth);
-          const rm=new THREE.Mesh(rg,mF.clone());
-          rm.position.set(0,wallY+d.H/2-T-railH/2,-(d.D/2-railDepth/2));
-          rm.castShadow=true; grp.add(rm); eL(rm,rg);
+          // French cleat — unit side (sits inside unit flush to back, below top panel)
+          const cleatH=3.5,cleatD=T;
+          const ucg=new THREE.BoxGeometry(d.innerL,cleatH,cleatD);
+          const ucm=new THREE.Mesh(ucg,mF.clone());
+          ucm.position.set(0,wallY+d.H/2-T-cleatH/2,-(d.D/2-cleatD/2));
+          ucm.castShadow=true; grp.add(ucm); eL(ucm,ucg);
+          // French cleat — wall side (on wall plane, same height)
+          const wcg=new THREE.BoxGeometry(d.innerL,cleatH,cleatD);
+          const wcm=new THREE.Mesh(wcg,new THREE.MeshStandardMaterial({color:0xB0A888,roughness:0.8,metalness:0}));
+          wcm.position.set(0,wallY+d.H/2-T-cleatH/2,-(d.D/2+cleatD+0.05));
+          grp.add(wcm); eL(wcm,wcg);
           camCt={x:0,y:wallY,z:0}; camSc=Math.max(d.L,d.H,40)*2.0+20;
           document.getElementById('b-dim').textContent=d.dimStr;
         },
@@ -794,30 +893,42 @@ const PRODS = [
           const d=this.getDims(st);
           const compartH=+(d.innerH/(d.shelves+1)).toFixed(3);
           const dadoList=Array.from({length:d.shelves},(_,i)=>+(compartH*(i+1)-T/2).toFixed(3)+'"').join(', ');
-          const railL=+(d.innerL).toFixed(3);
+          const cleatL=+(d.innerL).toFixed(3);
+          const nHoles=Math.max(2,Math.floor(d.L/12));
           return{
             parts:[
-              {name:'Top Panel',qty:1,L:d.L,W:d.D,notes:'Full width; 3 countersunk holes from top face for mounting rail attachment; pocket holes on underside near each end'},
+              {name:'Top Panel',qty:1,L:d.L,W:d.D,notes:'Full width; 3 countersunk holes from top face (to attach unit cleat below); pocket holes on underside near each end'},
               {name:'Bottom Panel',qty:1,L:d.L,W:d.D,notes:'Full width; pocket holes on top face near each end'},
               {name:'Side Panel',qty:2,L:d.D,W:+(d.innerH).toFixed(3),notes:d.shelves+' dado(s) at: '+dadoList+' from bottom (inner face); countersunk pilot at each dado centre (outer face)'},
-              {name:'Shelf',qty:d.shelves,L:railL,W:d.D,notes:'Fits into side panel dados \u2014 no glue'},
-              {name:'Mounting Rail',qty:1,L:railL,W:3,notes:'2 clearance holes \u00D8\u215C" for #10\u00D73" stud screws; sits flush with back edge inside top'},
+              {name:'Shelf',qty:d.shelves,L:cleatL,W:d.D,notes:'Fits into side panel dados \u2014 no glue'},
+              {name:'Unit Cleat',qty:1,L:cleatL,W:3.5,notes:'45\u00B0 rip along bottom long edge \u2014 bevel faces toward wall, angled edge points DOWN. 3 countersunk holes on flat face (for #8\u00D71\u00BC" up into top panel underside). This piece stays with the unit.'},
+              {name:'Wall Cleat',qty:1,L:cleatL,W:3.5,notes:'45\u00B0 rip along top long edge \u2014 bevel faces out, angled edge points UP. '+nHoles+' countersunk clearance holes \u00D8\u215C" evenly spaced for #10\u00D73" stud screws (or toggle bolts). This piece mounts to wall first.'},
             ],
             cncOps:[
               {part:'L + R Side Panel \u2014 inner face',op:'Dado (\u00D7'+d.shelves+' each)',spec:'\u00BEW \u00D7 \u215E" deep, full depth ('+d.D+'"), at: '+dadoList+' from bottom. No glue.'},
               {part:'L + R Side Panel \u2014 outer face',op:'Countersunk pilot (\u00D7'+d.shelves+' each)',spec:'At each dado centre \u2014 locking screw from outside into shelf end grain'},
-              {part:'Top Panel \u2014 top face',op:'Countersunk holes \u00D73',spec:'At 3", '+(+(d.L/2).toFixed(1))+'", and '+(d.L-3)+'" from left end \u2014 screw into mounting rail below'},
+              {part:'Top Panel \u2014 top face',op:'Countersunk holes \u00D73',spec:'At 3", '+(+(d.L/2).toFixed(1))+'", and '+(d.L-3)+'" from left end \u2014 screw up into unit cleat'},
               {part:'Top Panel \u2014 underside',op:'Pocket holes \u00D73 per end',spec:'15\u00B0 angled bore \u2014 screw into top edge of side panel'},
               {part:'Bottom Panel \u2014 top face',op:'Pocket holes \u00D73 per end',spec:'15\u00B0 angled bore \u2014 screw into bottom edge of side panel'},
-              {part:'Mounting Rail',op:'Clearance holes \u00D72',spec:'\u00D8\u215C" at 16" centres from rail centre \u2014 for #10\u00D73" structural screws into studs'},
+              {part:'Unit Cleat \u2014 saw op',op:'45\u00B0 rip',spec:'Table saw or CNC V-groove: rip along bottom long edge at 45\u00B0. Bevel faces wall. Flat face flush against top panel underside.'},
+              {part:'Wall Cleat \u2014 saw op',op:'45\u00B0 rip',spec:'Table saw or CNC V-groove: rip along top long edge at 45\u00B0. Bevel faces room. Angled edge points up to receive unit cleat.'},
+              {part:'Wall Cleat \u2014 face',op:'Clearance holes \u00D7'+nHoles,spec:'\u00D8\u215C" evenly spaced \u2014 drives #10\u00D73" structural screws into studs (use toggle bolts for any holes that fall between studs)'},
             ],
             hardware:[
-              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:14,notes:'Corners + top-to-rail'},
-              {item:'Flat-head screw #8 \u00D7 1" coarse',qty:d.shelves*2,notes:'Shelf locking from side outer faces'},
-              {item:'Structural screw #10 \u00D7 3"',qty:2,notes:'Wall mount into studs \u2014 included'},
-              {item:'Paper stud template',qty:1,notes:'Print and tape to wall for level drilling guide'},
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:12,notes:'Box corner assembly \u2014 all 4 corners'},
+              {item:'Flat-head screw #8 \u00D7 1\u00BC" coarse',qty:d.shelves*2,notes:'Shelf locking from side outer faces'},
+              {item:'Flat-head screw #8 \u00D7 1\u00BC" coarse',qty:3,notes:'Top panel to unit cleat \u2014 from top face'},
+              {item:'Structural screw #10 \u00D7 3"',qty:nHoles,notes:'Wall cleat into studs \u2014 minimum 2 screws must hit studs'},
+              {item:'Toggle bolt \u00BC-20 \u00D7 3" with washer',qty:2,notes:'Backup anchors for off-stud holes \u2014 rated 100+ lbs each'},
+              {item:'Paper level + stud template',qty:1,notes:'Print, tape to wall at desired height, mark stud lines, drill at marks'},
             ],
-            assembly:['1. Attach mounting rail to underside of top panel (3 screws from top face)','2. Tap shelves into side panel dados; drive locking screws from outer faces','3. Set bottom panel; drive 3 pocket screws per side from inside bottom face','4. Set top panel over sides; drive 3 pocket screws per side from underside','5. Tape paper template to wall; drill into studs; hold unit level, drive 2 structural screws']
+            assembly:[
+              '1. UNIT CLEAT: drive 3 flat-head screws from top panel top face down into unit cleat flat face \u2014 cleat flush to back edge of top panel, bevel pointing down toward wall',
+              '2. BOX: tap shelves into side dados; drive locking screws from outer faces. Set bottom panel; drive pocket screws. Set top panel + unit cleat assembly over sides; drive pocket screws from underside.',
+              '3. WALL CLEAT: tape paper template to wall at desired height. Use a spirit level \u2014 the cleat must be perfectly level or the unit will hang crooked. Mark stud centres.',
+              '4. WALL CLEAT: drill pilot holes at marks; drive #10\u00D73" structural screws into studs. For off-stud holes use \u00BC-20 toggle bolts. Minimum 2 stud screws required \u2014 do not hang on toggles alone.',
+              '5. HANG: tilt unit slightly forward, hook unit cleat over wall cleat from the front, lower into place. Cleats interlock. Unit is now self-locking \u2014 load pushes it tighter against the wall.',
+            ]
           };
         },
       },
@@ -852,7 +963,7 @@ const PRODS = [
       // ── 0 · Entryway Bench ────────────────────────────────────
       {
         name:'Entryway Bench', prefix:'BS-EB', bread:'Seating \u203A Bench',
-        typeLabel:'Bench', typeSub:'entryway \u00B7 shoe storage',
+        typeLabel:'Bench with shoe shelf', typeSub:'entryway \u00B7 shoe storage',
         desc:'An entryway bench and shoe rack in one. Solid \u00BE" Baltic birch throughout \u2014 bench seat, end panels, bottom shelf, and a structural centre support on wider sizes. The seat overhangs 1" past the front face so you\'re not knocking your shins into the end panels. Oiled finish stands up to daily use.',
         features:['\u00BE" Baltic birch plywood throughout \u00B7 no particle board','Seat overhangs 1" \u2014 comfortable to sit on, cleaner to look at','Bottom shelf holds 4\u20138 pairs of shoes','Bench seat rated for 300 lbs','Centre support on 36"+ widths for rock-solid structure','Dado-jointed shelf + pocket-screwed corners \u2014 no glue needed','Made to order \u00B7 3\u20135 week lead time'],
         assembly:['Ships flat-packed \u2014 end panels, seat, shelf, centre support (if applicable), hardware bag','One or two people \u00B7 ~25 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into end panel dados; pocket screws close seat corners'],
@@ -881,8 +992,8 @@ const PRODS = [
           const tg=new THREE.BoxGeometry(d.W,T,d.D+1);
           const tm=new THREE.Mesh(tg,mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
           [-1,1].forEach(s=>{
-            const eg=new THREE.BoxGeometry(T,d.H,d.D);
-            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.W/2-T/2),d.H/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
+            const eg=new THREE.BoxGeometry(T,d.H-T,d.D);
+            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.W/2-T/2),(d.H-T)/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
           });
           const bg=new THREE.BoxGeometry(innerW,T,d.D);
           const bm=new THREE.Mesh(bg,mFlat()); bm.position.set(0,d.shelfY,0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
@@ -931,7 +1042,7 @@ const PRODS = [
       // ── 1 · Stool ─────────────────────────────────────────────
       {
         name:'Stool', prefix:'BS-SL', bread:'Seating \u203A Stool',
-        typeLabel:'Stool', typeSub:'counter or bar height',
+        typeLabel:'Stool for sitting', typeSub:'counter or bar height',
         desc:'A three-sided box stool \u2014 two side panels, a solid back panel, and a front footrest, all in \u00BE" Baltic birch. The seat overhangs 1" at the front. Open front lets you tuck your feet in. Rated for 250 lbs. Counter or bar height.',
         features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade','Three-panel box construction \u2014 rated 250 lbs','1" seat overhang \u2014 shadow line consistent with the full collection','Front footrest stretcher dado-jointed into side panels','Solid back panel for anti-rack rigidity','2-coat hand-rubbed oil finish','Made to order \u00B7 3\u20134 week lead time'],
         assembly:['Ships flat-packed \u2014 seat, 2 side panels, back panel, stretcher, hardware bag','One person \u00B7 ~15 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Stretcher taps into side panel dados; back panel pocket-screws between sides; seat screws from underside'],
@@ -967,7 +1078,7 @@ const PRODS = [
           // Back panel (solid, between side panels, floor to seat)
           // Geometry is (W, H, T) — thin in Z, so visible faces are +Z/-Z (indices 4,5) → face grain
           const bpg=new THREE.BoxGeometry(d.innerW,d.innerH,T);
-          const bpm=new THREE.Mesh(bpg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]); bpm.position.set(0,d.innerH/2,-(d.D/2-T/2)); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
+          const bpm=new THREE.Mesh(bpg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]); bpm.position.set(0,d.innerH/2,-(d.D/2-T/2)+0.01); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
           // Footrest stretcher (front, at 6")
           const fg=new THREE.BoxGeometry(d.innerW,T,d.D);
           const fm=new THREE.Mesh(fg,mFlat()); fm.position.set(0,d.stretcherY,0); fm.castShadow=true; grp.add(fm); eL(fm,fg);
@@ -1003,65 +1114,191 @@ const PRODS = [
       {
         name:'Daybed', prefix:'BS-DB', bread:'Seating \u203A Daybed',
         typeLabel:'Daybed', typeSub:'twin platform \u00B7 storage below',
-        desc:'A raised platform frame sized for a standard twin mattress. \u00BE" Baltic birch end panels, a bottom storage shelf, and a structural centre support. The platform overhangs 1" at the front. Open front for blankets, pillows, shoes. Push against a wall, throw on a mattress, done. Rated for 350 lbs.',
-        features:['\u00BE" Baltic birch throughout \u00B7 void-free B/BB grade','Twin mattress size (75" \u00D7 38") \u2014 mattress not included','Raised platform at 14" \u2014 with 6" mattress, sleeping surface at 20"','Open front storage below platform \u2014 blankets, shoes, bins','Centre structural support rated 350 lbs \u2014 splits storage into two bays','1" platform overhang at front \u2014 shadow line consistent with collection','Dado-jointed shelf + pocket-screwed corners \u2014 no glue','Made to order in Brooklyn \u00B7 5\u20137 week lead time'],
-        assembly:['Ships flat-packed \u2014 platform, end panels, shelf, centre support, hardware bag','Two people \u00B7 ~30 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Shelf taps into end panel dados; platform pocket-screws from underside'],
+        desc:'Two open-front \u00BE" Baltic birch box units that sit side-by-side under a standard twin mattress. Same construction as the Daybed Supreme \u2014 identical box dimensions, open front on each unit for storage inside. Two boxes instead of four.',
+        features:['\u00BE" Baltic birch \u00B7 void-free B/BB grade \u00B7 2 identical box units','Each unit 37"\u00D737"\u00D716" H \u2014 square footprint, one open front face','2 units together: 74" L \u00D7 37" D \u00D7 16" H \u2014 fits a twin mattress (75"\u00D738")','Open front on each unit: accessible storage for linens, books, or bins','2-coat hand-rubbed oil finish \u00B7 ships as 2 flat-packed boxes','Made to order in Brooklyn \u00B7 5\u20137 week lead time'],
+        assembly:['Ships as 2 flat-packed boxes \u2014 5 panels + hardware bag each','Two people \u00B7 ~20 min per box \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u00B7 pocket screws only \u00B7 no glue needed','Place boxes side by side; mattress weight keeps them aligned'],
         ship:{badge:'Free freight shipping',note:'Flat-packed \u00B7 Contiguous US'},
         ctaLabel:'Order This Daybed',
         configs:[],
         getDims(st){
-          const L=75,W=38,H=14,shelfY=5;
-          const innerW=L-2*T;
-          const supH=H-T-shelfY-T;
-          return{L,W,H,shelfY,innerW,supH,dimStr:`${L}" L \u00D7 ${W}" W \u00D7 ${H}" H (frame)`,subStr:'Twin platform \u00B7 75\u00D738" \u00B7 storage below'};
+          const BW=37,BD=37,BH=16,gap=2;
+          return{BW,BD,BH,gap,dimStr:`74" L \u00D7 37" D \u00D7 ${BH}" H (frame)`,subStr:'Twin platform \u00B7 2-box system \u00B7 storage inside'};
+        },
+        price(st){
+          const BW=37,BD=37,BH=16,iH=BH-2*T;
+          const perBox=2*(BW*BD)+(BW*iH)+2*(BD*iH);
+          return calcRetail(perBox*2,190,55,130);
+        },
+        build(st){
+          buildMats();
+          const BW=37,BD=37,BH=16,iH=BH-2*T,gap=2;
+          function mkBox(cx,cz){
+            const btg=new THREE.BoxGeometry(BW,T,BD); const btm=new THREE.Mesh(btg,mFlat()); btm.position.set(cx,T/2,cz); btm.castShadow=btm.receiveShadow=true; grp.add(btm); eL(btm,btg);
+            const tpg=new THREE.BoxGeometry(BW,T,BD); const tpm=new THREE.Mesh(tpg,mFlat()); tpm.position.set(cx,BH-T/2,cz); tpm.castShadow=tpm.receiveShadow=true; grp.add(tpm); eL(tpm,tpg);
+            // Back panel fits between side panels (BW-2T inner width avoids corner overlap)
+            const bkg=new THREE.BoxGeometry(BW-2*T,iH,T); const bkm=new THREE.Mesh(bkg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]); bkm.position.set(cx,T+iH/2,cz-BD/2+T/2); bkm.castShadow=true; grp.add(bkm); eL(bkm,bkg);
+            // Side panels iH-0.02 so they clear top/bottom panel faces by 0.01 each
+            const lg=new THREE.BoxGeometry(T,iH-0.02,BD); const lm=new THREE.Mesh(lg,mStand()); lm.position.set(cx-BW/2+T/2,T+iH/2,cz); lm.castShadow=true; grp.add(lm); eL(lm,lg);
+            const rg=new THREE.BoxGeometry(T,iH-0.02,BD); const rm=new THREE.Mesh(rg,mStand()); rm.position.set(cx+BW/2-T/2,T+iH/2,cz); rm.castShadow=true; grp.add(rm); eL(rm,rg);
+          }
+          const ox=BW/2+gap/2;
+          mkBox(-ox,0); mkBox(+ox,0);
+          camCt={x:0,y:BH*0.5,z:0}; camSc=(BW+gap)*2*1.4+30;
+          document.getElementById('b-dim').textContent=this.getDims(st).dimStr;
+        },
+        getCuts(st){
+          const BW=37,BD=37,BH=16,iH=+(BH-2*T).toFixed(2);
+          return{
+            parts:[
+              {name:'Top Panel',qty:2,L:BW,W:BD,notes:'Face grain \u2014 one per box; pocket holes on inside face near all four edges'},
+              {name:'Bottom Panel',qty:2,L:BW,W:BD,notes:'Face grain \u2014 one per box; felt pads under corners'},
+              {name:'Back Panel',qty:2,L:BW,W:+iH,notes:'Face grain on show face \u2014 closed back of each unit; pocket holes on all four edges'},
+              {name:'Side Panel',qty:4,L:BD,W:+iH,notes:'Face grain \u2014 2 per box; front face left open (no panel)'},
+            ],
+            cncOps:[
+              {part:'Top + Bottom Panels \u2014 inside face',op:'Pocket holes \u00D73 per side edge',spec:'15\u00B0 angled bore \u2014 screw into side and back panel top/bottom edges from inside'},
+              {part:'Back Panel \u2014 side edges',op:'Pocket holes \u00D73 per edge',spec:'15\u00B0 angled bore \u2014 screw into side panel back edges from inside'},
+            ],
+            hardware:[
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:36,notes:'~18 per box (all interior joints)'},
+              {item:'Felt pad \u00BE" dia.',qty:8,notes:'4 per unit \u2014 under bottom corners'},
+            ],
+            assembly:['1. Per box: drive pocket screws to join back panel between two side panels (6 screws)','2. Set bottom panel; drive pocket screws from inside into bottom edges of all three panels (9 screws)','3. Set top panel; drive pocket screws from inside into top edges (9 screws)','4. Attach felt pads under bottom corners','5. Place both units side by side; lay mattress across (mattress weight keeps them aligned)']
+          };
+        },
+      },
+
+      // ── 3 · Daybed Supreme ────────────────────────────────────
+      {
+        name:'Daybed Supreme', prefix:'BS-DS', bread:'Seating \u203A Daybed Supreme',
+        typeLabel:'Daybed Supreme', typeSub:'4-box system \u00B7 modular \u00B7 As seen on tiktok',
+        desc:'Four open-front plywood box units, each 37\u00D737\u00D716\u201D \u2014 sized so two pushed together sit just inside a standard twin mattress without the corners jutting past the edge. Use all four as a king-size platform, a pair of twin daybeds, or reconfigure as an L-shaped sectional seat. Solid \u00BE\u201D Baltic birch throughout, open front on each box for accessible under-platform storage.',
+        features:['\u00BE\u201D Baltic birch \u00B7 void-free B/BB grade \u00B7 4 identical box units','Each unit 37\u201D\u00D737\u201D\u00D716\u201DH \u2014 square footprint, one open front face','2 units = 1 twin platform (74\u201D long, under a 38\u201D\u00D775\u201D mattress without jutting)','4 units = king-size bed (74\u201D\u00D774\u201D) or L-shaped sectional seat','Open front: accessible storage inside each unit for linens, books, or bins','2-coat hand-rubbed oil finish \u00B7 ships flat-packed as 4 separate boxes','Made to order in Brooklyn \u00B7 5\u20137 week lead time'],
+        assembly:['Ships as 4 flat-packed boxes \u2014 5 panels + hardware bag each','Two people \u00B7 ~20 min per box \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u00B7 pocket screws only \u00B7 no glue needed','Boxes sit together under mattress weight; optional link hardware keeps units aligned','Rearrange any time \u2014 no tools needed to switch between configurations'],
+        ship:{badge:'Free freight shipping',note:'Flat-packed \u00D74 \u00B7 Contiguous US'},
+        ctaLabel:'Order This System',
+        configs:[
+          {label:'Layout',key:'c0',items:[
+            {lb:'Bed',sub:'2\u00D72 \u00B7 twin mattresses'},
+            {lb:'L-Seat',sub:'sectional \u00B7 3+1'},
+          ]},
+        ],
+        getDims(st){
+          const BW=37, BD=37, BH=16;
+          if(st.c0===0) return{BW,BD,BH,layout:0,dimStr:`74" W \u00D7 74" D \u00D7 ${BH}" H`,subStr:'Two twin platforms \u00B7 4-box system'};
+          return{BW,BD,BH,layout:1,dimStr:`111" L \u00D7 74" W \u00D7 ${BH}" H`,subStr:'L-shaped sectional \u00B7 4-box system'};
+        },
+        price(st){
+          const BW=37, BD=37, BH=16, iH=BH-2*T;
+          const perBox=2*(BW*BD)+(BW*iH)+2*(BD*iH);
+          return calcRetail(perBox*4,380,110,260);
+        },
+        build(st){
+          buildMats();
+          const BW=37, BD=37, BH=16, iH=BH-2*T, gap=2;
+          function mkBox(cx,cz){
+            const btg=new THREE.BoxGeometry(BW,T,BD); const btm=new THREE.Mesh(btg,mFlat()); btm.position.set(cx,T/2,cz); btm.castShadow=btm.receiveShadow=true; grp.add(btm); eL(btm,btg);
+            const tpg=new THREE.BoxGeometry(BW,T,BD); const tpm=new THREE.Mesh(tpg,mFlat()); tpm.position.set(cx,BH-T/2,cz); tpm.castShadow=tpm.receiveShadow=true; grp.add(tpm); eL(tpm,tpg);
+            // Back panel inner width (BW-2T) — no corner overlap with side panels
+            const bkg=new THREE.BoxGeometry(BW-2*T,iH,T); const bkm=new THREE.Mesh(bkg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]); bkm.position.set(cx,T+iH/2,cz-BD/2+T/2); bkm.castShadow=true; grp.add(bkm); eL(bkm,bkg);
+            // Side panels iH-0.02 so they clear top/bottom panel faces (no coplanar z-fight)
+            const lg=new THREE.BoxGeometry(T,iH-0.02,BD); const lm=new THREE.Mesh(lg,mStand()); lm.position.set(cx-BW/2+T/2,T+iH/2,cz); lm.castShadow=true; grp.add(lm); eL(lm,lg);
+            const rg=new THREE.BoxGeometry(T,iH-0.02,BD); const rm=new THREE.Mesh(rg,mStand()); rm.position.set(cx+BW/2-T/2,T+iH/2,cz); rm.castShadow=true; grp.add(rm); eL(rm,rg);
+          }
+          if(st.c0===0){
+            const ox=BW/2+gap/2, oz=BD/2+gap/2;
+            mkBox(-ox,-oz); mkBox(+ox,-oz); mkBox(-ox,+oz); mkBox(+ox,+oz);
+            camCt={x:0,y:BH*0.5,z:0}; camSc=(BW+gap)*2*1.4+30;
+          } else {
+            mkBox(-(BW+gap),0); mkBox(0,0); mkBox(+(BW+gap),0); mkBox(+(BW+gap),BD+gap);
+            camCt={x:BW/2,y:BH*0.5,z:(BD+gap)/2}; camSc=(BW*3+gap*2)*1.2+30;
+          }
+          document.getElementById('b-dim').textContent=this.getDims(st).dimStr;
+        },
+        getCuts(st){
+          const BW=37, BD=37, BH=16, iH=+(BH-2*T).toFixed(2);
+          return{
+            parts:[
+              {name:'Top Panel',qty:4,L:BW,W:BD,notes:'Face grain \u2014 one per box; sits flush with top edges of sides and back'},
+              {name:'Bottom Panel',qty:4,L:BW,W:BD,notes:'Face grain \u2014 one per box; rests on floor with felt pads at corners'},
+              {name:'Back Panel',qty:4,L:BW,W:+iH,notes:'Face grain \u2014 closed back of each unit; pocket holes on all edges'},
+              {name:'Side Panel',qty:8,L:BD,W:+iH,notes:'Face grain \u2014 2 per unit; front face left open (no panel)'},
+            ],
+            cncOps:[
+              {part:'Top + Bottom Panels \u2014 inside face',op:'Pocket holes \u00D73 per side edge',spec:'15\u00B0 angled bore \u2014 screw into side and back panel top/bottom edges from inside'},
+              {part:'Back Panel \u2014 side edges',op:'Pocket holes \u00D73 per edge',spec:'15\u00B0 angled bore \u2014 screw into side panel back edges from inside'},
+            ],
+            hardware:[
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:72,notes:'~18 per box (all interior joints)'},
+              {item:'Felt pad \u00BE" dia.',qty:16,notes:'4 per unit \u2014 under bottom corners'},
+              {item:'Unit link bar + bolts',qty:8,notes:'2 links per adjacent pair \u2014 keeps system aligned under load; included'},
+            ],
+            assembly:['1. Per box: drive pocket screws to join back panel between two side panels (6 screws)','2. Set bottom panel; drive pocket screws from inside into bottom edges of all three panels (9 screws)','3. Set top panel; drive pocket screws from inside into top edges (9 screws)','4. Attach felt pads under bottom corners','5. Arrange all 4 units; install link hardware between adjacent units at back edges']
+          };
+        },
+      },
+
+      // ── 4 · Chair ─────────────────────────────────────────────
+      {
+        name:'Chair', prefix:'BS-CH', bread:'Seating \u203A Chair',
+        typeLabel:'Chair for sitting', typeSub:'slab \u00B7 dining or desk',
+        desc:'A pared-back slab chair cut from \u00BE\u201D Baltic birch. Two continuous side panels run from the floor straight up through the back \u2014 no joints, no separate legs. The seat dado-locks into the sides at 17\u00BD\u201D; the back panel pocket-screws between them at the back edge. Honest geometry, honest material.',
+        features:['\u00BE\u201D Baltic birch \u00B7 void-free B/BB grade','Side panels run continuous floor to back top \u2014 no leg-to-upright joints','Seat panel dado-jointed into side panels \u2014 no glue','Back panel pocket-screwed between sides above seat height','2-coat hand-rubbed oil finish','Ships flat-packed \u00B7 assembles in ~15 min','Made to order in Brooklyn \u00B7 3\u20134 week lead time'],
+        assembly:['Ships flat-packed \u2014 2 side panels, seat, back panel, hardware bag','One person \u00B7 ~15 min \u00B7 drill + #2 square-head bit','All holes pre-drilled by CNC \u2014 no measuring, no glue needed','Seat taps into dados; back panel pocket-screws between sides'],
+        ship:{badge:'Free shipping',note:'Boxed \u00B7 Contiguous US'},
+        ctaLabel:'Order This Chair',
+        configs:[
+          {label:'Back Height',key:'c0',items:[
+            {lb:'Medium',sub:'28" total height'},
+            {lb:'High',sub:'34" total height'},
+          ]},
+        ],
+        getDims(st){
+          const W=19, D=16, SH=17.5, BH=[28,34][st.c0];
+          const backH=+(BH-SH-T).toFixed(2);
+          return{W,D,SH,BH,backH,dimStr:`${W}" W \u00D7 ${D}" D \u00D7 ${BH}" H`,subStr:`${['Medium','High'][st.c0]} back \u00B7 dining \u00B7 ${W}" wide`};
         },
         price(st){
           const d=this.getDims(st);
-          const sqIn=d.L*(d.W+1)+2*(d.H*d.W)+d.innerW*d.W+d.W*d.supH;
-          const labor=280;
-          return calcRetail(sqIn,labor,75,195);
+          const sqIn=2*(d.BH*d.D)+(d.W*d.D)+(d.W*d.backH);
+          return calcRetail(sqIn,180+st.c0*20,22,55);
         },
         build(st){
           buildMats(); const d=this.getDims(st);
-          // Platform / top (1" front overhang — mattress sits on this)
-          const tg=new THREE.BoxGeometry(d.L,T,d.W+1);
-          const tm=new THREE.Mesh(tg,mFlat()); tm.position.set(0,d.H-T/2,0.5); tm.castShadow=tm.receiveShadow=true; grp.add(tm); eL(tm,tg);
-          // End panels (full height)
+          const iW=d.W-2*T;
           [-1,1].forEach(s=>{
-            const eg=new THREE.BoxGeometry(T,d.H,d.W);
-            const em=new THREE.Mesh(eg,mStand()); em.position.set(s*(d.L/2-T/2),d.H/2,0); em.castShadow=em.receiveShadow=true; grp.add(em); eL(em,eg);
+            const sg=new THREE.BoxGeometry(T,d.BH,d.D);
+            // Top/bottom edges use mEV so grain lines run along the depth (correct plywood end-grain direction)
+            const sm=new THREE.Mesh(sg,[mF.clone(),mF.clone(),mEV.clone(),mEV.clone(),mEV.clone(),mEV.clone()]); sm.position.set(s*(d.W/2-T/2),d.BH/2,0); sm.castShadow=sm.receiveShadow=true; grp.add(sm); eL(sm,sg);
           });
-          // Bottom storage shelf (dados into end panels)
-          const bg=new THREE.BoxGeometry(d.innerW,T,d.W);
-          const bm=new THREE.Mesh(bg,mFlat()); bm.position.set(0,d.shelfY,0); bm.castShadow=bm.receiveShadow=true; grp.add(bm); eL(bm,bg);
-          // Centre support (structural, shelf to platform)
-          const cg=new THREE.BoxGeometry(T,d.supH,d.W);
-          const cm=new THREE.Mesh(cg,mStand()); cm.position.set(0,d.shelfY+T+d.supH/2,0); cm.castShadow=true; grp.add(cm); eL(cm,cg);
-          camCt={x:0,y:d.H*0.5,z:0}; camSc=Math.max(d.L,d.W,d.H)*1.6+40;
+          const stg=new THREE.BoxGeometry(iW,T,d.D);
+          const stm=new THREE.Mesh(stg,mFlat()); stm.position.set(0,d.SH,0); stm.castShadow=stm.receiveShadow=true; grp.add(stm); eL(stm,stg);
+          const bkg=new THREE.BoxGeometry(iW,d.backH,T);
+          const bkm=new THREE.Mesh(bkg,[mE.clone(),mE.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+          bkm.position.set(0,d.SH+T+d.backH/2,-(d.D/2-T/2)); bkm.castShadow=true; grp.add(bkm); eL(bkm,bkg);
+          camCt={x:0,y:d.BH*0.45,z:0}; camSc=Math.max(d.W,d.BH,d.D)*2.8+15;
           document.getElementById('b-dim').textContent=d.dimStr;
         },
         getCuts(st){
           const d=this.getDims(st);
-          const dadoFromBottom=+(d.shelfY-T/2).toFixed(3);
+          const iW=+(d.W-2*T).toFixed(3);
           return{
             parts:[
-              {name:'Platform / Top',qty:1,L:d.L,W:d.W+1,notes:'1" front overhang; mattress sits on this surface; pocket holes on underside near each end and at centre'},
-              {name:'End Panel',qty:2,L:d.W,W:d.H,notes:'Dado for shelf at '+dadoFromBottom+'" from bottom; countersunk pilot at dado centre (outer face)'},
-              {name:'Storage Shelf',qty:1,L:+(d.innerW).toFixed(3),W:d.W,notes:'Fits into end panel dados \u2014 no glue'},
-              {name:'Centre Support',qty:1,L:d.W,W:+(d.supH).toFixed(3),notes:'Structural vertical panel at midpoint; pocket screws from platform and shelf'},
+              {name:'Side Panel',qty:2,L:d.D,W:d.BH,notes:'Full height floor to back top; dado for seat at '+d.SH+'" from bottom (inner face); countersunk pilot at dado centre (outer face); pocket holes on back edge above seat'},
+              {name:'Seat Panel',qty:1,L:iW,W:d.D,notes:'Face grain up; ends fit into side panel dados \u2014 no glue'},
+              {name:'Back Panel',qty:1,L:iW,W:+d.backH.toFixed(2),notes:'Face grain on show face; fits between sides flush at back edge above seat; pocket holes on side edges'},
             ],
             cncOps:[
-              {part:'L + R End Panel \u2014 inner face',op:'Dado',spec:'\u00BEW \u00D7 \u215E" deep, full depth ('+d.W+'"), at '+dadoFromBottom+'" from bottom. No glue.'},
-              {part:'L + R End Panel \u2014 outer face',op:'Countersunk pilot \u00D71 each',spec:'At dado centre \u2014 locking screw from outside into shelf end grain'},
-              {part:'Platform \u2014 underside',op:'Pocket holes \u00D74 per end + \u00D72 at centre',spec:'15\u00B0 angled bore \u2014 screw into top edge of end panels and centre support'},
-              {part:'Storage Shelf \u2014 top face',op:'Pocket holes \u00D71 at centre',spec:'15\u00B0 angled bore at centre \u2014 screw into centre support bottom edge'},
+              {part:'L + R Side Panel \u2014 inner face',op:'Dado',spec:'\u00BEW \u00D7 \u215E" deep, full depth ('+d.D+'"), at '+d.SH+'" from bottom. No glue.'},
+              {part:'L + R Side Panel \u2014 outer face',op:'Countersunk pilot \u00D71 each',spec:'At dado centre \u2014 locking screw into seat end grain from outside'},
+              {part:'L + R Side Panel \u2014 back edge above seat',op:'Pocket holes \u00D73 each',spec:'15\u00B0 angled bore \u2014 screw into back panel side edges'},
             ],
             hardware:[
-              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:12,notes:'8 platform-to-ends, 2 platform-to-centre, 1 shelf-to-centre, 1 spare'},
-              {item:'Flat-head screw #8 \u00D7 1" coarse',qty:2,notes:'Shelf locking from end panel outer faces'},
-              {item:'Felt pad \u00BE" dia.',qty:6,notes:'Under end panel corners and centre support base'},
+              {item:'Pocket screw #8 \u00D7 1\u00BC" coarse',qty:6,notes:'3 per side \u2014 sides to back panel'},
+              {item:'Flat-head screw #8 \u00D7 1" coarse',qty:2,notes:'1 per side \u2014 seat locking from outer face'},
+              {item:'Felt pad \u00BE" dia.',qty:4,notes:'Under side panel bottom corners'},
             ],
-            assembly:['1. Tap storage shelf into dado in one end panel; drive locking screw from outside','2. Tap shelf into second end panel; drive locking screw','3. Insert centre support at midpoint on shelf; drive pocket screw from shelf top face into support base','4. Set platform on top of end panels and centre support; drive 4 pocket screws per end and 2 into centre support from underside','5. Attach felt pads under end panels and centre support']
+            assembly:['1. Tap seat panel into dado in one side panel; drive locking screw from outer face','2. Tap seat other end into second side panel; drive locking screw','3. Slide back panel between sides flush at back edge above seat; drive 3 pocket screws per side into back panel edges','4. Attach felt pads to bottom corners of side panels']
           };
         },
       },
@@ -1085,6 +1322,173 @@ const PRODS = [
     getCuts(st){ return this.types[st.ty].getCuts(st); },
   },
 
+// ─────────────────────────────────────────────────────────────
+//  4. FRAMES
+// ─────────────────────────────────────────────────────────────
+{
+  id: 'frames',
+  tabLabel: 'Frames',
+  state: { ty:0, c0:3, c1:6, c2:0 }, // default 8"W × 10"H × 1.5" deep
+  types: [
+    {
+      name: 'Canvas Frame',
+      prefix: 'BS-CF',
+      bread: 'Frames \u203A Canvas',
+      typeLabel: 'Canvas frame',
+      typeSub: 'tray \u00B7 wall mount',
+      desc: '\u00BE\u201D Baltic birch cut into five pieces: a back panel the canvas rests on, and four border strips screwed to its edges. The 13-ply sandwich is visible across the full front face of each strip \u2014 that\u2019s the detail. Canvas drops in from the front and sits on the back panel; the border strips hold it in place. Pick any width and height independently for a fully custom fit.',
+      features: [
+        '\u00BE\u201D Baltic birch \u00B7 B/BB grade \u2014 5 pieces: back panel + four border strips',
+        '13-ply sandwich visible across the full front face of each strip \u2014 that\u2019s the design detail',
+        'Canvas drops in from the front and rests on the back panel; border strips hold it in place',
+        'Pick any width \u00D7 height independently \u2014 13 widths \u00D7 17 heights to choose from',
+        'Slim (1.5\u201D) or gallery (2.25\u201D) tray depth',
+        '2-piece French cleat mount \u2014 self-locking under load; same system as wall shelves',
+        'Made to order \u00B7 2\u20133 week lead time',
+      ],
+      assembly: [
+        '1. Pocket-screw four border strips to back panel edges \u2014 no visible fasteners from front',
+        '2. Mount unit cleat to back panel back face near top \u2014 bevel down',
+        '3. Install wall cleat: tape paper template, drill into stud(s), add toggles off-stud if needed',
+        '4. Hang tray on wall cleat \u2014 hooks over and locks under weight',
+        '5. Drop canvas in from front \u2014 rests on back panel, border strips hold the edges',
+      ],
+      ship: { badge:'Free shipping', note:'Flat-packed \u00B7 Contiguous US \u00B7 hardware included' },
+      ctaLabel: 'Order This Frame',
+      configs: [
+        { label:'Canvas Width', key:'c0', items:[
+          {lb:'4"'},{lb:'5"'},{lb:'6"'},{lb:'8"'},{lb:'9"'},{lb:'10"'},
+          {lb:'11"'},{lb:'12"'},{lb:'16"'},{lb:'18"'},{lb:'20"'},{lb:'24"'},{lb:'30"'},
+        ]},
+        { label:'Canvas Height', key:'c1', items:[
+          {lb:'4"'},{lb:'5"'},{lb:'6"'},{lb:'7"'},{lb:'8"'},{lb:'9"'},{lb:'10"'},
+          {lb:'11"'},{lb:'12"'},{lb:'14"'},{lb:'16"'},{lb:'18"'},{lb:'20"'},{lb:'24"'},{lb:'30"'},{lb:'36"'},
+        ]},
+        { label:'Tray Depth', key:'c2', items:[
+          {lb:'1.5"', sub:'slim'},{lb:'2.25"', sub:'gallery'},
+        ]},
+      ],
+      getDims(st) {
+        const ws=[4,5,6,8,9,10,11,12,16,18,20,24,30];
+        const hs=[4,5,6,7,8,9,10,11,12,14,16,18,20,24,30,36];
+        const cW=ws[st.c0]||8, cH=hs[st.c1]||10;
+        const sH=[1.5,2.25][st.c2]||1.5;
+        const outerW=+(cW+2*T).toFixed(3), outerH=+(cH+2*T).toFixed(3);
+        return { cW, cH, sH, outerW, outerH,
+          dimStr:`${outerW}" W \u00D7 ${outerH}" H \u00D7 ${sH}" deep`,
+          subStr:`Fits ${cW}\u00D7${cH}" canvas \u00B7 ${sH}" tray` };
+      },
+      price(st) {
+        const d=this.getDims(st);
+        const sqIn=d.cW*d.cH + 2*d.outerW*d.sH + 2*T*d.cH;
+        const labor=35+(st.c2===1?15:0);
+        const ship=15+Math.floor(Math.max(d.outerW,d.outerH)/12)*5;
+        return calcRetail(sqIn, labor, 10, ship);
+      },
+      build(st) {
+        buildMats();
+        const d=this.getDims(st);
+        const wallY=d.outerH/2+6;
+        // Wall plane
+        const wg=new THREE.PlaneGeometry(d.outerW+18,d.outerH+18);
+        const wm=new THREE.Mesh(wg,new THREE.MeshStandardMaterial({color:0xECE8E2,roughness:1,metalness:0}));
+        wm.position.set(0,wallY,-(d.sH+1.5)); grp.add(wm);
+        // Back panel — floor of tray, slightly undersized to avoid coplanar strip edges
+        const bpg=new THREE.BoxGeometry(d.cW-0.02,d.cH-0.02,T);
+        const bpm=new THREE.Mesh(bpg,mFlat());
+        bpm.position.set(0,wallY,T/2); bpm.castShadow=true; grp.add(bpm); eL(bpm,bpg);
+        // Strip material factories: 13-ply edge grain on ±Z (front face), face on ±Y or ±X
+        const tsM=()=>[mEV.clone(),mEV.clone(),mF.clone(),mF.clone(),mE.clone(),mE.clone()]; // top/bottom
+        const ssM=()=>[mF.clone(),mF.clone(),mEV.clone(),mEV.clone(),mE.clone(),mE.clone()]; // sides
+        // Top strip
+        const tsg=new THREE.BoxGeometry(d.outerW,T,d.sH);
+        const tsm=new THREE.Mesh(tsg,tsM());
+        tsm.position.set(0,wallY+d.cH/2+T/2,0.01+d.sH/2); tsm.castShadow=true; grp.add(tsm); eL(tsm,tsg);
+        // Bottom strip
+        const bsg=new THREE.BoxGeometry(d.outerW,T,d.sH);
+        const bsm=new THREE.Mesh(bsg,tsM());
+        bsm.position.set(0,wallY-d.cH/2-T/2,0.01+d.sH/2); bsm.castShadow=true; grp.add(bsm); eL(bsm,bsg);
+        // Left strip (cH-0.02 avoids coplanar faces with top/bottom strips)
+        const lsg=new THREE.BoxGeometry(T,d.cH-0.02,d.sH);
+        const lsm=new THREE.Mesh(lsg,ssM());
+        lsm.position.set(-(d.cW/2+T/2),wallY,0.01+d.sH/2); lsm.castShadow=true; grp.add(lsm); eL(lsm,lsg);
+        // Right strip
+        const rsg=new THREE.BoxGeometry(T,d.cH-0.02,d.sH);
+        const rsm=new THREE.Mesh(rsg,ssM());
+        rsm.position.set(+(d.cW/2+T/2),wallY,0.01+d.sH/2); rsm.castShadow=true; grp.add(rsm); eL(rsm,rsg);
+        // Canvas — cream panel resting on back panel
+        const cg=new THREE.BoxGeometry(d.cW*0.98,d.cH*0.98,0.1);
+        const cm=new THREE.Mesh(cg,new THREE.MeshStandardMaterial({color:0xEDE7D6,roughness:0.9,metalness:0}));
+        cm.position.set(0,wallY,T+0.05); cm.receiveShadow=true; grp.add(cm);
+        // French cleat — unit side (screwed to back of back panel, near top)
+        const cleatH=1.5,cleatD=T;
+        const ucg=new THREE.BoxGeometry(d.outerW*0.7,cleatH,cleatD);
+        const ucm=new THREE.Mesh(ucg,mF.clone());
+        ucm.position.set(0,wallY+d.outerH/2-cleatH/2,-cleatD/2);
+        ucm.castShadow=true; grp.add(ucm); eL(ucm,ucg);
+        // French cleat — wall side
+        const wcg=new THREE.BoxGeometry(d.outerW*0.7,cleatH,cleatD);
+        const wcm=new THREE.Mesh(wcg,new THREE.MeshStandardMaterial({color:0xB0A888,roughness:0.8,metalness:0}));
+        wcm.position.set(0,wallY+d.outerH/2-cleatH/2,-(cleatD*2+0.05));
+        grp.add(wcm); eL(wcm,wcg);
+        camCt={x:0,y:wallY,z:d.sH/3}; camSc=Math.max(d.outerW,d.outerH)*2.2+20;
+        document.getElementById('b-dim').textContent=d.dimStr;
+      },
+      getCuts(st) {
+        const d=this.getDims(st);
+        const cleatL=+(d.outerW*0.7).toFixed(3);
+        return {
+          parts:[
+            {name:'Back Panel',   qty:1, L:+d.cW.toFixed(3),    W:+d.cH.toFixed(3), notes:'Face grain \u00B7 canvas rests on front face; cleats screw to back face near top'},
+            {name:'Top Strip',    qty:1, L:+d.outerW.toFixed(3), W:+d.sH.toFixed(3), notes:'13-ply edge on front face (outerW\u00D7T visible); face grain on wide face; pocket holes \u00D72 per end into back panel top edge'},
+            {name:'Bottom Strip', qty:1, L:+d.outerW.toFixed(3), W:+d.sH.toFixed(3), notes:'Same as top strip \u00B7 pocket holes into back panel bottom edge'},
+            {name:'Side Strip',   qty:2, L:+d.cH.toFixed(3),     W:+d.sH.toFixed(3), notes:'13-ply edge on front face (cH\u00D7T visible); face grain on wide face; pocket holes \u00D72 per end into back panel side edges'},
+            {name:'Unit Cleat',   qty:1, L:cleatL,               W:1.5,              notes:'45\u00B0 rip along bottom long edge \u2014 bevel faces wall, angled edge points DOWN. 3 countersunk holes for #8\u00D71\u00BC" screws into back panel back face.'},
+            {name:'Wall Cleat',   qty:1, L:cleatL,               W:1.5,              notes:'45\u00B0 rip along top long edge \u2014 bevel faces out, angled edge points UP. 2\u20133 countersunk clearance holes for #10\u00D73" stud screws.'},
+          ],
+          cncOps:[
+            {part:'Top + Bottom Strips \u2014 each end', op:'Pocket holes \u00D72',     spec:'15\u00B0 angled bore \u2014 strips screw into back panel top/bottom edges (butt joint)'},
+            {part:'Side Strips \u2014 each end',         op:'Pocket holes \u00D72',     spec:'Same \u2014 side strips screw into back panel side edges; fit between top/bottom strips'},
+            {part:'Back Panel \u2014 back face',         op:'Counter-bore \u00D73',     spec:'3 countersunk holes near top edge for unit cleat mounting screws'},
+          ],
+          hardware:[
+            {item:'Pocket screw #8 \u00D71\u00BC" fine thread', qty:16, notes:'4 per strip \u00D74 strips \u2014 fine thread grips end grain'},
+            {item:'#8 \u00D71\u00BC" flat-head screw',          qty:3,  notes:'Unit cleat to back panel back face'},
+            {item:'#10 \u00D73" structural screw',              qty:3,  notes:'Wall cleat into stud(s)'},
+            {item:'Toggle bolt \u00BC" \u00D73"',               qty:2,  notes:'Off-stud positions if needed'},
+            {item:'Paper level template',                       qty:1,  notes:'Pre-punched at cleat positions \u2014 tape to wall, mark, remove, drill'},
+          ],
+          assembly:[
+            '1. Lay back panel face-down; pocket-screw top and bottom strips to top/bottom edges (strips flush with back panel front face)',
+            '2. Pocket-screw side strips to left and right edges of back panel; tray is now fully assembled',
+            '3. Glue all joints, square on flat surface, clamp; let cure',
+            '4. Mount unit cleat to back panel back face near top with 3 screws \u2014 bevel down, angled edge points DOWN',
+            '5. Install wall cleat: tape paper template, drill, screw into stud(s); add toggle bolts off-stud if needed',
+            '6. Hang tray on wall cleat; drop canvas in from front \u2014 rests on back panel, border strips hold it in place',
+          ],
+        };
+      },
+    },
+  ],
+  get name(){ return this.types[this.state.ty].name; },
+  get modelPrefix(){ return this.types[this.state.ty].prefix; },
+  get breadcrumb(){ return this.types[this.state.ty].bread; },
+  get desc(){ return this.types[this.state.ty].desc; },
+  get features(){ return this.types[this.state.ty].features; },
+  get assembly(){ return this.types[this.state.ty].assembly; },
+  get ship(){ return this.types[this.state.ty].ship; },
+  get ctaLabel(){ return this.types[this.state.ty].ctaLabel; },
+  get configs(){
+    const tc={label:'Type',key:'ty',items:this.types.map(t=>({lb:t.typeLabel,sub:t.typeSub}))};
+    return [tc,...this.types[this.state.ty].configs];
+  },
+  onTypeChange(){ this.state.c0=0; this.state.c1=0; this.state.c2=0; },
+  getDims(st){ return this.types[st.ty].getDims(st); },
+  price(st){ return this.types[st.ty].price(st); },
+  build(st){ this.types[st.ty].build(st); },
+  getCuts(st){ return this.types[st.ty].getCuts(st); },
+},
+
 ]; // end PRODS
 
 // ═══════════════════════════════════════════════════════════════
@@ -1095,10 +1499,27 @@ let noTypeSelected = true; // true until user explicitly picks a style
 
 function switchProd(id) {
   curProd = PRODS.find(p => p.id===id) || PRODS[0];
-  noTypeSelected = true;   // require explicit style pick — no auto-render
+  noTypeSelected = true;
   zm=1; th=0; ph=0.25;
   syncNav();
-  clearGrp();              // empty the 3D view
+  clearGrp();
+  renderPanel();
+}
+
+// Flat product selector — pick a specific type across any category
+function selectType(prodId, ty) {
+  const pr = PRODS.find(p => p.id === prodId);
+  if (!pr) return;
+  const changed = curProd.id !== prodId;
+  curProd = pr;
+  curProd.state.ty = ty;
+  if (curProd.onTypeChange) curProd.onTypeChange();
+  noTypeSelected = false;
+  if (changed) { zm=1; th=0; ph=0.25; }
+  clearGrp();
+  curProd.build(curProd.state);
+  updCam();
+  syncNav();
   renderPanel();
 }
 
@@ -1137,21 +1558,191 @@ function editionNum(state) {
 
 const EB_UPCHARGE = 120; // flat edge band upcharge added to retail
 
+// ═══════════════════════════════════════════════════════════════
+//  Thumbnail renderer — separate WebGL context, colour-only mats
+// ═══════════════════════════════════════════════════════════════
+let _tr = null, _trCv = null;
+function _initTR() {
+  if (_tr) return;
+  _trCv = document.createElement('canvas');
+  _trCv.width = 240; _trCv.height = 180;
+  _tr = new THREE.WebGLRenderer({ canvas: _trCv, antialias: true, alpha: false });
+  _tr.setPixelRatio(1);
+  _tr.setClearColor(0xF5F1EB, 1);
+  _tr.outputEncoding = THREE.sRGBEncoding;
+  _tr.toneMapping = THREE.ACESFilmicToneMapping;
+  _tr.toneMappingExposure = 1.2;
+}
+
+// Simple flat-colour materials for thumbnails (can't share textures across contexts)
+const _FC = 0xC0AC82, _EC = 0x9B7E58;
+function _mF2() { return new THREE.MeshStandardMaterial({ color:_FC, roughness:0.55, metalness:0 }); }
+function _mE2() { return new THREE.MeshStandardMaterial({ color:_EC, roughness:0.65, metalness:0 }); }
+function _mS2() { return [_mF2(),_mF2(),_mE2(),_mE2(),_mE2(),_mE2()]; } // standing panel
+function _mL2() { return [_mE2(),_mE2(),_mF2(),_mF2(),_mE2(),_mE2()]; } // flat/lying panel
+
+function _b(w,h,d, mat, px,py,pz, parent) {
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w,h,d), mat);
+  m.position.set(px,py,pz); parent.add(m);
+}
+
+function buildPreview(id, ty) {
+  const g  = new THREE.Group();
+  const pr = PRODS.find(p => p.id === id);
+  if (!pr) return g;
+  const st = { ty, c0:0, c1:0, c2:0 };
+
+  if (id === 'tables') {
+    if (ty === 0) {                              // Dining — trestle
+      const d = pr.types[0].getDims(st);
+      _b(d.L,T,d.W, _mL2(), 0,d.H-T/2,0, g);
+      [d.L/2-d.recess-T/2, -(d.L/2-d.recess-T/2)].forEach(xp => _b(T,d.panelH,d.baseW, _mS2(), xp,d.panelH/2,0, g));
+      _b(d.webLen,d.panelH,T, _mS2(), 0,d.panelH/2,0, g);
+    } else if (ty === 1) {                       // Coffee — trestle
+      const d = pr.types[1].getDims(st);
+      _b(d.L,T,d.W, _mL2(), 0,d.H-T/2,0, g);
+      [d.L/2-d.recess-T/2, -(d.L/2-d.recess-T/2)].forEach(xp => _b(T,d.panelH,d.baseW, _mS2(), xp,d.panelH/2,0, g));
+      _b(d.webLen,d.panelH,T, _mS2(), 0,d.panelH/2,0, g);
+    } else if (ty === 2) {                       // Coffee + Shelf — box
+      const d = pr.types[2].getDims(st);
+      _b(d.L,T,d.W+1, _mL2(), 0,d.H-T/2,0.5, g);
+      [-1,1].forEach(s => _b(T,d.epH,d.W, _mS2(), s*(d.L/2-T/2),d.epH/2,0, g));
+      _b(d.innerL,T,d.W, _mL2(), 0,d.shelfY,0, g);
+    } else if (ty === 3) {                       // Side Table — box
+      const d = pr.types[3].getDims(st);
+      _b(d.L,T,d.W+1, _mL2(), 0,d.H-T/2,0.5, g);
+      _b(d.L,T,d.W, _mL2(), 0,T/2,0, g);
+      [-1,1].forEach(s => _b(T,d.innerH,d.W, _mS2(), s*(d.L/2-T/2),T+d.innerH/2,0, g));
+      _b(d.L-2*T,T,d.W, _mL2(), 0,d.shelfY,0, g);
+    } else if (ty === 4) {                       // Desk (rear shelf)
+      const W=48, D=24, H=29.5, shelfY=8, iW=W-2*T;
+      const shelfD=D/2, shelfZ=-(D/2-shelfD/2);
+      _b(W,T,D+1, _mL2(), 0,H-T/2,0.5, g);
+      [-1,1].forEach(s => _b(T,H-T,D, _mS2(), s*(W/2-T/2),(H-T)/2,0, g));
+      _b(iW,T,shelfD, _mL2(), 0,shelfY,shelfZ, g);
+    }
+  } else if (id === 'shelving') {
+    if (ty === 0) {                              // Freestanding bookcase
+      const d = pr.types[0].getDims(st);
+      const gap = (d.H-T)/(d.nShelves-1), shW = d.W-2*T;
+      [-1,1].forEach(s => _b(T,d.H,d.D, _mS2(), s*(d.W/2-T/2),d.H/2,0, g));
+      for(let i=0;i<d.nShelves;i++) _b(shW,T,d.D, _mL2(), 0,i*gap+T/2,0, g);
+      _b(d.W,T,d.D+1, _mL2(), 0,d.H+T/2,0.5, g);
+    } else if (ty === 1) {                       // Wall shelf (floating)
+      const d = pr.types[1].getDims(st);
+      const cy = d.H/2;
+      _b(d.L,T,d.D, _mL2(), 0,cy+d.H/2-T/2,0, g);
+      _b(d.L,T,d.D, _mL2(), 0,cy-d.H/2+T/2,0, g);
+      [-1,1].forEach(s => _b(T,d.innerH,d.D, _mS2(), s*(d.L/2-T/2),cy,0, g));
+      const compH = d.innerH/(d.shelves+1);
+      for(let i=1;i<=d.shelves;i++) _b(d.innerL,T,d.D, _mL2(), 0,(cy-d.H/2+T)+compH*i,0, g);
+    }
+  } else if (id === 'seating') {
+    if (ty === 0) {                              // Entryway bench
+      const d = pr.types[0].getDims(st);
+      _b(d.W,T,d.D+1, _mL2(), 0,d.H-T/2,0.5, g);
+      [-1,1].forEach(s => _b(T,d.H-T,d.D, _mS2(), s*(d.W/2-T/2),(d.H-T)/2,0, g));
+      _b(d.W-2*T,T,d.D, _mL2(), 0,d.shelfY,0, g);
+    } else if (ty === 1) {                       // Stool
+      const d = pr.types[1].getDims(st);
+      _b(d.W,T,d.D+1, _mL2(), 0,d.H-T/2,0.5, g);
+      [-1,1].forEach(s => _b(T,d.innerH,d.D, _mS2(), s*(d.W/2-T/2),d.innerH/2,0, g));
+      _b(d.innerW,d.innerH,T, _mS2(), 0,d.innerH/2,-(d.D/2-T/2), g);
+      _b(d.innerW,T,d.D, _mL2(), 0,d.stretcherY,0, g);
+    } else if (ty === 2) {                       // Daybed — 2 open-front boxes
+      const BW=37,BD=37,BH=16,iH=BH-2*T,gap=2,ox=BW/2+gap/2;
+      [[-ox,0],[+ox,0]].forEach(([cx,cz]) => {
+        _b(BW,T,BD, _mL2(), cx,T/2,cz, g);
+        _b(BW,T,BD, _mL2(), cx,BH-T/2,cz, g);
+        _b(BW-2*T,iH,T, _mS2(), cx,T+iH/2,cz-BD/2+T/2, g);    // inner-width back
+        _b(T,iH-0.02,BD, _mS2(), cx-BW/2+T/2,T+iH/2,cz, g);   // sides clear top/bottom
+        _b(T,iH-0.02,BD, _mS2(), cx+BW/2-T/2,T+iH/2,cz, g);
+      });
+    } else if (ty === 3) {                       // Daybed Supreme (2×2 bed view)
+      const BW=37, BD=37, BH=16, iH=BH-2*T, gap=2;
+      const ox=BW/2+gap/2, oz=BD/2+gap/2;
+      [[-ox,-oz],[ox,-oz],[-ox,oz],[ox,oz]].forEach(([cx,cz]) => {
+        _b(BW,T,BD, _mL2(), cx,T/2,cz, g);
+        _b(BW,T,BD, _mL2(), cx,BH-T/2,cz, g);
+        _b(BW-2*T,iH,T, _mS2(), cx,T+iH/2,cz-BD/2+T/2, g);    // inner-width back
+        _b(T,iH-0.02,BD, _mS2(), cx-BW/2+T/2,T+iH/2,cz, g);   // sides clear top/bottom
+        _b(T,iH-0.02,BD, _mS2(), cx+BW/2-T/2,T+iH/2,cz, g);
+      });
+    } else if (ty === 4) {                       // Chair
+      const W=19, D=16, SH=17.5, BH=28, backH=BH-SH-T, iW=W-2*T;
+      [-1,1].forEach(s => _b(T,BH,D, _mS2(), s*(W/2-T/2),BH/2,0, g));
+      _b(iW,T,D, _mL2(), 0,SH,0, g);
+      _b(iW,backH,T, _mS2(), 0,SH+T+backH/2,-(D/2-T/2), g);
+    }
+  } else if (id === 'frames') {                  // Canvas Frame — default 8×10, 1.5" tray
+    const cW=8, cH=10, sH=1.5;
+    const oW=cW+2*T, oH=cH+2*T, wY=oH/2+2;
+    _b(cW-0.02,cH-0.02,T, _mF2(), 0,wY,T/2, g);             // back panel
+    _b(oW,T,sH, _mF2(), 0,wY+cH/2+T/2,0.01+sH/2, g);       // top strip
+    _b(oW,T,sH, _mF2(), 0,wY-cH/2-T/2,0.01+sH/2, g);       // bottom strip
+    _b(T,cH-0.02,sH, _mF2(), -(cW/2+T/2),wY,0.01+sH/2, g); // left strip
+    _b(T,cH-0.02,sH, _mF2(), +(cW/2+T/2),wY,0.01+sH/2, g); // right strip
+    const cm=new THREE.Mesh(new THREE.BoxGeometry(cW*0.98,cH*0.98,0.1),
+      new THREE.MeshStandardMaterial({color:0xEDE7D6,roughness:0.9,metalness:0}));
+    cm.position.set(0,wY,T+0.05); g.add(cm);
+  }
+  return g;
+}
+
+const _thumbCache = {};
+function getThumb(id, ty) {
+  const key = `${id}__${ty}`;
+  if (_thumbCache[key]) return _thumbCache[key];
+  _initTR();
+
+  // Build mini scene
+  const sc = new THREE.Scene();
+  sc.background = new THREE.Color(0xF5F1EB);
+  sc.add(new THREE.HemisphereLight(0xFFF8EE, 0xE0D8C8, 0.85));
+  const sun2 = new THREE.DirectionalLight(0xFFFBF0, 3.0); sun2.position.set(80,180,100); sc.add(sun2);
+  const fill2 = new THREE.DirectionalLight(0xDDE4FF, 1.0); fill2.position.set(-60,50,-50); sc.add(fill2);
+
+  const grp2 = buildPreview(id, ty);
+  sc.add(grp2);
+
+  // Auto-fit camera to bounding box
+  const bbox = new THREE.Box3().setFromObject(grp2);
+  const ctr  = bbox.getCenter(new THREE.Vector3());
+  const sz   = bbox.getSize(new THREE.Vector3());
+  const maxD = Math.max(sz.x, sz.y, sz.z);
+  const cam2 = new THREE.PerspectiveCamera(36, 240/180, 0.1, 10000);
+  const dist = maxD * 2.0;
+  cam2.position.set(ctr.x + dist*0.65, ctr.y + dist*0.45, ctr.z + dist*0.85);
+  cam2.lookAt(ctr);
+  cam2.updateProjectionMatrix();
+
+  _tr.render(sc, cam2);
+  const url = _trCv.toDataURL('image/jpeg', 0.88);
+  _thumbCache[key] = url;
+
+  // Dispose mini scene
+  grp2.traverse(o => {
+    if (o.geometry) o.geometry.dispose();
+    if (o.material) { (Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.dispose()); }
+  });
+  return url;
+}
+
 function renderPanel() {
   const p=curProd, st=p.state;
   let html='';
 
-  // ── 1. Category picker ───────────────────────────────────────
-  html += `<div class="cfg-grp" style="margin-bottom:4px"><div class="pills">`;
+  // ── Product picker — all types across all categories, flat grid ─
+  html += `<div class="cfg-grp"><div class="cfg-lbl">Product${!noTypeSelected?` <span class="cfg-val">— ${p.types[st.ty].typeLabel}</span>`:''}</div><div class="prod-cards">`;
   PRODS.forEach(pr => {
-    html += `<button class="pill${pr.id===p.id?' on':''}" onclick="switchProd('${pr.id}')">${pr.tabLabel}</button>`;
-  });
-  html += `</div></div>`;
-
-  // ── 2. Style / type picker ───────────────────────────────────
-  html += `<div class="cfg-grp"><div class="cfg-lbl">Style${!noTypeSelected?` <span class="cfg-val">— ${p.types[st.ty].typeLabel}</span>`:''}</div><div class="pills">`;
-  p.types.forEach((t,i) => {
-    html += `<button class="pill${!noTypeSelected&&i===st.ty?' on':''}" onclick="setOpt('ty',${i})">${t.typeLabel}${t.typeSub?`<span class="pill-sub">${t.typeSub}</span>`:''}</button>`;
+    pr.types.forEach((t,i) => {
+      const isOn = !noTypeSelected && pr.id===p.id && i===st.ty;
+      const imgSrc = getThumb(pr.id, i);
+      html += `<button class="prod-card${isOn?' on':''}" onclick="selectType('${pr.id}',${i})">` +
+        `<div class="card-img"><img src="${imgSrc}" alt="${t.typeLabel}" loading="lazy"></div>` +
+        `<div class="card-lbl"><span class="card-name">${t.typeLabel}</span>${t.typeSub?`<span class="card-sub">${t.typeSub}</span>`:''}</div>` +
+        `</button>`;
+    });
   });
   html += `</div></div>`;
 
@@ -1219,7 +1810,7 @@ function renderPanel() {
 
   // ── 8. CTA ───────────────────────────────────────────────────
   html += `<div class="ship-row"><span class="ship-badge">${p.ship.badge}</span><span class="ship-note">${p.ship.note}</span></div>`;
-  html += `<button class="btn-cart" onclick="openQ()">${p.ctaLabel}</button>`;
+  html += `<div class="cta-row"><button class="btn-cart" onclick="openQ()">${p.ctaLabel}</button><button class="btn-plans" onclick="openPlans()">Order plans — $40</button></div>`;
   html += `<button class="btn-sec" onclick="downloadCSV()">↓ Download Production Packet</button>`;
   html += `<div class="pd-trust">Handcrafted in Brooklyn, NY<br>30-day satisfaction guarantee · Made to order</div>`;
 
@@ -1230,18 +1821,7 @@ function renderPanel() {
 //  Nav sync (header + mobile bottom bar)
 // ═══════════════════════════════════════════════════════════════
 function syncNav() {
-  // Header
-  document.querySelectorAll('.hd-nav a').forEach(a => {
-    const match = a.getAttribute('onclick').match(/'([^']+)'/);
-    if(match) a.classList.toggle('active', match[1]===curProd.id);
-  });
-  // Mobile tabs
-  document.querySelectorAll('.mob-prodtab').forEach(t => {
-    t.classList.toggle('on', t.dataset.id===curProd.id);
-  });
-  // Scroll active mobile tab into view
-  const activeTab = document.querySelector('.mob-prodtab.on');
-  if(activeTab) activeTab.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
+  // No category-based nav active state needed — product selection handled by flat card grid
 }
 
 function buildMobileNav() {
@@ -1329,6 +1909,28 @@ function openQ() {
   document.getElementById('modal').style.display='flex';
 }
 function closeQ() { document.getElementById('modal').style.display='none'; }
+
+function openPlans() {
+  const p=curProd, d=p.getDims(p.state);
+  document.getElementById('plans-spec').innerHTML=
+    `<strong>${p.name}</strong><br>`+
+    `${d.dimStr}<br><br>`+
+    `<strong style="font-size:18px">$40</strong>`+
+    `<span style="font-size:10px;color:#999;margin-left:8px">digital build plans</span><br>`+
+    `<span style="font-size:11px;color:#888;display:block;margin-top:6px;">PDF cut list \u00B7 assembly drawings \u00B7 material list<br>Delivered via email within 1 business day.</span>`;
+  document.getElementById('modal-plans').style.display='flex';
+}
+function closePlans() { document.getElementById('modal-plans').style.display='none'; }
+function sendPlans() {
+  const p=curProd, d=p.getDims(p.state);
+  const nm=document.getElementById('p-name').value||'\u2014';
+  const em=document.getElementById('p-email').value||'\u2014';
+  const subj=`Build Plans Order \u2014 ${p.name} \u2014 $40 \u2014 ${nm}`;
+  const body=`BUILD PLANS ORDER\n=====\nProduct: ${p.name}\nDimensions: ${d.dimStr}\nPrice: $40 (digital plans)\n\nCUSTOMER\n========\nName: ${nm}\nEmail: ${em}\n\nPlaced via benstudios.com configurator`;
+  window.open(`mailto:${SELLER}?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`);
+  closePlans();
+}
+
 function sendQ() {
   const p=curProd, d=p.getDims(p.state), pr=p.price(p.state);
   const nm=document.getElementById('q-name').value||'—';
@@ -1372,7 +1974,6 @@ if (urlProd && PRODS.find(p => p.id === urlProd)) {
     }
   }
 }
-buildMobileNav();
 syncNav();
 rebuild();
 </script>

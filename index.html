@@ -239,15 +239,19 @@ function box(w,h,d, mat, px,py,pz, parent) {
 //  Product definitions
 // ═══════════════════════════════════════════════════════════
 const ITEMS = [
-  { id:'tables',  ty:0, name:'Dining Table' },
-  { id:'tables',  ty:1, name:'Coffee Table' },
-  { id:'tables',  ty:2, name:'Coffee + Shelf' },
-  { id:'tables',  ty:3, name:'Side Table' },
-  { id:'shelving',ty:0, name:'Bookcase' },
-  { id:'shelving',ty:1, name:'Wall Shelf' },
-  { id:'seating', ty:0, name:'Bench' },
-  { id:'seating', ty:1, name:'Stool' },
+  { id:'tables',  ty:0, name:'Dining table' },
+  { id:'tables',  ty:1, name:'Coffee table' },
+  { id:'tables',  ty:2, name:'Coffee table with shelf' },
+  { id:'tables',  ty:3, name:'Side table with shelf' },
+  { id:'tables',  ty:4, name:'Desk with shelf' },
+  { id:'shelving',ty:0, name:'Shelves for books' },
+  { id:'shelving',ty:1, name:'Wall-Mounted shelves' },
+  { id:'seating', ty:0, name:'Bench with shoe shelf' },
+  { id:'seating', ty:1, name:'Stool for sitting' },
   { id:'seating', ty:2, name:'Daybed' },
+  { id:'seating', ty:3, name:'Daybed Supreme' },
+  { id:'seating', ty:4, name:'Chair for sitting' },
+  { id:'frames',  ty:0, name:'Canvas frame' },
 ];
 
 function buildProduct(id, ty) {
@@ -320,12 +324,56 @@ function buildProduct(id, ty) {
     bpm.position.set(0,iH/2,-(D/2-T/2)); bpm.castShadow=true; g.add(bpm);
     bpm.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
     box(iW,T,D,mFlat(),0,6,0,g);
-  } else if(id==='seating' && ty===2) { // Daybed
-    const L=75,W=38,H=14,iW=L-2*T,supH=H-T-5-T;
-    box(L,T,W+1,mFlat(),0,H-T/2,0.5,g);
-    [-1,1].forEach(s=>box(T,H,W,mStand(),s*(L/2-T/2),H/2,0,g));
-    box(iW,T,W,mFlat(),0,5,0,g);
-    box(T,supH,W,mStand(),0,5+T+supH/2,0,g);
+  } else if(id==='seating' && ty===2) { // Daybed — 2 open-front boxes
+    const BW=37,BD=37,BH=16,iH=BH-2*T,gap=2,ox=BW/2+gap/2;
+    [[-ox,0],[+ox,0]].forEach(([cx,cz])=>{
+      box(BW,T,BD,mFlat(),cx,T/2,cz,g);
+      box(BW,T,BD,mFlat(),cx,BH-T/2,cz,g);
+      const bpg=new THREE.BoxGeometry(BW-2*T,iH,T); // inner-width back — no corner overlap
+      const bpm=new THREE.Mesh(bpg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+      bpm.position.set(cx,T+iH/2,cz-BD/2+T/2); bpm.castShadow=true; g.add(bpm);
+      bpm.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+      box(T,iH-0.02,BD,mStand(),cx-BW/2+T/2,T+iH/2,cz,g); // iH-0.02 clears top/bottom faces
+      box(T,iH-0.02,BD,mStand(),cx+BW/2-T/2,T+iH/2,cz,g);
+    });
+  } else if(id==='seating' && ty===3) { // Daybed Supreme — 4 open-front boxes in 2×2
+    const BW=37,BD=37,BH=16,iH=BH-2*T,gap=2;
+    const ox=BW/2+gap/2,oz=BD/2+gap/2;
+    [[-ox,-oz],[ox,-oz],[-ox,oz],[ox,oz]].forEach(([cx,cz])=>{
+      box(BW,T,BD,mFlat(),cx,T/2,cz,g);
+      box(BW,T,BD,mFlat(),cx,BH-T/2,cz,g);
+      const bpg=new THREE.BoxGeometry(BW-2*T,iH,T); // inner-width back — no corner overlap
+      const bpm=new THREE.Mesh(bpg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+      bpm.position.set(cx,T+iH/2,cz-BD/2+T/2); bpm.castShadow=true; g.add(bpm);
+      bpm.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+      box(T,iH-0.02,BD,mStand(),cx-BW/2+T/2,T+iH/2,cz,g); // iH-0.02 clears top/bottom faces
+      box(T,iH-0.02,BD,mStand(),cx+BW/2-T/2,T+iH/2,cz,g);
+    });
+  } else if(id==='seating' && ty===4) { // Chair
+    const W=19,D=16,SH=17.5,BH=28,backH=BH-SH-T,iW=W-2*T;
+    [-1,1].forEach(s=>box(T,BH,D,mStand(),s*(W/2-T/2),BH/2,0,g));
+    box(iW,T,D,mFlat(),0,SH,0,g);
+    const bpg=new THREE.BoxGeometry(iW,backH,T);
+    const bpm=new THREE.Mesh(bpg,[mEV.clone(),mEV.clone(),mE.clone(),mE.clone(),mF.clone(),mF.clone()]);
+    bpm.position.set(0,SH+T+backH/2,-(D/2-T/2)); bpm.castShadow=true; g.add(bpm);
+    bpm.add(new THREE.LineSegments(new THREE.EdgesGeometry(bpg),new THREE.LineBasicMaterial({color:0x402808,transparent:true,opacity:0.12})));
+  } else if(id==='tables' && ty===4) { // Desk with shelf
+    const W=48,D=24,H=29.5,shelfY=8,iW=W-2*T;
+    const shelfD=Math.round(D/2),shelfZ=-(D/2-shelfD/2);
+    box(W,T,D+1,mFlat(),0,H-T/2,0.5,g);
+    [-1,1].forEach(s=>box(T,H-T,D,mStand(),s*(W/2-T/2),(H-T)/2,0,g)); // H-T sides clear top panel face
+    box(iW,T,shelfD,mFlat(),0,shelfY,shelfZ,g);
+  } else if(id==='frames' && ty===0) { // Canvas Frame — 8×10, 1.5" tray
+    const cW=8,cH=10,sH=1.5;
+    const oW=cW+2*T,oH=cH+2*T,wY=oH/2+4;
+    box(cW-0.02,cH-0.02,T,mFlat(),0,wY,T/2,g);              // back panel
+    box(oW,T,sH,mFlat(),0,wY+cH/2+T/2,0.01+sH/2,g);        // top strip
+    box(oW,T,sH,mFlat(),0,wY-cH/2-T/2,0.01+sH/2,g);        // bottom strip
+    box(T,cH-0.02,sH,mFlat(),-(cW/2+T/2),wY,0.01+sH/2,g);  // left strip
+    box(T,cH-0.02,sH,mFlat(),+(cW/2+T/2),wY,0.01+sH/2,g);  // right strip
+    const cg=new THREE.BoxGeometry(cW*0.98,cH*0.98,0.1);
+    const cm=new THREE.Mesh(cg,new THREE.MeshStandardMaterial({color:0xEDE7D6,roughness:0.9,metalness:0}));
+    cm.position.set(0,wY,T+0.05); cm.castShadow=false; g.add(cm);
   }
 
   return g;
